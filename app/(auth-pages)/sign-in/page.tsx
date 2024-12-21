@@ -1,44 +1,72 @@
-import { signInAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
+import { FormMessage, Message } from '@/components/form-message';
+import { SignInForm } from '@/components/forms/signin-form';
+import { StaticRouteLink } from '@/components/static-route-link';
+import { H2, P } from '@/components/typography/text';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { GoogleAuthButton } from '@/components/ui/google-auth-button';
+import { GenericTrans } from '@/lib/utils';
+import en from '@/messages/en.json';
+import { createClient } from '@/utils/supabase/server';
+
+type SignInTrans = GenericTrans<keyof typeof en.Auth.pages.signin>;
+
+export default async function SigninPage(props: {
+  searchParams: Promise<Message>;
+}) {
   const searchParams = await props.searchParams;
+  const t: SignInTrans = await getTranslations('Auth.pages.signin');
+  const supabase = await createClient();
+
+  await supabase.auth.signOut();
+
   return (
-    <form className="flex-1 flex flex-col min-w-64">
-      <h1 className="text-2xl font-medium">Sign in</h1>
-      <p className="text-sm text-foreground">
-        Don't have an account?{" "}
-        <Link className="text-foreground font-medium underline" href="/sign-up">
-          Sign up
-        </Link>
-      </p>
-      <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-        <Label htmlFor="email">Email</Label>
-        <Input name="email" placeholder="you@example.com" required />
-        <div className="flex justify-between items-center">
-          <Label htmlFor="password">Password</Label>
-          <Link
-            className="text-xs text-foreground underline"
-            href="/forgot-password"
-          >
-            Forgot Password?
-          </Link>
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <H2 variant="card">{t('title')}</H2>
+        </CardTitle>
+        <CardDescription>
+          <P variant="info">{t('subtitle')}</P>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="mb-6 grid">
+          <GoogleAuthButton
+            className="align-center"
+            buttonType="signin"
+          ></GoogleAuthButton>
+          <div className="flex flex-row items-center space-x-6 py-6">
+            <div className="h-px grow bg-border-input"></div>
+            <div className="flex-none text-lg text-label">{t('or')}</div>
+            <div className="h-px grow bg-border-input"></div>
+          </div>
         </div>
-        <Input
-          type="password"
-          name="password"
-          placeholder="Your password"
-          required
-        />
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
-          Sign in
-        </SubmitButton>
-        <FormMessage message={searchParams} />
-      </div>
-    </form>
+        <SignInForm />
+        <div className="w-fit justify-self-center pt-3">
+          <FormMessage message={searchParams} />
+        </div>
+      </CardContent>
+      <CardFooter className="justify-self-center">
+        <P className="text-lg text-black">
+          {t('haveAnAccountText')}{' '}
+          <StaticRouteLink
+            className="font-medium underline hover:text-secondary"
+            routeTo="signUp"
+          >
+            {t('haveAnAccountLinkText')}
+          </StaticRouteLink>
+        </P>
+      </CardFooter>
+    </Card>
   );
 }

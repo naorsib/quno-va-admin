@@ -1,51 +1,68 @@
-import { signUpAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { SmtpMessage } from "../smtp-message";
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
-export default async function Signup(props: {
-  searchParams: Promise<Message>;
-}) {
-  const searchParams = await props.searchParams;
-  if ("message" in searchParams) {
-    return (
-      <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
-        <FormMessage message={searchParams} />
-      </div>
-    );
+import { SignUpForm } from '@/components/forms/signup-form';
+import { H2, P } from '@/components/typography/text';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { GoogleAuthButton } from '@/components/ui/google-auth-button';
+import { AuthPagesTrans } from '@/lib/utils';
+import { createClient } from '@/utils/supabase/server';
+
+export default async function SignupPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!!user) {
+    await supabase.auth.signOut();
   }
 
+  const t: AuthPagesTrans<'signup'> =
+    await getTranslations('Auth.pages.signup');
+
   return (
-    <>
-      <form className="flex flex-col min-w-64 max-w-64 mx-auto">
-        <h1 className="text-2xl font-medium">Sign up</h1>
-        <p className="text-sm text text-foreground">
-          Already have an account?{" "}
-          <Link className="text-primary font-medium underline" href="/sign-in">
-            Sign in
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <H2 variant="card">{t('title')}</H2>
+        </CardTitle>
+        <CardDescription>
+          <P variant="info">{t('subtitle')}</P>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="mb-6 grid">
+          <GoogleAuthButton
+            className="align-center"
+            buttonType="signup"
+          ></GoogleAuthButton>
+          <div className="flex flex-row items-center space-x-6 py-6">
+            <div className="h-px grow bg-border-input"></div>
+            <div className="flex-none text-lg text-label">{t('or')}</div>
+            <div className="h-px grow bg-border-input"></div>
+          </div>
+        </div>
+        <SignUpForm />
+      </CardContent>
+      <CardFooter className="justify-self-center">
+        <p className="text text-lg text-black">
+          {t('haveAnAccountText')}{' '}
+          <Link
+            className="font-medium underline hover:text-primary"
+            href="/sign-in"
+          >
+            {t('haveAnAccountLinkText')}
           </Link>
         </p>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            name="password"
-            placeholder="Your password"
-            minLength={6}
-            required
-          />
-          <SubmitButton formAction={signUpAction} pendingText="Signing up...">
-            Sign up
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
-      </form>
-      <SmtpMessage />
-    </>
+      </CardFooter>
+    </Card>
   );
 }

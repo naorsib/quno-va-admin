@@ -1,16 +1,62 @@
-import Hero from "@/components/hero";
-import ConnectSupabaseSteps from "@/components/tutorial/connect-supabase-steps";
-import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import { getTranslations } from 'next-intl/server';
+
+import BookYourDemo from '@/components/landing-page/book-your-demo/book-your-demo-hero';
+import EasySetting from '@/components/landing-page/easy-setting/easy-setting-hero';
+import RelieveYourTeam from '@/components/landing-page/relieve-your-team/relieve-your-team-hero';
+import YourBenefits from '@/components/landing-page/your-benefits-hero/your-benefits-hero';
+import LogoSvgComponent from '@/components/react-svg-components/logo';
+import { StaticRouteLink } from '@/components/static-route-link';
+import { P } from '@/components/typography/text';
+import { Button } from '@/components/ui/button';
+import { cn, GenericTrans } from '@/lib/utils';
+import en from '@/messages/en.json';
+
+type HeaderTrans = GenericTrans<keyof typeof en.Landing.header>;
+
+// ensuring content will margin from the fixed header's height
+const headerHeight = '16';
+const headerHeightMobile = '24';
 
 export default async function Index() {
+  const t: HeaderTrans = await getTranslations(`Landing.header`);
+
   return (
     <>
-      <Hero />
-      <main className="flex-1 flex flex-col gap-6 px-4">
-        <h2 className="font-medium text-xl mb-4">Next steps</h2>
-        {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-      </main>
+      <nav
+        className={cn(
+          'fixed top-0 z-20 flex h-24 w-full justify-center border-b bg-white lg:h-16 lg:border-b-0',
+          `h-${headerHeightMobile} lg:h-${headerHeight}`,
+        )}
+      >
+        <div className="flex w-full items-center justify-center p-7 px-10 lg:justify-between lg:px-20 lg:py-3">
+          <div className="flex items-center gap-5 font-semibold">
+            <LogoSvgComponent
+              desc={t('logoDesc')}
+              className="self-center text-primary"
+            />
+          </div>
+
+          <StaticRouteLink routeTo="signUp">
+            <Button
+              className="hidden h-12 border border-primary bg-card-button px-4 py-3 text-lg font-normal text-white lg:flex"
+              asChild
+            >
+              <P>{t('requestDemoButton')}</P>
+            </Button>
+          </StaticRouteLink>
+        </div>
+      </nav>
+      <div
+        className={cn(
+          'w-full',
+          `mt-${headerHeightMobile} lg:mt-${headerHeight}`,
+        )}
+      >
+        <RelieveYourTeam />
+        <YourBenefits />
+        <EasySetting />
+        <BookYourDemo />
+      </div>
     </>
   );
 }

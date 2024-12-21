@@ -1,0 +1,210 @@
+{
+  "AppServices": {
+    "BookAppointment": {
+      "info": "Enable patients to schedule appointments effortlessly through an automated call, reducing staff workload and wait times",
+      "title": "Book Appointment"
+    },
+    "CancelAppointment": {
+      "info": "Streamline appointment cancellations with automated calls, freeing up slots instantly for other patients.",
+      "title": "Cancel Appointment"
+    },
+    "RescheduleAppointment": {
+      "info": "Allow patients to reschedule appointments with ease, improving scheduling flexibility and clinic efficiency.",
+      "title": "Reschedule appointment"
+    },
+
+    "PrescriptionRenewal": {
+      "info": "Simplify prescription renewals via automated calls, saving time for both patients and clinic staff.",
+      "title": "Perscription renewal"
+    },
+    "GetSickLeave": {
+      "info": "Automate patient requests for sick notes, ensuring quick processing without burdening staff.",
+      "title": "Get a sick note"
+    },
+    "DoctorCallback": {
+      "info": "Let patients request doctor callbacks seamlessly, enhancing communication and patient satisfaction.",
+      "title": "Doctor callback"
+    }
+  },
+  "Auth": {
+    "googleButton": {
+      "text": {
+        "signin": "Sign in with Google",
+        "signup": "Sign up with Google"
+      }
+    },
+    "pages": {
+      "forgotPassword": {
+        "initialInfo": "Check your email for a link to reset your password.",
+        "emailSentInfo": "Check your email for a password reset link",
+        "title": "Forgot Password"
+      },
+      "resetPassword": {
+        "continue": "Continue",
+        "expired_error": "Reset password link expired, please try again",
+        "passwordUpdatedInfo": "Password updated",
+        "initialInfo": "Please enter your new password below",
+        "title": "Reset password"
+      },
+      "signin": {
+        "haveAnAccountText": "Dont have an account?",
+        "haveAnAccountLinkText": "Sign up",
+        "or": "or",
+        "subtitle": "Login to your existing Qunosuite account",
+        "title": "Sign in to Qunosuite"
+      },
+      "signup": {
+        "haveAnAccountText": "Already have an account?",
+        "haveAnAccountLinkText": "Sign in",
+        "or": "or",
+        "subtitle": "Create your account to archive the perfect patient journey",
+        "title": "Sign up to Qunosuite"
+      },
+      "youAreReady": {
+        "start": "Start Qunosuite",
+        "subtitle": "Thank you for providing all information. You now have access to Quincy. Next you can discover Qunosuite and create the worlds best Patient journey.",
+        "title": "You are ready!"
+      },
+      "verifyEmail": {
+        "checkEmail": "Please check your inbox and verify your Email address.",
+        "confirmAccount": "Please confirm your account by the email which was sent to",
+        "title": "Please verify your email address"
+      },
+      "verifyOtp": {
+        "checkPhone": "Please check your phone and enter the code to verify",
+        "confirmAccount": "Please confirm your account by entering the authorization code which was sent to",
+        "initialTitle": "Almost there",
+        "otpSent": "Verify your phone number",
+        "signInDifferent": "Click here to sign in with a different user",
+        "signingOut": "Signing out...",
+        "verifyAndAdd": "Please verify your settings and add phone and password"
+      }
+    },
+    "validations": {
+      "zod": {
+        "invalidMessage": "{fieldName} invalid",
+        "maxLengthMessage": "{fieldName} must be at most ${max} characters.",
+        "minLengthMessage": "{fieldName} must be at least {min} characters.",
+        "phoneLengthMessage": "{fieldName} must be 11 digits, or 12 if you included a leading zero"
+      },
+      "custom": {
+        "min": ""
+      }
+    }
+  },
+  "Forms": {
+    "buttons": {
+      "forgotPassword": {
+        "load": "Sending reset email..",
+        "text": "Send reset email"
+      },
+      "otp": {
+        "resend": "Resend",
+        "submitting": "Submitting..",
+        "submit": "Submit code"
+      },
+      "resend": {
+        "load": "Resending..",
+        "text": "Resend code"
+      },
+      "resetPassword": {
+        "load": "Updating password..",
+        "text": "Update password"
+      },
+      "signin": {
+        "forgotPasswordLinkText": "Forgot Password?",
+        "load": "Signing in..",
+        "text": "Sign in"
+      },
+      "signup": {
+        "load": "Signing up..",
+        "text": "Sign up"
+      },
+      "verifyOtp": {
+        "load": "Sending code",
+        "text": "Verify your phone number"
+      }
+    },
+    "fields": {
+      "confirmPassword": "Confirm Password",
+      "email": "Business Email",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "newPassword": "New Password",
+      "password": "Password",
+      "phone": "Phone Number"
+    }
+  },
+  "Landing": {
+    "header": {
+      "requestDemoButton": "Request a Demo",
+      "logoDesc": "QunoMedical Logo"
+    },
+    "heros": {
+      "yourBenefits": {
+        "boxes": {
+          "costSave": {
+            "subtitle": "Cost Savings",
+            "text": "Quincy reduces the need for extra phone staff, helping you optimize resources.",
+            "title": "40%"
+          },
+          "moreTime": {
+            "subtitle": "More time for patients",
+            "text": "By automating calls and appointment scheduling, your staff can focus more on direct patient care",
+            "title": "65%"
+          },
+          "timeSave": {
+            "subtitle": "Time Savings",
+            "text": "With better accessibility and faster response times, you can attract more patients and grow your practice over time.",
+            "title": "30%"
+          }
+        },
+        "buttonDisclaimer": "*Free, requires registration",
+        "buttonText": "Try it live",
+        "description": "YOUR BENEFITS",
+        "subtitle": "How does your patients reach out to you and what are the activities involved in this process.",
+        "title": "How Quincy benefits your Practice in the long run"
+      },
+      "bookYourDemo": {
+        "buttonDisclaimer": "*Free, requires registration",
+        "buttonText": "Try live demo",
+        "button2Text": "Talk to an expert",
+        "description": "DEMO",
+        "imageAltText": "Book free demo",
+        "info": "Why wait until your competitors take the leap? Experience how Quincy can streamline your practice and give you the competitive edge—before it’s too late.",
+        "titlePart1": "Don’t Wait Until Your Competitors Are Ahead",
+        "titlePart2": "Book Your Free Demo Now!"
+      },
+      "easySetting": {
+        "boxes": {
+          "setUpPhone": {
+            "text": "Redirect a clinic number to Quincy provided number and see it in actiony",
+            "title": "Setup a phone redirect"
+          },
+          "setUpSystem": {
+            "text": "Connect to your PVS, or control the calendars and doctor availability manually",
+            "title": "Set up the system"
+          },
+          "testIt": {
+            "text": "Review that system works correct for you and that you like the outcome",
+            "title": "Test it"
+          }
+        },
+        "description": "EASY SETTING UP",
+        "imageAltText": "Easy setting up",
+        "subtitle": "How does your patients reach out to you and what are the activities involved in this process.",
+        "title": "Connecting Quincy AI is simple"
+      },
+      "relieveYourTeam": {
+        "buttonDisclaimer": "*Free, requires registration",
+        "buttonText": "Try live demo",
+        "buttonTextMobile": "Try it live",
+        "description": "QUINCY AI, YOUR AI-RECEPTIONIST",
+        "imageAltText": "Relieve Your Team",
+        "info": "Quincy takes the phone stress off your hands, so you can focus on what matters most.",
+        "subtitle": "Boost Efficiency with Quincy, the AI Phone Assistant!",
+        "title": "Relieve Your Team"
+      }
+    }
+  }
+}
