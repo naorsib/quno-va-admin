@@ -6,7 +6,7 @@ import { GenericTrans } from './utils';
 
 type formFieldsKeys = keyof typeof en.Forms.fields;
 
-export type formFieldsTrans = GenericTrans<formFieldsKeys>;
+export type FormFieldsTrans = GenericTrans<formFieldsKeys>;
 
 type firstZodKey = keyof typeof en.Auth.validations.zod;
 

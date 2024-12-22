@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 
@@ -21,7 +21,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { FormButtonsTrans } from '@/lib/utils';
 import {
   emailValidation,
-  formFieldsTrans,
+  FormFieldsTrans,
   stringLengthValidation,
   ValidationsTrans,
 } from '@/lib/validations';
@@ -32,7 +32,7 @@ export interface SignupFormData {
 }
 const useValidationSchema = (
   t: ValidationsTrans,
-  tFields: formFieldsTrans,
+  tFields: FormFieldsTrans,
 ): ZodType<SignupFormData> => {
   return z.object({
     email: emailValidation(tFields('email'), t),
@@ -44,7 +44,7 @@ type Props = ComponentProps<'div'>;
 
 export function SignInForm({ ...props }: Props) {
   const tZod: ValidationsTrans = useTranslations('Auth.validations.zod');
-  const tFields: formFieldsTrans = useTranslations('Forms.fields');
+  const tFields: FormFieldsTrans = useTranslations('Forms.fields');
 
   const tb: FormButtonsTrans<'signin'> = useTranslations(
     'Forms.buttons.signin',

@@ -4,11 +4,18 @@ import { ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { Input } from './input';
+import { Select } from './select';
 
 export function NestedInput(props: ComponentProps<typeof Input>) {
   const { register } = useFormContext(); // retrieve all hook methods
 
   return <Input {...register(props.name as string)} {...props} />;
+}
+
+export function NestedSelect(props: ComponentProps<typeof Select>) {
+  const { register } = useFormContext(); // retrieve all hook methods
+
+  return <Select {...register(props.name as string)} {...props} />;
 }
 
 type InputWithPrefixProps = ComponentProps<typeof Input> & {

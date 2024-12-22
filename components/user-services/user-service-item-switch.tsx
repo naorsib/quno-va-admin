@@ -21,7 +21,6 @@ export function UserServiceItemSwitch({ user_service, ...props }: Props) {
       .from('user_services')
       .update({ is_enabled })
       .eq('id', user_service.id);
-    setIsUpdating(false);
     if (error) {
       // revert failed action
       setIsEnabled(!is_enabled);
@@ -29,6 +28,7 @@ export function UserServiceItemSwitch({ user_service, ...props }: Props) {
     } else {
       setIsEnabled(is_enabled);
     }
+    setIsUpdating(false);
   };
   return (
     <CustomToggleBox pressed={isEnabled} className="relative w-full p-4">

@@ -92,6 +92,16 @@
       }
     }
   },
+  "Enums": {
+    "clinic_type": {
+      "clinictype1": "Clinic Type1",
+      "clinictype2": "Clinic Type2",
+      "clinictype3": "Clinic Type3"
+    }
+  },
+  "Errors": {
+    "update_unsuccessful": "Update unsuccessful"
+  },
   "Forms": {
     "buttons": {
       "forgotPassword": {
@@ -126,6 +136,9 @@
       }
     },
     "fields": {
+      "address": "Address",
+      "clinic_name": "Clinic Name",
+      "clinic_type": "Clinic Type",
       "confirmPassword": "Confirm Password",
       "email": "Business Email",
       "first_name": "First Name",

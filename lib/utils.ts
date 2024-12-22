@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
-import { TranslationValues, useTranslations } from 'next-intl';
+import { TranslationValues } from 'next-intl';
 import { twMerge } from 'tailwind-merge';
 
 import en from '@/messages/en.json';
@@ -41,3 +41,12 @@ type PagesNames = keyof typeof authPages;
 export type AuthPagesTrans<P extends PagesNames> = GenericTrans<
   keyof (typeof authPages)[P]
 >;
+
+const enums = en.Enums;
+type EnumsNames = keyof typeof enums;
+
+export type EnumsTrans<E extends EnumsNames> = GenericTrans<
+  keyof (typeof enums)[E]
+>;
+type errorsKeys = keyof typeof en.Errors;
+export type ErrorsTrans = GenericTrans<errorsKeys>;

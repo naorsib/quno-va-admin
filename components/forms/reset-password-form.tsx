@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 
@@ -18,7 +18,7 @@ import {
 import { PasswordInput } from '@/components/ui/password-input';
 import { FormButtonsTrans } from '@/lib/utils';
 import {
-  formFieldsTrans,
+  FormFieldsTrans,
   passwordValidation,
   ValidationsTrans,
 } from '@/lib/validations';
@@ -29,7 +29,7 @@ export interface ResetPasswordFormData {
 }
 const useValidationSchema = (
   t: ValidationsTrans,
-  tFields: formFieldsTrans,
+  tFields: FormFieldsTrans,
 ): ZodType<ResetPasswordFormData> => {
   return z.object({
     confirmPassword: passwordValidation(tFields('confirmPassword'), t),
@@ -41,7 +41,7 @@ type Props = ComponentProps<'div'>;
 
 export function ResetPasswordForm({ ...props }: Props) {
   const tZod: ValidationsTrans = useTranslations('Auth.validations.zod');
-  const tFields: formFieldsTrans = useTranslations('Forms.fields');
+  const tFields: FormFieldsTrans = useTranslations('Forms.fields');
   const tb: FormButtonsTrans<'resetPassword'> = useTranslations(
     'Forms.buttons.resetPassword',
   );

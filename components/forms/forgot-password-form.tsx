@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 
@@ -19,7 +19,7 @@ import { NestedInput } from '@/components/ui/nest-input';
 import { FormButtonsTrans } from '@/lib/utils';
 import {
   emailValidation,
-  formFieldsTrans,
+  FormFieldsTrans,
   ValidationsTrans,
 } from '@/lib/validations';
 
@@ -28,7 +28,7 @@ export interface ForgotPasswordFormData {
 }
 const useValidationSchema = (
   t: ValidationsTrans,
-  tFields: formFieldsTrans,
+  tFields: FormFieldsTrans,
 ): ZodType<ForgotPasswordFormData> => {
   return z.object({
     email: emailValidation(tFields('email'), t),
@@ -39,7 +39,7 @@ type Props = ComponentProps<'div'>;
 
 export function ForgotPasswordForm({ ...props }: Props) {
   const tZod: ValidationsTrans = useTranslations('Auth.validations.zod');
-  const tFields: formFieldsTrans = useTranslations('Forms.fields');
+  const tFields: FormFieldsTrans = useTranslations('Forms.fields');
   const tb: FormButtonsTrans<'forgotPassword'> = useTranslations(
     'Forms.buttons.forgotPassword',
   );
