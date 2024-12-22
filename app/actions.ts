@@ -2,13 +2,14 @@
 
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+
 import { errorConsts } from '@/consts/erroring.const';
 import { routeConsts } from '@/consts/routing.const';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
 
 const getPhoneFromFormData = (formData: FormData) => {
-  return (formData.get('phone') as string).replace(/^0{1}/g, '');
+  return (formData.get('phone') as string).replaceAll(/^0{1}/g, '');
 };
 
 const phoneExistsErrorCode = 'phone_exists';

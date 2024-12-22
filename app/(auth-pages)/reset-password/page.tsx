@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+
 import { FormMessage, Message } from '@/components/form-message';
 import { ResetPasswordForm } from '@/components/forms/reset-password-form';
 import { StaticRouteLink } from '@/components/static-route-link';
