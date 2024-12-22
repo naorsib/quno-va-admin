@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { routeConsts } from '@/costs/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 import { createClient } from '@/utils/supabase/server';
 
 export async function GET(request: Request) {

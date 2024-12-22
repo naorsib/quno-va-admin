@@ -17,7 +17,7 @@ import { NestedInput } from '@/components/ui/nest-input';
 export type UserBasicDetails = {
   id: number;
   clinic_name: string;
-  address: string;
+  address?: string;
 };
 
 type Props = ComponentProps<'div'> & {

@@ -1,6 +1,4 @@
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-
 import { FormMessage, Message } from '@/components/form-message';
 import { ResetPasswordForm } from '@/components/forms/reset-password-form';
 import { StaticRouteLink } from '@/components/static-route-link';
@@ -13,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { routeConsts } from '@/costs/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 import { GenericTrans } from '@/lib/utils';
 import en from '@/messages/en.json';
 import { createClient } from '@/utils/supabase/server';

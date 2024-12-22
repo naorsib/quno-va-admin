@@ -1,7 +1,7 @@
 import { InfoIcon } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
-import { routeConsts } from '@/costs/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 import { createClient } from '@/utils/supabase/server';
 
 export default async function AppPage() {

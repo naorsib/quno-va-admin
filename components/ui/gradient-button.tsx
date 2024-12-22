@@ -26,4 +26,4 @@ const GradientButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
 GradientButton.displayName = 'GradientButton';
 
-export default GradientButton;
+export { GradientButton };

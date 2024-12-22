@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { routeConsts } from '@/costs/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 import { AuthPagesTrans } from '@/lib/utils';
 import { createClient } from '@/utils/supabase/server';
 

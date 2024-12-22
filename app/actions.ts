@@ -1,26 +1,29 @@
-"use server";
+'use server';
 
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { errorConsts } from '@/consts/erroring.const';
+import { routeConsts } from '@/consts/routing.const';
+import { createClient } from '@/utils/supabase/server';
+import { encodedRedirect } from '@/utils/utils';
 
-import { errorConsts } from "@/costs/erroring.const";
-import { routeConsts } from "@/costs/routing.const";
-import { createClient } from "@/utils/supabase/server";
-import { encodedRedirect } from "@/utils/utils";
+const getPhoneFromFormData = (formData: FormData) => {
+  return (formData.get('phone') as string).replace(/^0{1}/g, '');
+};
 
-const phoneExistsErrorCode = "phone_exists";
+const phoneExistsErrorCode = 'phone_exists';
 
 export const signUpAction = async (formData: FormData) => {
-  const first_name = formData.get("first_name") as string;
-  const last_name = formData.get("last_name") as string;
-  const email = formData.get("email") as string;
+  const first_name = formData.get('first_name') as string;
+  const last_name = formData.get('last_name') as string;
+  const email = formData.get('email') as string;
 
-  const password = formData.get("password") as string;
-  const country_code = formData.get("country_code") as string;
-  const phone = `${country_code}${formData.get("phone") as string}`;
+  const password = formData.get('password') as string;
+  const country_code = formData.get('country_code') as string;
+  const phone = `${country_code}${getPhoneFromFormData(formData)}`;
 
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
+  const origin = (await headers()).get('origin');
 
   const {
     error,
@@ -38,8 +41,8 @@ export const signUpAction = async (formData: FormData) => {
 };
 
 export const signInAction = async (formData: FormData) => {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
   const supabase = await createClient();
 
   const {
@@ -54,7 +57,7 @@ export const signInAction = async (formData: FormData) => {
     if (error.code == errorConsts.emailNotConfirmed) {
       return redirect(`${routeConsts.verifyEmail}?email=${user?.email}`);
     }
-    return encodedRedirect("error", routeConsts.signIn, error.message);
+    return encodedRedirect('error', routeConsts.signIn, error.message);
   }
   if (!user?.email_confirmed_at) {
     return redirect(`${routeConsts.verifyEmail}?email=${user?.email}`);
@@ -67,13 +70,13 @@ export const signInAction = async (formData: FormData) => {
 
 export const signUpWithAuth = async () => {
   const supabase = await createClient();
-  const next = "";
+  const next = '';
 
   const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
+    provider: 'google',
     options: {
       redirectTo: `${globalThis.location.origin}/auth/callback${
-        next ? `?next=${encodeURIComponent(next)}` : ""
+        next ? `?next=${encodeURIComponent(next)}` : ''
       }`,
     },
   });
@@ -83,12 +86,12 @@ export const signUpWithAuth = async () => {
 };
 
 export const updateUser = async (formData: FormData) => {
-  const first_name = formData.get("first_name") as string;
-  const last_name = formData.get("last_name") as string;
-  const country_code = formData.get("country_code") as string;
-  const phone = `${country_code}${formData.get("phone") as string}`;
+  const first_name = formData.get('first_name') as string;
+  const last_name = formData.get('last_name') as string;
+  const country_code = formData.get('country_code') as string;
+  const phone = `${country_code}${getPhoneFromFormData(formData)}`;
 
-  console.log("finalphone", phone);
+  console.log('finalphone', phone);
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.updateUser({
@@ -122,39 +125,60 @@ export const sendPhoneOtp = async (formData: FormData) => {
   if (!!user_update_error) {
     if (user_update_error.code == phoneExistsErrorCode) {
       // Faking success in order to not reveal the existence of the phone to the user
-      return encodedRedirect("success", routeConsts.verifyOtp, "true");
+      return encodedRedirect('success', routeConsts.verifyOtp, 'true');
     }
     return encodedRedirect(
-      "error",
+      'error',
       routeConsts.verifyOtp,
-      "Could not send otp code",
+      'Could not send otp code',
     );
   }
-  const country_code = formData.get("country_code") as string;
-  const phone = `${country_code}${formData.get("phone") as string}`;
+  const country_code = formData.get('country_code') as string;
+  const phone = `${country_code}${formData.get('phone') as string}`;
 
   const error = await sendPhoneOtpCommon(phone);
 
   if (!error) {
-    return encodedRedirect("success", routeConsts.verifyOtp, "true");
+    return encodedRedirect('success', routeConsts.verifyOtp, 'true');
   }
-  return encodedRedirect("error", routeConsts.verifyOtp, error.message);
+  return encodedRedirect('error', routeConsts.verifyOtp, error.message);
 };
 
 export const verifyOtp = async (token: string, phone: string) => {
   const supabase = await createClient();
   const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return encodedRedirect('error', routeConsts.verifyOtp, 'unexpected_error');
+  }
+  const {
     data: { session },
     error,
   } = await supabase.auth.verifyOtp({
     phone,
-    type: "phone_change",
+    type: 'phone_change',
     token,
   });
 
   if (error) {
-    return encodedRedirect("error", routeConsts.verifyOtp, error.message);
+    return encodedRedirect('error', routeConsts.verifyOtp, error.message);
   }
+
+  // const sb_admin = await createAdminClient();
+  const result = await supabase.from('user_basic_details').insert({
+    id: user.id,
+    first_name: user.user_metadata.first_name,
+    last_name: user.user_metadata.last_name,
+    clinic_name: `${user.user_metadata.first_name}'s clinic`,
+    email: user.user_metadata.email,
+    phone: user.user_metadata.phone,
+  });
+  console.log('result:', result);
+  if (result.error) {
+    return encodedRedirect('error', routeConsts.verifyOtp, 'unexpected_error');
+  }
+
   return redirect(routeConsts.youAreReady);
 };
 
@@ -173,15 +197,15 @@ export const resendOtp = async (phone: string) => {
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
-  const email = formData.get("email")?.toString() as string;
+  const email = formData.get('email')?.toString() as string;
 
   const supabase = await createClient();
-  const origin = (await headers()).get("origin");
-  const callbackUrl = formData.get("callbackUrl")?.toString();
+  const origin = (await headers()).get('origin');
+  const callbackUrl = formData.get('callbackUrl')?.toString();
 
   const { data, error } = await supabase.auth.signUp({
     email: email,
-    password: "testpass",
+    password: 'testpass',
   });
   // console.log("error", error);
   // console.log("data.user:", data.user);
@@ -205,9 +229,9 @@ export const forgotPasswordAction = async (formData: FormData) => {
   if (dataReset.error) {
     console.error(dataReset.error.message);
     return encodedRedirect(
-      "error",
+      'error',
       routeConsts.forgotPassword,
-      "Could not reset password",
+      'Could not reset password',
     );
   }
 
@@ -215,28 +239,28 @@ export const forgotPasswordAction = async (formData: FormData) => {
     return redirect(callbackUrl);
   }
 
-  return encodedRedirect("success", routeConsts.forgotPassword, "true");
+  return encodedRedirect('success', routeConsts.forgotPassword, 'true');
 };
 
 export const resetPasswordAction = async (formData: FormData) => {
   const supabase = await createClient();
 
-  const password = formData.get("newPassword") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
+  const password = formData.get('newPassword') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
 
   if (!password || !confirmPassword) {
     encodedRedirect(
-      "error",
+      'error',
       routeConsts.resetPassword,
-      "Password and confirm password are required",
+      'Password and confirm password are required',
     );
   }
 
   if (password !== confirmPassword) {
     encodedRedirect(
-      "error",
+      'error',
       routeConsts.resetPassword,
-      "Passwords do not match",
+      'Passwords do not match',
     );
   }
 
@@ -247,26 +271,26 @@ export const resetPasswordAction = async (formData: FormData) => {
   if (error) {
     if (error.code == errorConsts.samePassword) {
       encodedRedirect(
-        "error",
+        'error',
         routeConsts.resetPassword,
-        "New password should be different from the old password.",
+        'New password should be different from the old password.',
       );
     } else {
       encodedRedirect(
-        "error",
+        'error',
         routeConsts.resetPassword,
-        "Password update failed",
+        'Password update failed',
       );
     }
   }
 
-  encodedRedirect("success", routeConsts.resetPassword, "true");
+  encodedRedirect('success', routeConsts.resetPassword, 'true');
 };
 
 export const handleSignInWithGoogle = async (response: any) => {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithIdToken({
-    provider: "google",
+    provider: 'google',
     token: response.credential,
   });
 };

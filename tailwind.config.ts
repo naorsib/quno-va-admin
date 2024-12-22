@@ -8,6 +8,10 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
+  safelist: [
+    `lg:mt-${process.env.HEADER_HEIGHT}`,
+    `mt-${process.env.HEADER_HEIGHT_MOBILE}`,
+  ],
   prefix: '',
   theme: {
     container: {

@@ -15,7 +15,7 @@
     "unicorn/no-array-for-each": "off",
     "unicorn/no-array-reduce": "off",
     "import/named": "off",
-    "prettier/prettier": "warn",
+    "prettier/prettier": "off",
     "unicorn/no-document-cookie": "off",
     "unicorn/prevent-abbreviations": [
       "error",

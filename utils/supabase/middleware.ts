@@ -1,6 +1,6 @@
-import { appBase, routeConsts } from "@/costs/routing.const";
-import { createServerClient } from "@supabase/ssr";
-import { type NextRequest, NextResponse } from "next/server";
+import { appBase, routeConsts } from '@/consts/routing.const';
+import { createServerClient } from '@supabase/ssr';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export const updateSession = async (request: NextRequest) => {
   // This `try/catch` block is only here for the interactive tutorial.
@@ -23,17 +23,17 @@ export const updateSession = async (request: NextRequest) => {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value)
+              request.cookies.set(name, value),
             );
             response = NextResponse.next({
               request,
             });
             cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
+              response.cookies.set(name, value, options),
             );
           },
         },
-      }
+      },
     );
 
     // This will refresh session if expired - required for Server Components
@@ -45,12 +45,14 @@ export const updateSession = async (request: NextRequest) => {
       return NextResponse.redirect(new URL(routeConsts.signIn, request.url));
     }
 
-    if (request.nextUrl.pathname === "/" && !user.error) {
+    if (request.nextUrl.pathname === '/' && !user.error) {
       if (!user.data.user.phone_confirmed_at) {
-        return NextResponse.redirect(new URL( routeConsts.verifyOtp, request.url));
+        return NextResponse.redirect(
+          new URL(routeConsts.verifyOtp, request.url),
+        );
       }
       return NextResponse.redirect(
-        new URL(routeConsts.quincyMainDashboard, request.url)
+        new URL(routeConsts.quincyMainDashboard, request.url),
       );
     }
 

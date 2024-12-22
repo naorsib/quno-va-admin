@@ -22,7 +22,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { routeConsts } from '@/costs/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 
 import { ClientMenuButton } from './client-menu-button';
 

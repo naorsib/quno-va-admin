@@ -1,5 +1,4 @@
 import { getTranslations } from 'next-intl/server';
-
 import BookYourDemo from '@/components/landing-page/book-your-demo/book-your-demo-hero';
 import EasySetting from '@/components/landing-page/easy-setting/easy-setting-hero';
 import RelieveYourTeam from '@/components/landing-page/relieve-your-team/relieve-your-team-hero';
@@ -13,10 +12,6 @@ import en from '@/messages/en.json';
 
 type HeaderTrans = GenericTrans<keyof typeof en.Landing.header>;
 
-// ensuring content will margin from the fixed header's height
-const headerHeight = '16';
-const headerHeightMobile = '24';
-
 export default async function Index() {
   const t: HeaderTrans = await getTranslations(`Landing.header`);
 
@@ -25,7 +20,7 @@ export default async function Index() {
       <nav
         className={cn(
           'fixed top-0 z-20 flex h-24 w-full justify-center border-b bg-white lg:h-16 lg:border-b-0',
-          `h-${headerHeightMobile} lg:h-${headerHeight}`,
+          `h-${process.env.HEADER_HEIGHT_MOBILE} lg:h-${process.env.HEADER_HEIGHT}`,
         )}
       >
         <div className="flex w-full items-center justify-center p-7 px-10 lg:justify-between lg:px-20 lg:py-3">
@@ -49,7 +44,7 @@ export default async function Index() {
       <div
         className={cn(
           'w-full',
-          `mt-${headerHeightMobile} lg:mt-${headerHeight}`,
+          `mt-${process.env.HEADER_HEIGHT_MOBILE} lg:mt-${process.env.HEADER_HEIGHT}`,
         )}
       >
         <RelieveYourTeam />

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ComponentProps } from 'react';
 
-import { routeConsts } from '@/costs/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 import { cn } from '@/lib/utils';
 
 const emptyLinkKey = 'empty';

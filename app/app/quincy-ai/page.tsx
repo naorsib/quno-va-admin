@@ -3,12 +3,12 @@ import { redirect } from 'next/navigation';
 import { BasicDetails } from '@/components/basic-details/basic-details';
 import { UserBasicDetails } from '@/components/basic-details/basic-details-form';
 import { UserServices } from '@/components/user-services/user-services';
-import { routeConsts } from '@/costs/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 import { createClient } from '@/utils/supabase/server';
 
 type UserDetails = UserBasicDetails & {
   // TODO - Turns into enum using translations or a lookup view
-  clinic_type: string;
+  clinic_type?: string;
 };
 
 export default async function QuincyPage() {
@@ -28,23 +28,14 @@ export default async function QuincyPage() {
     return redirect(routeConsts.verifyOtp);
   }
 
-  // const { data: user_services } = (await supabase
-  //   .from("user_details")
-  //   .select("id, clinic_name, address, clinic_type")
-  //   .eq("user_id", props.userId)
-  //   ) as { data:UserDetails };
+  const { data: clinic_details } = (await supabase
+    .from('user_basic_details')
+    .select('id, clinic_name, clinic_type')
+    .eq('id', user.id)
+    .limit(1)
+    .single()) as { data: UserDetails };
+  console.log('clinic_details', clinic_details);
 
-  // TODO - Fetch when we have the new table (example query above)
-  const id = 1;
-  const clinic_name = 'test_clinic';
-  const address = 'test_address';
-  // const clinicType="test_type"
-
-  const basicDetails: UserBasicDetails = {
-    id,
-    clinic_name,
-    address,
-  };
   return (
     <div className="flex h-screen max-h-[calc(100vh-64px)] w-full flex-1 flex-col justify-between gap-12">
       <div className="flex max-h-[calc(100%-40px)] flex-col items-start items-center gap-2 overflow-y-scroll px-3 py-10 md:max-h-none md:overflow-auto">
@@ -57,7 +48,7 @@ export default async function QuincyPage() {
           </p>
 
           <BasicDetails
-            basicDetails={basicDetails}
+            basicDetails={clinic_details}
             userId={user.id}
             className="mb-3"
           />

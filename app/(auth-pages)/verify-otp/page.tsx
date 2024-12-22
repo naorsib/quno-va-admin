@@ -15,7 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { routeConsts } from '@/costs/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 import { AuthPagesTrans } from '@/lib/utils';
 import { createClient } from '@/utils/supabase/server';
 
@@ -57,7 +57,7 @@ export default async function VerifyOtpPage(props: {
 
   let phone = (user.phone || user.user_metadata.phone || '') as string;
 
-  const country_code = phone.length > 0 ? phone.slice(0, 1) : '49';
+  const country_code = phone.length > 0 ? phone.slice(0, 2) : '49';
 
   // remove country code
   phone = phone.slice(2);
@@ -101,7 +101,7 @@ export default async function VerifyOtpPage(props: {
             </div>
           </>
         )}
-        {verifyOtpSent && <OtpCodeForm phone={phone} />}
+        {verifyOtpSent && <OtpCodeForm phone={`${country_code}${phone}`} />}
       </CardContent>
       <CardFooter>
         <Button
