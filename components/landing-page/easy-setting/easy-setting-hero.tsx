@@ -4,8 +4,8 @@ import { getTranslations } from 'next-intl/server';
 import hero from '@/assets/images/easysetting-hero.png';
 import { LandingHeroWrapper } from '@/components/landing-page/landing-hero-wrapper';
 import { H2, H5, P } from '@/components/typography/text';
-import { GenericTrans } from '@/lib/utils';
 import en from '@/messages/en.json';
+import { GenericTrans } from '@/types/translations';
 
 import { BoxFieldsTrans, EasySettingsInfoBox } from './easy-settings-info-box';
 

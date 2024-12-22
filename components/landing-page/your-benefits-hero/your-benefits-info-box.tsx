@@ -1,6 +1,6 @@
 import { H3, H4, P } from '@/components/typography/text';
-import { GenericTrans } from '@/lib/utils';
 import en from '@/messages/en.json';
+import { GenericTrans } from '@/types/translations';
 
 type BenefitBoxesKeys = keyof typeof en.Landing.heros.yourBenefits.boxes;
 type BenefitBoxesFieldsKeys =

@@ -20,12 +20,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { EnumsTrans, ErrorsTrans } from '@/lib/utils';
 import {
   FormFieldsTrans,
   stringLengthValidation,
   ValidationsTrans,
 } from '@/lib/validations';
+import { EnumsTrans, ErrorsTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/client';
 
 import { NestedSelect } from '../ui/nest-input';

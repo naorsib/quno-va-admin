@@ -4,8 +4,8 @@ import { LandingHeroWrapper } from '@/components/landing-page/landing-hero-wrapp
 import { StaticRouteLink } from '@/components/static-route-link';
 import { H2, H5, P } from '@/components/typography/text';
 import { GradientButton } from '@/components/ui/gradient-button';
-import { GenericTrans } from '@/lib/utils';
 import en from '@/messages/en.json';
+import { GenericTrans } from '@/types/translations';
 
 import { BoxFieldsTrans, YourBenefitsInfoBox } from './your-benefits-info-box';
 

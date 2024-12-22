@@ -148,6 +148,14 @@
       "phone": "Phone Number"
     }
   },
+  "InnerPages": {
+    "quincy": {
+      "title": "Quincy Setup",
+      "infoText1": "To give a realistic experience, we need you to fill out this information. This information are nessecary to built a special and customized response to the patient.",
+      "infoText2": "Depending on your clinic setup you can have different scenarios of how to work with your patients. You can also select a preset, that controls the voice and type of additional information available to Quincy.",
+      "startDemoButton": "Start Demo"
+    }
+  },
   "Landing": {
     "header": {
       "requestDemoButton": "Request a Demo",

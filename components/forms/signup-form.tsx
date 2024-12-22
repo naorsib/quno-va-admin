@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/form';
 import { InputWithPrefix, NestedInput } from '@/components/ui/nest-input';
 import { PasswordInput } from '@/components/ui/password-input';
-import { FormButtonsTrans } from '@/lib/utils';
 import {
   emailValidation,
   FormFieldsTrans,
@@ -25,6 +24,7 @@ import {
   stringLengthValidation,
   ValidationsTrans,
 } from '@/lib/validations';
+import { FormButtonsTrans } from '@/types/translations';
 
 export interface SignupFormData {
   country_code: string;

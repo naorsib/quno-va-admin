@@ -11,20 +11,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { GenericTrans } from '@/lib/utils';
-import en from '@/messages/en.json';
+import { AuthPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
-
-type ForgotPasswordTrans = GenericTrans<
-  keyof typeof en.Auth.pages.forgotPassword
->;
 
 export default async function ForgotPasswordPage(props: {
   searchParams: Promise<Message>;
 }) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  const t: ForgotPasswordTrans = await getTranslations(
+  const t: AuthPagesTrans<'forgotPassword'> = await getTranslations(
     `Auth.pages.forgotPassword`,
   );
   const searchParams = await props.searchParams;

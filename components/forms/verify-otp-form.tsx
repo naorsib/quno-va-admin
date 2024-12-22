@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod'; // Add new import
 
@@ -16,12 +16,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { InputWithPrefix, NestedInput } from '@/components/ui/nest-input';
-import { FormButtonsTrans } from '@/lib/utils';
 import {
   phoneValidation,
   stringLengthValidation,
   ValidationsTrans,
 } from '@/lib/validations';
+import { FormButtonsTrans } from '@/types/translations';
 
 export type UserSignupDetails = {
   country_code: string;

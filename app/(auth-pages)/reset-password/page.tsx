@@ -13,14 +13,9 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { routeConsts } from '@/consts/routing.const';
-import { GenericTrans } from '@/lib/utils';
-import en from '@/messages/en.json';
+import { AuthPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
-
-type ResetPasswordTrans = GenericTrans<
-  keyof typeof en.Auth.pages.resetPassword
->;
 
 export default async function ResetPasswordPage(props: {
   searchParams: Promise<Message>;
@@ -32,8 +27,9 @@ export default async function ResetPasswordPage(props: {
   const hrefToContinue = user?.phone_confirmed_at
     ? 'quincyMainDashboard'
     : 'verifyOtp';
-  const t: ResetPasswordTrans = await getTranslations(
-    'Auth.pages.resetPassword',
+
+  const t: AuthPagesTrans<'resetPassword'> = await getTranslations(
+    `Auth.pages.resetPassword`,
   );
   if (!user) {
     return encodedRedirect(

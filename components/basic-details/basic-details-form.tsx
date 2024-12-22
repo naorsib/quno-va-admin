@@ -15,12 +15,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { NestedInput } from '@/components/ui/nest-input';
-import { ErrorsTrans } from '@/lib/utils';
 import {
   FormFieldsTrans,
   stringLengthValidation,
   ValidationsTrans,
 } from '@/lib/validations';
+import { ErrorsTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/client';
 
 export type UserClinicDetails = {

@@ -1,6 +1,6 @@
 import { H3, P } from '@/components/typography/text';
-import { GenericTrans } from '@/lib/utils';
 import en from '@/messages/en.json';
+import { GenericTrans } from '@/types/translations';
 
 type EasySettingBoxesKeys = keyof typeof en.Landing.heros.easySetting.boxes;
 type EastSettingBoxesFieldsKeys =

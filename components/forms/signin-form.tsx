@@ -18,13 +18,13 @@ import {
 } from '@/components/ui/form';
 import { NestedInput } from '@/components/ui/nest-input';
 import { PasswordInput } from '@/components/ui/password-input';
-import { FormButtonsTrans } from '@/lib/utils';
 import {
   emailValidation,
   FormFieldsTrans,
   stringLengthValidation,
   ValidationsTrans,
 } from '@/lib/validations';
+import { FormButtonsTrans } from '@/types/translations';
 
 export interface SignupFormData {
   email: string;

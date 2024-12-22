@@ -2,7 +2,7 @@
 
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { useTranslations } from 'next-intl';
-import React, { ComponentProps, useState } from 'react';
+import { ComponentProps, useState } from 'react';
 
 import { resendOtp, verifyOtp } from '@/app/actions';
 import { SubmitButton } from '@/components/submit-button';
@@ -12,7 +12,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { FormButtonsTrans } from '@/lib/utils';
+import { FormButtonsTrans } from '@/types/translations';
 
 type Props = ComponentProps<'div'> & {
   phone: string;

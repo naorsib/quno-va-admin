@@ -7,8 +7,8 @@ import { StaticRouteLink } from '@/components/static-route-link';
 import { H2, H5, P } from '@/components/typography/text';
 import { Button } from '@/components/ui/button';
 import { GradientButton } from '@/components/ui/gradient-button';
-import { GenericTrans } from '@/lib/utils';
 import en from '@/messages/en.json';
+import { GenericTrans } from '@/types/translations';
 
 type BookTrans = GenericTrans<keyof typeof en.Landing.heros.bookYourDemo>;
 

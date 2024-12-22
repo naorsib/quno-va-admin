@@ -2,7 +2,7 @@ import * as z from 'zod';
 
 import en from '@/messages/en.json';
 
-import { GenericTrans } from './utils';
+import { GenericTrans } from '../types/translations';
 
 type formFieldsKeys = keyof typeof en.Forms.fields;
 

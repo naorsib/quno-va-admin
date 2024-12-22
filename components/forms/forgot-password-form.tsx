@@ -16,12 +16,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { NestedInput } from '@/components/ui/nest-input';
-import { FormButtonsTrans } from '@/lib/utils';
 import {
   emailValidation,
   FormFieldsTrans,
   ValidationsTrans,
 } from '@/lib/validations';
+import { FormButtonsTrans } from '@/types/translations';
 
 export interface ForgotPasswordFormData {
   email: string;

@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { routeConsts } from '@/consts/routing.const';
-import { AuthPagesTrans } from '@/lib/utils';
+import { AuthPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
 
 export default async function VerifyEmailPage(props: {

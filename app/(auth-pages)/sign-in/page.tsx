@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
 import { FormMessage, Message } from '@/components/form-message';
@@ -14,17 +13,16 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { GoogleAuthButton } from '@/components/ui/google-auth-button';
-import { GenericTrans } from '@/lib/utils';
-import en from '@/messages/en.json';
+import { AuthPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
-
-type SignInTrans = GenericTrans<keyof typeof en.Auth.pages.signin>;
 
 export default async function SigninPage(props: {
   searchParams: Promise<Message>;
 }) {
   const searchParams = await props.searchParams;
-  const t: SignInTrans = await getTranslations('Auth.pages.signin');
+  const t: AuthPagesTrans<'signin'> =
+    await getTranslations(`Auth.pages.signin`);
+
   const supabase = await createClient();
 
   await supabase.auth.signOut();

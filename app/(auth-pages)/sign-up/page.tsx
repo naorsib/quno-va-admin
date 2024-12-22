@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { GoogleAuthButton } from '@/components/ui/google-auth-button';
-import { AuthPagesTrans } from '@/lib/utils';
+import { AuthPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
 
 export default async function SignupPage() {

@@ -16,12 +16,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { PasswordInput } from '@/components/ui/password-input';
-import { FormButtonsTrans } from '@/lib/utils';
 import {
   FormFieldsTrans,
   passwordValidation,
   ValidationsTrans,
 } from '@/lib/validations';
+import { FormButtonsTrans } from '@/types/translations';
 
 export interface ResetPasswordFormData {
   confirmPassword: string;
