@@ -16,7 +16,7 @@ export async function UserServices({ userId }: Props) {
 
   return (
     <div className="flex w-full flex-col items-center gap-2 text-sm">
-      <div className="max-w-nd grid w-full grid-cols-1 gap-4 sm:max-w-full md:grid-cols-2">
+      <div className="max-w-nd grid w-full auto-rows-fr grid-cols-1 gap-4 sm:max-w-full md:grid-cols-2">
         {user_services.map(service => (
           <UserServiceItem key={service.id} user_service={service} />
         ))}

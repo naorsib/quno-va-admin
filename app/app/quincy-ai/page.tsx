@@ -28,7 +28,7 @@ export default async function QuincyPage() {
   return (
     // max-h-[calc(100vh-64px)]
     <div className="flex flex-col">
-      <div className="flex max-h-[calc(100%-40px)] flex-col items-start items-center gap-4 py-10 lg:max-h-none">
+      <div className="flex max-h-[calc(100%-40px)] flex-col items-start items-center gap-4 py-10 lg:max-h-none lg:pb-4">
         <div className="flex w-full flex-row items-center justify-between">
           <H1 variant="innerPage">{t('title')}</H1>
 
