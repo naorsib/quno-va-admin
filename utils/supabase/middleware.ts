@@ -66,7 +66,7 @@ export const updateSession = async (request: NextRequest) => {
         );
       }
       return NextResponse.redirect(
-        new URL(routeConsts.quincyMainDashboard, request.url),
+        new URL(routeConsts.quincyDashboard, request.url),
       );
     }
 
