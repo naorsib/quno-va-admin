@@ -14,6 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { NestedSelect } from '@/components/ui/nest-input';
 import {
   SelectContent,
   SelectItem,
@@ -27,8 +28,6 @@ import {
 } from '@/lib/validations';
 import { EnumsTrans, ErrorsTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/client';
-
-import { NestedSelect } from '../../ui/nest-input';
 
 type ClinicTypeDetails = {
   clinic_type: string;

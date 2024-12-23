@@ -9,7 +9,6 @@ import {
 import getConfig from 'next/config';
 
 import { signOutAction } from '@/app/actions';
-import LogoSvgComponent from '@/components/react-svg-components/logo';
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/sidebar';
 import { routeConsts } from '@/consts/routing.const';
 
+import LogoSvgComponent from '../react-svg-components/logo';
 import { ClientMenuButton } from './client-menu-button';
 
 getConfig();
@@ -53,11 +53,11 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
-      <SidebarHeader></SidebarHeader>
-      <SidebarContent className="p-7 sm:px-4 lg:px-7">
-        <LogoSvgComponent className="text-white" desc="QunoMedical Logo" />
-        <SidebarGroup>
+    <Sidebar collapsible="offcanvas">
+      <SidebarHeader />
+      <SidebarContent className="p-7 pt-2 sm:px-4 lg:px-7">
+        <LogoSvgComponent className="z-10 text-white" desc="QunoMedical Logo" />
+        <SidebarGroup className="mt-8">
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map(item => (

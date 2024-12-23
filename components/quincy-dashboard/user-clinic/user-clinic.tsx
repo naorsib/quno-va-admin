@@ -5,8 +5,8 @@ import { createClient } from '@/utils/supabase/server';
 import {
   BasicDetailsForm,
   UserClinicBase,
-} from '../basic-details/basic-details-form';
-import { ClinicTypeForm } from '../basic-details/clinic-type-form';
+} from './basic-details/basic-details-form';
+import { ClinicTypeForm } from './basic-details/clinic-type-form';
 
 export type UserClinicData = UserClinicBase & {
   // TODO - maybe turn into enum using a lookup view

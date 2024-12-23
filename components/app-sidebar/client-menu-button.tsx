@@ -12,7 +12,7 @@ type Props = ComponentProps<'div'> & MenuItemData;
 
 export function ClientMenuButton({ url, ...props }: Props) {
   const pathname = usePathname();
-  const isActive = pathname == url;
+  const isActive = url ? pathname.startsWith(url) : false;
   const isDisabled = !url;
 
   return (
