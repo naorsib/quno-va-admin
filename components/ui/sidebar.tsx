@@ -150,6 +150,7 @@ const SidebarProvider = React.forwardRef<
             className={cn(
               'group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebarGradient',
               className,
+              'border-transparent',
             )}
             ref={ref}
             {...props}
@@ -208,7 +209,7 @@ const Sidebar = React.forwardRef<
             data-sidebar="sidebar"
             data-mobile="true"
             aria-describedby=""
-            className="w-full max-w-md bg-sidebarGradient p-0 text-sidebar-foreground sm:w-[--sidebar-width] [&>button]:hidden"
+            className="w-full max-w-md rounded border-transparent bg-sidebarGradient p-0 text-sidebar-foreground sm:w-[--sidebar-width] [&>button]:hidden"
             style={
               {
                 '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
@@ -260,7 +261,7 @@ const Sidebar = React.forwardRef<
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebarGradient group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow lg:items-center"
+            className="flex h-full w-full flex-col rounded border-transparent bg-sidebarGradient group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow lg:items-center"
           >
             {children}
           </div>

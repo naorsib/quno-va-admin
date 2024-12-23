@@ -1,14 +1,11 @@
-import {
-  ArrowLeft,
-  Calendar,
-  Home,
-  Inbox,
-  Search,
-  Settings,
-} from 'lucide-react';
+import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
 import getConfig from 'next/config';
 
 import { signOutAction } from '@/app/actions';
+import LogoSvgComponent from '@/components/react-svg-components/logo';
+import LogoutSvgComponent from '@/components/react-svg-components/logout';
+import { P } from '@/components/typography/text';
+import { Separator } from '@/components/ui/separator';
 import {
   Sidebar,
   SidebarContent,
@@ -17,13 +14,13 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { routeConsts } from '@/consts/routing.const';
 
-import LogoSvgComponent from '../react-svg-components/logo';
+import { Button } from '../ui/button';
 import { ClientMenuButton } from './client-menu-button';
+import { UserAvatar } from './user-avatar';
 
 getConfig();
 
@@ -74,17 +71,15 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="w-full p-7">
+      <SidebarFooter className="flex w-full flex-col gap-4 p-7 pb-10">
         <form action={signOutAction}>
-          <SidebarMenuButton
-            type="submit"
-            className="hover:text-primary-foreground"
-          >
-            <ArrowLeft />
-
-            <span>Logout</span>
-          </SidebarMenuButton>
+          <Button className="bg-transparent text-border-input hover:bg-transparent hover:text-white">
+            <LogoutSvgComponent />
+            <P className="text-lg">Logout</P>
+          </Button>
         </form>
+        <Separator />
+        <UserAvatar></UserAvatar>
       </SidebarFooter>
     </Sidebar>
   );
