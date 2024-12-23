@@ -92,6 +92,10 @@
       }
     }
   },
+  "CallEvents": {
+    "appointment_cancelled": "Appointment cancelled",
+    "appointment_scheduled": "Appointment scheduled"
+  },
   "Enums": {
     "clinic_type": {
       "clinictype1": "Clinic Type1",
@@ -181,6 +185,16 @@
       "logoDesc": "QunoMedical Logo"
     },
     "heros": {
+      "audioDemo": {
+        "appointment_booking": "Appointment Booking",
+        "appointment_booking2": "Appointment Booking2",
+        "buttonDisclaimer": "*Free, requires registration",
+        "buttonText": "Try live demo",
+        "description": "DEMO",
+        "quincyHelpsWith": "Quincy helps with these calls",
+        "subtitle": "Quincy is an intelligent phone assistant specifically designed to help medical practices manage and respond to calls. Through automated call answering, call routing, appointment booking, and handling simple queries, Quincy ensures your practice is always accessible while saving valuable time.",
+        "title": "What it Quincy AI?"
+      },
       "yourBenefits": {
         "boxes": {
           "costSave": {

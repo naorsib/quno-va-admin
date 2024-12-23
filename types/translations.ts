@@ -45,3 +45,6 @@ export type EnumsTrans<E extends EnumsNames> = GenericTrans<
 >;
 type errorsKeys = keyof typeof en.Errors;
 export type ErrorsTrans = GenericTrans<errorsKeys>;
+
+type callEventsKeys = keyof typeof en.CallEvents;
+export type CallEventsTrans = GenericTrans<callEventsKeys>;

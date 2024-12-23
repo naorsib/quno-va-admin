@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 
+import AudioDemoHero from '@/components/landing-page/audio-demo/audio-demo-hero';
 import BookYourDemo from '@/components/landing-page/book-your-demo/book-your-demo-hero';
 import EasySetting from '@/components/landing-page/easy-setting/easy-setting-hero';
 import RelieveYourTeam from '@/components/landing-page/relieve-your-team/relieve-your-team-hero';
@@ -51,6 +52,7 @@ export default async function Index() {
       >
         <RelieveYourTeam />
         <YourBenefits />
+        <AudioDemoHero />
         <EasySetting />
         <BookYourDemo />
       </div>
