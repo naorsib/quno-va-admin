@@ -10,9 +10,7 @@ export default async function Layout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarTrigger />
-      <div className="flex max-w-3xl flex-col items-start gap-12">
-        {children}
-      </div>
+      <div className="flex w-full max-w-3xl flex-col px-3">{children}</div>
     </SidebarProvider>
   );
 }

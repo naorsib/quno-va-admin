@@ -26,10 +26,10 @@ export default async function VerifyEmailPage(props: {
   } = await supabase.auth.getUser();
 
   if (!!user) {
-    return redirect(routeConsts.quincyMainDashboard);
+    return redirect(routeConsts.quincyDashboard);
   }
   if (!searchParams.email) {
-    return redirect(routeConsts.quincyMainDashboard);
+    return redirect(routeConsts.quincyDashboard);
   }
 
   const t: AuthPagesTrans<'verifyEmail'> = await getTranslations(

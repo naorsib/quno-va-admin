@@ -25,7 +25,7 @@ export default async function ResetPasswordPage(props: {
     data: { user },
   } = await supabase.auth.getUser();
   const hrefToContinue = user?.phone_confirmed_at
-    ? 'quincyMainDashboard'
+    ? 'quincyDashboard'
     : 'verifyOtp';
 
   const t: AuthPagesTrans<'resetPassword'> = await getTranslations(

@@ -28,7 +28,7 @@ import {
 import { EnumsTrans, ErrorsTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/client';
 
-import { NestedSelect } from '../ui/nest-input';
+import { NestedSelect } from '../../ui/nest-input';
 
 type ClinicTypeDetails = {
   clinic_type: string;
@@ -110,8 +110,10 @@ export function ClinicTypeForm({ clinic_type, userId, ...props }: Props) {
                 {...field}
               >
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a verified email to display" />
+                  <SelectTrigger disabled={isUpdating}>
+                    <SelectValue
+                      placeholder={tFields(`${field.name}_placeholder`)}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

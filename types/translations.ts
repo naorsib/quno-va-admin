@@ -1,6 +1,5 @@
-import { TranslationValues } from 'next-intl';
-
 import en from '@/messages/en.json';
+import { TranslationValues } from 'next-intl';
 
 export type GenericTrans<T> = (
   key: T,
@@ -17,18 +16,25 @@ export type GenericTrans<T> = (
 
 // }
 
+const authPages = en.Auth.pages;
+type AuthPagesNames = keyof typeof authPages;
+
+export type AuthPagesTrans<P extends AuthPagesNames> = GenericTrans<
+  keyof (typeof authPages)[P]
+>;
+
+const innerPages = en.InnerPages;
+type InnerPagesNames = keyof typeof innerPages;
+
+export type InnerPagesTrans<P extends InnerPagesNames> = GenericTrans<
+  keyof (typeof innerPages)[P]
+>;
+
 const buttons = en.Forms.buttons;
 type ButtonsNames = keyof typeof buttons;
 
 export type FormButtonsTrans<B extends ButtonsNames> = GenericTrans<
   keyof (typeof buttons)[B]
->;
-
-const authPages = en.Auth.pages;
-type PagesNames = keyof typeof authPages;
-
-export type AuthPagesTrans<P extends PagesNames> = GenericTrans<
-  keyof (typeof authPages)[P]
 >;
 
 const enums = en.Enums;

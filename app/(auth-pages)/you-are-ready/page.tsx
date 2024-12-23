@@ -42,7 +42,7 @@ export default async function YouAreReadyPage() {
       <CardContent />
       <CardFooter>
         <StaticRouteLink
-          routeTo="quincyMainDashboard"
+          routeTo="quincyDashboard"
           className="flex w-full justify-center sm:w-3/4"
         >
           <Button

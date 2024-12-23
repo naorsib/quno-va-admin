@@ -42,8 +42,21 @@ export const updateSession = async (request: NextRequest) => {
     const user = await supabase.auth.getUser();
 
     // protected routes
-    if (request.nextUrl.pathname.startsWith(appBase) && user.error) {
-      return NextResponse.redirect(new URL(routeConsts.signIn, request.url));
+    if (request.nextUrl.pathname.startsWith(appBase)) {
+      if (user.error) {
+        return NextResponse.redirect(new URL(routeConsts.signIn, request.url));
+      }
+      if (!user.data.user.email_confirmed_at) {
+        return NextResponse.redirect(
+          `${routeConsts.verifyEmail}?email=${user.data.user.email}`,
+        );
+      }
+      if (!user.data.user.phone_confirmed_at) {
+        return NextResponse.redirect(routeConsts.verifyOtp);
+      }
+      if (user.error) {
+        return NextResponse.redirect(new URL(routeConsts.signIn, request.url));
+      }
     }
 
     if (request.nextUrl.pathname === '/' && !user.error) {

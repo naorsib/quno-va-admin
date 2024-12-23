@@ -139,6 +139,7 @@
       "address": "Address",
       "clinic_name": "Clinic Name",
       "clinic_type": "Clinic Type",
+      "clinic_type_placeholder": "Select your clinic type",
       "confirmPassword": "Confirm Password",
       "email": "Business Email",
       "first_name": "First Name",
@@ -150,10 +151,22 @@
   },
   "InnerPages": {
     "quincy": {
-      "title": "Quincy Setup",
       "infoText1": "To give a realistic experience, we need you to fill out this information. This information are nessecary to built a special and customized response to the patient.",
       "infoText2": "Depending on your clinic setup you can have different scenarios of how to work with your patients. You can also select a preset, that controls the voice and type of additional information available to Quincy.",
-      "startDemoButton": "Start Demo"
+      "startDemoButton": "Start Demo",
+      "title": "Quincy Setup"
+    },
+    "quincyDemo": {
+      "contractRequested": "Contract Requested",
+      "contractRequestedInfo": "We will reach out to you shortly!",
+      "dialogTitle": "Thanks for your request!",
+      "dialogSubtitle": "Our account managers will reach out to you shortly!",
+      "innerBoxText1": "Your demo is ready",
+      "innerBoxText2": "Call this number from the phone you used to register and see it working",
+      "requestContractButton": "Request Contract",
+      "settingsLink": "Settings",
+      "title": "Quincy demo",
+      "waitingForCallsButton": "Waiting for Calls"
     }
   },
   "Landing": {

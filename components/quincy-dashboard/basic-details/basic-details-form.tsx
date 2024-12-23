@@ -23,29 +23,29 @@ import {
 import { ErrorsTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/client';
 
-export type UserClinicDetails = {
+export type UserClinicBase = {
   clinic_name: string;
   address?: string;
 };
 
 type Props = ComponentProps<'div'> & {
-  basicDetails: UserClinicDetails;
+  clinic_base: UserClinicBase;
   userId: string;
 };
 
 const useValidationSchema = (
   t: ValidationsTrans,
   tFields: FormFieldsTrans,
-): ZodType<UserClinicDetails> => {
+): ZodType<UserClinicBase> => {
   return z.object({
     clinic_name: stringLengthValidation(tFields('clinic_name'), t),
     address: stringLengthValidation(tFields('address'), t),
   });
 };
 
-export function BasicDetailsForm({ basicDetails, userId, ...props }: Props) {
+export function BasicDetailsForm({ clinic_base, userId, ...props }: Props) {
   const [isUpdating, setIsUpdating] = useState(false);
-  const [basicUserDetails, setBasicUserDetails] = useState(basicDetails);
+  const [clinicBase, setClinicBase] = useState(clinic_base);
 
   const tZod: ValidationsTrans = useTranslations('Auth.validations.zod');
   const tFields: FormFieldsTrans = useTranslations('Forms.fields');
@@ -56,8 +56,8 @@ export function BasicDetailsForm({ basicDetails, userId, ...props }: Props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      clinic_name: basicUserDetails.clinic_name,
-      address: basicUserDetails.address || '',
+      clinic_name: clinicBase.clinic_name,
+      address: clinicBase.address || '',
     },
     mode: 'onBlur',
   });
@@ -67,13 +67,13 @@ export function BasicDetailsForm({ basicDetails, userId, ...props }: Props) {
     form.clearErrors();
     const clinic_name = values.clinic_name;
     const address = values.address;
-    let updateObject: Partial<UserClinicDetails> = {};
-    let updatedField: keyof UserClinicDetails | undefined;
-    if (basicUserDetails.address !== address) {
+    let updateObject: Partial<UserClinicBase> = {};
+    let updatedField: keyof UserClinicBase | undefined;
+    if (clinicBase.address !== address) {
       updateObject.address = address;
       updatedField = 'address';
     }
-    if (basicUserDetails.clinic_name !== clinic_name) {
+    if (clinicBase.clinic_name !== clinic_name) {
       updateObject.clinic_name = clinic_name;
       updatedField = 'clinic_name';
     }
@@ -86,13 +86,13 @@ export function BasicDetailsForm({ basicDetails, userId, ...props }: Props) {
 
       if (error) {
         // revert failed action
-        form.setValue(updatedField, basicUserDetails[updatedField]);
+        form.setValue(updatedField, clinicBase[updatedField]);
         // set errors
         form.setError(updatedField, {
           message: tErrors('update_unsuccessful'),
         });
       } else {
-        setBasicUserDetails(Object.assign(basicDetails, updateObject));
+        setClinicBase(Object.assign(clinicBase, updateObject));
       }
       setIsUpdating(false);
     }

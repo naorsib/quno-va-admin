@@ -45,6 +45,7 @@ const h1Variants = cva('', {
     variant: {
       default: '',
       landingPage: 'text-4xl lg:text-5xl font-bold',
+      innerPage: 'text-2xl font-bold',
     },
   },
   defaultVariants: {
@@ -222,7 +223,7 @@ H6.displayName = 'H6';
 const pVariants = cva('', {
   variants: {
     variant: {
-      default: 'text-xl font-normal',
+      default: '',
       info: 'text-base/6 lg:text-lg/6',
       textInButton: 'text-xl font-normal',
     },

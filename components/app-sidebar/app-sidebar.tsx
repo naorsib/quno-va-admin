@@ -7,7 +7,6 @@ import {
   Settings,
 } from 'lucide-react';
 import getConfig from 'next/config';
-import { ForwardRefExoticComponent, RefAttributes } from 'react';
 
 import { signOutAction } from '@/app/actions';
 import LogoSvgComponent from '@/components/react-svg-components/logo';
@@ -35,7 +34,7 @@ const items = [
   },
   {
     title: 'Quincy',
-    url: routeConsts.quincyMainDashboard,
+    url: routeConsts.quincyDashboard,
     icon: Inbox,
   },
   {

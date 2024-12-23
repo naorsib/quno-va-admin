@@ -33,7 +33,7 @@ export default async function VerifyOtpPage(props: {
   }
 
   if (!!user.phone_confirmed_at) {
-    return redirect(routeConsts.quincyMainDashboard);
+    return redirect(routeConsts.quincyDashboard);
   }
 
   const searchParams = await props.searchParams;

@@ -11,5 +11,6 @@ export const routeConsts = {
   verifyOtp: '/verify-otp',
   youAreReady: '/you-are-ready',
   quincyAi,
-  quincyMainDashboard: quincyAi,
+  quincyDashboard: quincyAi,
+  quincyDemo: `${quincyAi}/demo`,
 };

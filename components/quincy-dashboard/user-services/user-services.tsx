@@ -1,15 +1,17 @@
-import React from 'react';
-
 import { createClient } from '@/utils/supabase/server';
 
 import { UserService, UserServiceItem } from './user-service-item';
 
-export async function UserServices(props: { userId: string }) {
+type Props = {
+  userId: string;
+};
+
+export async function UserServices({ userId }: Props) {
   const supabase = await createClient();
   const { data: user_services } = (await supabase
     .from('user_services')
     .select('id, app_service_id, is_enabled')
-    .eq('user_id', props.userId)
+    .eq('user_id', userId)
     .order('id')) as { data: UserService[] };
 
   return (

@@ -42,6 +42,9 @@
     --sidebar-accent-foreground: 226 13% 80%; /*Still on default*/
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%; /*Still on default*/
+    --success: 115 60% 55%;
+    --successLight: 115 77% 95%;
+    --successDark: 115 77% 25%;
   }
 }
 

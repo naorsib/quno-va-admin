@@ -66,7 +66,7 @@ export const signInAction = async (formData: FormData) => {
   if (!user?.phone_confirmed_at) {
     return redirect(routeConsts.verifyOtp);
   }
-  return redirect(routeConsts.quincyMainDashboard);
+  return redirect(routeConsts.quincyDashboard);
 };
 
 export const signUpWithAuth = async () => {
@@ -286,6 +286,21 @@ export const resetPasswordAction = async (formData: FormData) => {
   }
 
   encodedRedirect('success', routeConsts.resetPassword, 'true');
+};
+
+export const requestContract = async () => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const userId = user?.id as string;
+  const { error } = await supabase
+    .from('user_basic_details')
+    .update({ contract_requested: true })
+    .eq('id', userId);
+  return redirect(`${routeConsts.quincyDemo}?requested=true`);
 };
 
 export const handleSignInWithGoogle = async (response: any) => {

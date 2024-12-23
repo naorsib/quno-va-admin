@@ -1,9 +1,6 @@
-import * as React from 'react';
 import { ComponentProps } from 'react';
-interface SVGRProps {
-  desc?: string;
-  descId?: string;
-}
+
+import { SVGRProps } from '@/types';
 
 type Props = ComponentProps<'div'> & SVGRProps;
 
