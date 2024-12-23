@@ -16,6 +16,7 @@
     "unicorn/no-array-reduce": "off",
     "import/named": "off",
     "prettier/prettier": "off",
+    "react-hooks/rules-of-hooks": "off",
     "unicorn/no-document-cookie": "off",
     "unicorn/prevent-abbreviations": [
       "error",

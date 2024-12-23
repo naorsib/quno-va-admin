@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { UPDATE_UNSUCCESSFUL } from '@/consts/erroring.const';
 import {
   FormFieldsTrans,
   stringLengthValidation,
@@ -85,7 +86,7 @@ export function ClinicTypeForm({ clinic_type, userId, ...props }: Props) {
         form.setValue('clinic_type', lastClinicType);
         // show error
         form.setError('clinic_type', {
-          message: tErrors('update_unsuccessful'),
+          message: tErrors(UPDATE_UNSUCCESSFUL),
         });
       } else {
         setLastClinicType(clinic_type);

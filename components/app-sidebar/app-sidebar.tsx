@@ -1,10 +1,11 @@
 import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
-import getConfig from 'next/config';
+import { useTranslations } from 'next-intl';
 
 import { signOutAction } from '@/app/actions';
 import LogoSvgComponent from '@/components/react-svg-components/logo';
 import LogoutSvgComponent from '@/components/react-svg-components/logout';
 import { P } from '@/components/typography/text';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
   Sidebar,
@@ -17,38 +18,41 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { routeConsts } from '@/consts/routing.const';
+import en from '@/messages/en.json';
+import { GenericTrans } from '@/types/translations';
 
-import { Button } from '../ui/button';
 import { ClientMenuButton } from './client-menu-button';
 import { UserAvatar } from './user-avatar';
 
-getConfig();
-
-const items = [
-  {
-    title: 'Home',
-    icon: Home,
-  },
-  {
-    title: 'Quincy',
-    url: routeConsts.quincyDashboard,
-    icon: Inbox,
-  },
-  {
-    title: 'Calendar',
-    icon: Calendar,
-  },
-  {
-    title: 'Search',
-    icon: Search,
-  },
-  {
-    title: 'Settings',
-    icon: Settings,
-  },
-];
+type sidebarKeys = keyof typeof en.Sidebar;
+export type SidebarTrans = GenericTrans<sidebarKeys>;
 
 export function AppSidebar() {
+  const tSidebar: SidebarTrans = useTranslations('Sidebar');
+
+  const items = [
+    {
+      title: tSidebar('home'),
+      icon: Home,
+    },
+    {
+      title: tSidebar('quincy'),
+      url: routeConsts.quincyDashboard,
+      icon: Inbox,
+    },
+    {
+      title: tSidebar('calendar'),
+      icon: Calendar,
+    },
+    {
+      title: tSidebar('search'),
+      icon: Search,
+    },
+    {
+      title: tSidebar('settings'),
+      icon: Settings,
+    },
+  ];
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader />
@@ -73,13 +77,13 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="flex w-full flex-col gap-4 p-7 pb-10">
         <form action={signOutAction}>
-          <Button className="bg-transparent text-border-input hover:bg-transparent hover:text-white">
-            <LogoutSvgComponent />
-            <P className="text-lg">Logout</P>
+          <Button className="mb-3 bg-transparent text-border-input hover:bg-transparent hover:text-white">
+            <LogoutSvgComponent desc={tSidebar('logoDesc')} />
+            <P className="text-lg">{tSidebar('logout')}</P>
           </Button>
         </form>
-        <Separator />
-        <UserAvatar></UserAvatar>
+        <Separator className="bg-border-input" />
+        <UserAvatar status={tSidebar('active')}></UserAvatar>
       </SidebarFooter>
     </Sidebar>
   );

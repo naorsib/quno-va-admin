@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { NestedInput } from '@/components/ui/nest-input';
+import { UPDATE_UNSUCCESSFUL } from '@/consts/erroring.const';
 import {
   FormFieldsTrans,
   stringLengthValidation,
@@ -89,7 +90,7 @@ export function BasicDetailsForm({ clinic_base, userId, ...props }: Props) {
         form.setValue(updatedField, clinicBase[updatedField]);
         // set errors
         form.setError(updatedField, {
-          message: tErrors('update_unsuccessful'),
+          message: tErrors(UPDATE_UNSUCCESSFUL),
         });
       } else {
         setClinicBase(Object.assign(clinicBase, updateObject));

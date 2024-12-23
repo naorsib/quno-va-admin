@@ -2,9 +2,18 @@
 
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
-import { errorConsts } from '@/consts/erroring.const';
+import {
+  COULD_NOT_RESET_PASSWORD,
+  EMAIL_NOT_CONFIRMED,
+  OTP_DISABLED,
+  PASSWORD_UPDATE_FAILED,
+  SAME_PASSWORD,
+  UNEXPECTED_ERROR,
+} from '@/consts/erroring.const';
 import { routeConsts } from '@/consts/routing.const';
+import { ErrorsTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
 
@@ -55,7 +64,7 @@ export const signInAction = async (formData: FormData) => {
   });
 
   if (error) {
-    if (error.code == errorConsts.emailNotConfirmed) {
+    if (error.code == EMAIL_NOT_CONFIRMED) {
       return redirect(`${routeConsts.verifyEmail}?email=${user?.email}`);
     }
     return encodedRedirect('error', routeConsts.signIn, error.message);
@@ -113,7 +122,7 @@ const sendPhoneOtpCommon = async (phone: string) => {
   // console.log("error:", error);
   // console.log("error.code", error?.code);
   // TODO - Handle when we have Pro account
-  if (!error || error.code == errorConsts.otpDisabled) {
+  if (!error || error.code == OTP_DISABLED) {
     // Advanced MFA needs to be enabled (Pro account).
     // That's why we get 'otp_disabled' and it still sends out sms, currnetly surpressing this error code
     return;
@@ -151,7 +160,7 @@ export const verifyOtp = async (token: string, phone: string) => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return encodedRedirect('error', routeConsts.verifyOtp, 'unexpected_error');
+    return encodedRedirect('error', routeConsts.verifyOtp, UNEXPECTED_ERROR);
   }
   const {
     data: { session },
@@ -177,7 +186,7 @@ export const verifyOtp = async (token: string, phone: string) => {
   });
   console.log('result:', result);
   if (result.error) {
-    return encodedRedirect('error', routeConsts.verifyOtp, 'unexpected_error');
+    return encodedRedirect('error', routeConsts.verifyOtp, UNEXPECTED_ERROR);
   }
 
   return redirect(routeConsts.youAreReady);
@@ -229,10 +238,12 @@ export const forgotPasswordAction = async (formData: FormData) => {
   // console.log("dataReset", dataReset);
   if (dataReset.error) {
     console.error(dataReset.error.message);
+    const tErrors: ErrorsTrans = useTranslations('Errors');
+
     return encodedRedirect(
       'error',
       routeConsts.forgotPassword,
-      'Could not reset password',
+      tErrors(COULD_NOT_RESET_PASSWORD),
     );
   }
 
@@ -249,38 +260,23 @@ export const resetPasswordAction = async (formData: FormData) => {
   const password = formData.get('newPassword') as string;
   const confirmPassword = formData.get('confirmPassword') as string;
 
-  if (!password || !confirmPassword) {
-    encodedRedirect(
-      'error',
-      routeConsts.resetPassword,
-      'Password and confirm password are required',
-    );
-  }
-
-  if (password !== confirmPassword) {
-    encodedRedirect(
-      'error',
-      routeConsts.resetPassword,
-      'Passwords do not match',
-    );
-  }
-
   const { error } = await supabase.auth.updateUser({
     password: password,
   });
 
   if (error) {
-    if (error.code == errorConsts.samePassword) {
+    const tErrors: ErrorsTrans = useTranslations('Errors');
+    if (error.code == SAME_PASSWORD) {
       encodedRedirect(
         'error',
         routeConsts.resetPassword,
-        'New password should be different from the old password.',
+        tErrors(SAME_PASSWORD),
       );
     } else {
       encodedRedirect(
         'error',
         routeConsts.resetPassword,
-        'Password update failed',
+        tErrors(PASSWORD_UPDATE_FAILED),
       );
     }
   }

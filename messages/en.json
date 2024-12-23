@@ -100,7 +100,13 @@
     }
   },
   "Errors": {
-    "update_unsuccessful": "Update unsuccessful"
+    "could_not_reset_password": "Could not reset password",
+    "email_not_confirmed": "",
+    "password_update_failed": "Password update failed",
+    "otp_disabled": "",
+    "unexpected_error": "Unexpected error",
+    "update_unsuccessful": "Update unsuccessful",
+    "same_password": "'New password should be different from the old password.'"
   },
   "Forms": {
     "buttons": {
@@ -240,5 +246,15 @@
         "title": "Relieve Your Team"
       }
     }
+  },
+  "Sidebar": {
+    "active": "Active",
+    "calendar": "Calendar",
+    "home": "Home",
+    "logoDesc": "QunoMedical Logo",
+    "logout": "Logout",
+    "quincy": "Quincy",
+    "search": "Search",
+    "settings": "Settings"
   }
 }

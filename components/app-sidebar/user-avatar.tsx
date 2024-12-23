@@ -1,10 +1,14 @@
 import Image from 'next/image';
 
+import { P } from '@/components/typography/text';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { createClient } from '@/utils/supabase/server';
 
-import { P } from '../typography/text';
-export async function UserAvatar() {
+type Props = {
+  status: string;
+};
+
+export async function UserAvatar({ status }: Props) {
   const supabase = await createClient();
 
   const {
@@ -37,7 +41,7 @@ export async function UserAvatar() {
         <P fontFamily="roboto" className="text-lg font-bold">
           {full_name}
         </P>
-        <P fontFamily="roboto">Active</P>
+        <P fontFamily="roboto">{status}</P>
       </div>
 
       <div className="absolute bottom-1 left-7 h-3.5 w-3.5 rounded-full border-2 border-primary/70 bg-success"></div>
