@@ -48,11 +48,18 @@ export const updateSession = async (request: NextRequest) => {
       }
       if (!user.data.user.email_confirmed_at) {
         return NextResponse.redirect(
-          `${routeConsts.verifyEmail}?email=${user.data.user.email}`,
+          new URL(
+            `${routeConsts.verifyEmail}?email=${user.data.user.email}`,
+            request.url,
+          ),
         );
       }
+
       if (!user.data.user.phone_confirmed_at) {
-        return NextResponse.redirect(routeConsts.verifyOtp);
+        console.log('request.url', request.url);
+        return NextResponse.redirect(
+          new URL(routeConsts.verifyOtp, request.url),
+        );
       }
       if (user.error) {
         return NextResponse.redirect(new URL(routeConsts.signIn, request.url));
