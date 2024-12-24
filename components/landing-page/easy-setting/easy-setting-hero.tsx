@@ -22,21 +22,22 @@ export default async function EasySettingHero() {
       <H5 variant="bannerInfo" className="z-10">
         {t('description')}
       </H5>
-      <H2 variant="landingPage" className="z-10 max-w-lg">
+      <H2 variant="landingPage" className="z-10 max-w-xl font-semibold">
         {t('title')}
       </H2>
-      <P className="z-10 max-w-lg text-base/6 lg:mb-4">{t('subtitle')}</P>
-      <div className="relative flex h-[500px] w-[130%] lg:absolute lg:left-[-300px] lg:h-full lg:w-4/5">
+      <P className="z-10 max-w-xl text-base/6 lg:mb-4">{t('subtitle')}</P>
+      <div className="relative -mb-20 -mt-4 flex h-[500px] w-[200%] sm:mt-0 lg:absolute lg:left-[-300px] lg:m-0 lg:h-full lg:w-4/5">
         <Image
           fill={true}
           src={hero}
           loading="lazy"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           alt={t('imageAltText')}
+          objectFit="contain"
         />
       </div>
 
-      <div className="z-10 my-2 flex w-full max-w-[600px] grow flex-col gap-4 text-start lg:w-3/5 lg:self-end">
+      <div className="z-10 my-2 flex w-full max-w-[600px] grow flex-col gap-4 text-start lg:w-3/5 lg:gap-6 lg:self-end">
         <EasySettingsInfoBox
           tr={tEasySettingsBoxes}
           boxName="setUpSystem"

@@ -22,13 +22,13 @@ export default async function YourBenefitsHero() {
       <H2 variant="landingPage" className="font-semibold">
         {t('title')}
       </H2>
-      <P className="max-w-lg text-base/6">{t('subtitle')}</P>
-      <div className="mb-2 flex grow flex-col gap-4 text-start lg:flex-row">
+      <P className="max-w-xl text-base/6">{t('subtitle')}</P>
+      <div className="mt-3 flex grow flex-col gap-6 text-start lg:flex-row">
         <YourBenefitsInfoBox tr={tBenefitBoxes} boxName={'moreTime'} />
         <YourBenefitsInfoBox tr={tBenefitBoxes} boxName={'costSave'} />
         <YourBenefitsInfoBox tr={tBenefitBoxes} boxName={'timeSave'} />
       </div>
-      <div className="flex w-full flex-col items-center gap-2 lg:hidden">
+      <div className="mt-3 flex w-full flex-col items-center gap-2 lg:hidden">
         <StaticRouteLink routeTo="signUp" className="w-full">
           <GradientButton asChild additions="landingButton">
             <P>{t('buttonText')}</P>
