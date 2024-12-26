@@ -34,12 +34,10 @@ export const stringLengthValidation = (
 };
 
 export const phoneValidation = (fieldName: string, t: ValidationsTrans) => {
-  return z
-    .string()
-    .transform(value => value.replaceAll(/^0{1}/g, ''))
-    .refine(value => value.length == 11, {
-      message: t('phoneLengthMessage', { fieldName }),
-    });
+  return z.string().transform(value => value.replaceAll(/^0{1}/g, ''));
+  // .refine(value => value.length == 11, {
+  //   message: t('phoneLengthMessage', { fieldName }),
+  // });
 };
 
 export const emailValidation = (fieldName: string, t: ValidationsTrans) => {
