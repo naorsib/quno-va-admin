@@ -1,30 +1,34 @@
 {
-  "AppServices": {
-    "BookAppointment": {
+  "CallEvents": {
+    "schedule_appointment": {
       "info": "Enable patients to schedule appointments effortlessly through an automated call, reducing staff workload and wait times",
       "title": "Book Appointment"
     },
-    "CancelAppointment": {
+    "cancel_appointment": {
       "info": "Streamline appointment cancellations with automated calls, freeing up slots instantly for other patients.",
       "title": "Cancel Appointment"
     },
-    "RescheduleAppointment": {
+    "rechedule_appointment": {
       "info": "Allow patients to reschedule appointments with ease, improving scheduling flexibility and clinic efficiency.",
       "title": "Reschedule appointment"
     },
 
-    "PrescriptionRenewal": {
+    "prescription_renewal": {
       "info": "Simplify prescription renewals via automated calls, saving time for both patients and clinic staff.",
       "title": "Perscription renewal"
     },
-    "GetSickLeave": {
+    "get_sick_leave": {
       "info": "Automate patient requests for sick notes, ensuring quick processing without burdening staff.",
       "title": "Get a sick note"
     },
-    "DoctorCallback": {
+    "doctor_call": {
       "info": "Let patients request doctor callbacks seamlessly, enhancing communication and patient satisfaction.",
       "title": "Doctor callback"
     }
+  },
+  "CallEvents_2": {
+    "appointment_cancelled": "Appointment cancelled",
+    "appointment_scheduled": "Appointment scheduled"
   },
   "Auth": {
     "googleButton": {
@@ -92,10 +96,6 @@
       }
     }
   },
-  "CallEvents": {
-    "appointment_cancelled": "Appointment cancelled",
-    "appointment_scheduled": "Appointment scheduled"
-  },
   "Enums": {
     "clinic_type": {
       "clinictype1": "Clinic Type1",
@@ -161,16 +161,19 @@
   },
   "InnerPages": {
     "quincy": {
+      "continueDemoButton": "Continue Demo",
       "infoText1": "To give a realistic experience, we need you to fill out this information. This information are nessecary to built a special and customized response to the patient.",
       "infoText2": "Depending on your clinic setup you can have different scenarios of how to work with your patients. You can also select a preset, that controls the voice and type of additional information available to Quincy.",
       "startDemoButton": "Start Demo",
       "title": "Quincy Setup"
     },
     "quincyDemo": {
+      "callEnded": "Call Ended",
       "contractRequested": "Contract Requested",
       "contractRequestedInfo": "We will reach out to you shortly!",
       "dialogTitle": "Thanks for your request!",
       "dialogSubtitle": "Our account managers will reach out to you shortly!",
+      "incomingCall": "Incoming Call",
       "innerBoxText1": "Your demo is ready",
       "innerBoxText2": "Call this number from the phone you used to register and see it working",
       "requestContractButton": "Request Contract",

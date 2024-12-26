@@ -2,7 +2,7 @@
 
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import {
   COULD_NOT_RESET_PASSWORD,
@@ -14,6 +14,7 @@ import {
 } from '@/consts/erroring.const';
 import { routeConsts } from '@/consts/routing.const';
 import { ErrorsTrans } from '@/types/translations';
+import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
 
@@ -238,7 +239,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   // console.log("dataReset", dataReset);
   if (dataReset.error) {
     console.error(dataReset.error.message);
-    const tErrors: ErrorsTrans = useTranslations('Errors');
+    const tErrors: ErrorsTrans = await getTranslations('Errors');
 
     return encodedRedirect(
       'error',
@@ -265,7 +266,7 @@ export const resetPasswordAction = async (formData: FormData) => {
   });
 
   if (error) {
-    const tErrors: ErrorsTrans = useTranslations('Errors');
+    const tErrors: ErrorsTrans = await getTranslations('Errors');
     if (error.code == SAME_PASSWORD) {
       encodedRedirect(
         'error',
@@ -296,7 +297,84 @@ export const requestContract = async () => {
     .from('user_basic_details')
     .update({ contract_requested: true })
     .eq('id', userId);
+
+  // TODO - Verify
+  // A trigger 'after_contract_requested_user_basic_details' makes sure that the demo phone assigned to this user is deleted
+
   return redirect(`${routeConsts.quincyDemo}?requested=true`);
+};
+export const redirectToDemo = async () => {
+  return redirect(routeConsts.quincyDemo);
+};
+export const startDemo = async () => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const userId = user?.id as string;
+  console.log('userId', userId);
+
+  const supabase_admin = await createAdminClient();
+  const existingNonDeletedDemo = await supabase_admin
+    .from('demo_service_phone_assignments')
+    .select('id, is_deleted')
+    .eq('is_deleted', false)
+    .eq('assigned_to', userId)
+    .limit(1)
+    .maybeSingle();
+
+  // this should never happen unless the user is trying to be malicious
+  if (existingNonDeletedDemo.data) {
+    return redirect(routeConsts.quincyDemo);
+  }
+  // get a non-assigned phone or the longest assigned one
+  const { data: phone_assignment } = await supabase_admin
+    .from('demo_service_phone_assignments')
+    .select('id, phone, assigned_at')
+    .eq('is_deleted', false)
+    .order('assigned_at', {
+      nullsFirst: true,
+      ascending: true,
+    })
+    .limit(1)
+    .single();
+
+  if (phone_assignment) {
+    const assigned_at = new Date().toISOString();
+
+    if (phone_assignment.assigned_at == undefined) {
+      // update existing non-assigned phone record
+      await supabase_admin
+        .from('demo_service_phone_assignments')
+        .update({
+          assigned_at,
+          assigned_to: userId,
+        })
+        .eq('id', phone_assignment.id);
+    } else {
+      // soft-delete existing phone assignment record
+      await supabase_admin
+        .from('demo_service_phone_assignments')
+        .update({ is_deleted: true })
+        .eq('id', phone_assignment.id);
+
+      // create a new assignment record
+      await supabase_admin
+        .from('demo_service_phone_assignments')
+        .insert({
+          phone: phone_assignment.phone,
+          assigned_at,
+          assigned_to: userId,
+        })
+        .eq('id', phone_assignment.id);
+    }
+    return redirect(routeConsts.quincyDemo);
+  } else {
+    // this can never happen
+    return redirect(routeConsts.signIn);
+  }
 };
 
 export const handleSignInWithGoogle = async (response: any) => {

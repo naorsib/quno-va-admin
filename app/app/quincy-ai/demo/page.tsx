@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { requestContract } from '@/app/actions';
 import { AppointmentsLogs } from '@/components/quincy-demo/appointments-logs';
-import { DemoCall } from '@/components/quincy-demo/demo-call';
+import { DemoCall, OngoingCall } from '@/components/quincy-demo/demo-call';
 import { DemoSuccessBox } from '@/components/quincy-demo/demo-success-box';
 import { ThankYouDialog } from '@/components/quincy-demo/thank-you-dialog';
 import SettingsSvgComponent from '@/components/react-svg-components/settings';
@@ -31,21 +31,51 @@ export default async function QuincyDemoPage(props: {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    // this should never happen as we're protected by the middleware
-    return redirect(routeConsts.signIn);
-  }
-
-  const searchParams = await props.searchParams;
-  const requested = !!searchParams.requested;
-
+  const userId = user?.id as string;
   const { data: demo_data } = (await supabase
     .from('user_basic_details')
     .select('contract_requested')
-    .eq('id', user.id)
+    .eq('id', userId)
     .limit(1)
     .single()) as { data: DemoRequestedData };
 
+  const existingNonDeletedDemo = await supabase
+    .from('demo_service_phone_assignments')
+    .select('id, phone, is_deleted')
+    .eq('is_deleted', false)
+    .eq('assigned_to', userId)
+    .limit(1)
+    .maybeSingle();
+
+  const searchParams = await props.searchParams;
+  const demoOngoing = !!existingNonDeletedDemo.data;
+  if (!demoOngoing && !demo_data.contract_requested) {
+    // should've never gotten here
+    return redirect(routeConsts.quincyDashboard);
+  }
+  let ongoingCall: OngoingCall | undefined;
+
+  if (existingNonDeletedDemo.data) {
+    const { data: activeCall } = await supabase
+      .from('incoming_demo_calls')
+      .select('id , created_at')
+      // eslint-disable-next-line unicorn/no-null
+      .is('ended_at', null)
+      .eq('demo_service_phone_assignment_id', existingNonDeletedDemo.data.id)
+      .limit(1)
+      .maybeSingle();
+
+    if (activeCall) {
+      const { id: userOngoingCallId, created_at: callStartTime } = activeCall;
+      ongoingCall = {
+        userOngoingCallId,
+        callStartTime,
+      };
+    }
+    console.log('ongoingCall:', ongoingCall);
+  }
+  // requested now
+  const requested = !!searchParams.requested;
   const t: InnerPagesTrans<'quincyDemo'> = await getTranslations(
     `InnerPages.quincyDemo`,
   );
@@ -79,9 +109,17 @@ export default async function QuincyDemoPage(props: {
         </div>
         <DemoSuccessBox
           contract_requested={demo_data.contract_requested}
+          phone={existingNonDeletedDemo.data?.phone}
           t={t}
         />
-        <DemoCall contract_requested={demo_data.contract_requested} t={t} />
+        {!demo_data.contract_requested && (
+          <DemoCall
+            ongoingCall={ongoingCall}
+            demo_service_phone_assignment_id={
+              existingNonDeletedDemo.data?.id as number
+            }
+          />
+        )}
         <AppointmentsLogs
           contract_requested={demo_data.contract_requested}
           t={t}

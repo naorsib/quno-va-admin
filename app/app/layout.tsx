@@ -20,7 +20,7 @@ export default async function Layout({
             desc="QunoMedical Logo"
           />
         </div>
-        <div className="flex w-full max-w-3xl flex-col px-3 md:mt-0">
+        <div className="flex w-full max-w-3xl flex-col px-3 md:mt-3 md:px-8">
           {children}
         </div>
       </div>

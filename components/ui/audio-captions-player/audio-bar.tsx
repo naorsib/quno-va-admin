@@ -2,16 +2,15 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
+import DialSvgComponent from '@/components/react-svg-components/dial';
+import RadioWavesSvgComponent from '@/components/react-svg-components/radio-waves';
+import { H4, P } from '@/components/typography/text';
 import AudioCaptionPlayer from '@/components/ui/audio-captions-player/audio-caption-player';
+import { Button } from '@/components/ui/button';
 import { captionsMap } from '@/consts/captions.consts';
 import { cn } from '@/lib/utils';
 import en from '@/messages/en.json';
 import { GenericTrans } from '@/types/translations';
-
-import DialSvgComponent from '../../react-svg-components/dial';
-import RadioWavesSvgComponent from '../../react-svg-components/radio-waves';
-import { H4, P } from '../../typography/text';
-import { Button } from '../button';
 
 type AudioDemoTrans = GenericTrans<keyof typeof en.Landing.heros.audioDemo>;
 export type AudioBarButton = keyof typeof captionsMap;
@@ -45,7 +44,7 @@ export default function AudioBar() {
             >
               <P className="text-base/6 font-normal">{t(b)}</P>
               {selectedAudioButton == b && (
-                // If at some point we want to animate, this would be the way to go
+                // If at some point we want to animate, this would be the way to start
                 // <div className="animate-wave-forms absolute bottom-0">
                 //   <RadioWavesSvgComponent />
                 //   <RadioWavesSvgComponent />

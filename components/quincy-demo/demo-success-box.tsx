@@ -1,11 +1,11 @@
 import { QuincyDemoPropsBase } from '@/app/app/quincy-ai/demo/page';
 import PhoneSvgComponent from '@/components/react-svg-components/phone';
 import { P } from '@/components/typography/text';
+import { parsePhone } from '@/utils/utils';
 
-export async function DemoSuccessBox({
-  contract_requested,
-  t,
-}: QuincyDemoPropsBase) {
+type Props = QuincyDemoPropsBase & { phone: string };
+
+export async function DemoSuccessBox({ phone, contract_requested, t }: Props) {
   return (
     <>
       <div className="flex w-full flex-col items-center gap-4 rounded border border-successDark bg-successLight px-10 py-5">
@@ -25,7 +25,7 @@ export async function DemoSuccessBox({
               <P className="text-base/6">{t('innerBoxText2')}</P>
             </div>
             <P fontFamily="roboto" className="text-2xl font-bold">
-              +49 1234 567 8910
+              +{parsePhone(phone)}
             </P>
           </>
         )}

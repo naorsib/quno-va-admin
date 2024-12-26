@@ -64,7 +64,6 @@ export function BasicDetailsForm({ clinic_base, userId, ...props }: Props) {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    debugger;
     form.clearErrors();
     const clinic_name = values.clinic_name;
     const address = values.address;

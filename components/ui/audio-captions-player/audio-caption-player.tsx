@@ -1,15 +1,15 @@
 import { PhoneCall } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import CalendarSvgComponent from '@/components/react-svg-components/calendar';
+import DialSvgComponent from '@/components/react-svg-components/dial';
+import RobotSvgComponent from '@/components/react-svg-components/robot';
 import { P } from '@/components/typography/text';
+import { AudioControls } from '@/components/ui/audio-controls';
 import { captionsMap } from '@/consts/captions.consts';
 import en from '@/messages/en.json';
 import { CallEventsTrans, GenericTrans } from '@/types/translations';
 
-import CalendarSvgComponent from '../../react-svg-components/calendar';
-import DialSvgComponent from '../../react-svg-components/dial';
-import RobotSvgComponent from '../../react-svg-components/robot';
-import { AudioControls } from '../audio-controls';
 import { AudioBarButton } from './audio-bar';
 import { CaptionManager } from './caption-manager';
 
@@ -49,7 +49,7 @@ type AudioDemoTrans = GenericTrans<keyof typeof en.Landing.heros.audioDemo>;
 export default function AudioCaptionPlayer({
   selectedAudioButton,
 }: AudioCaptionPlayerProps) {
-  const tCallEvents: CallEventsTrans = useTranslations('CallEvents');
+  const tCallEvents: CallEventsTrans = useTranslations('CallEvents_2');
   const t: AudioDemoTrans = useTranslations(`Landing.heros.audioDemo`);
 
   const { audioSrc, captions } = captionsMap[selectedAudioButton];

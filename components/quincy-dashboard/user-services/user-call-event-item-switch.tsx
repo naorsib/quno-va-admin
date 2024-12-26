@@ -6,21 +6,21 @@ import { CustomToggleBox } from '@/components//ui/custom-toggle-box';
 import { Switch } from '@/components/ui/switch';
 import { createClient } from '@/utils/supabase/client';
 
-import { UserService } from './user-service-item';
+import { UserCallEvent } from './user-call-event-item';
 
 type Props = ComponentProps<'div'> & {
-  user_service: UserService;
+  user_call_event: UserCallEvent;
 };
-export function UserServiceItemSwitch({ user_service, ...props }: Props) {
+export function UserCallEventItemSwitch({ user_call_event, ...props }: Props) {
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(user_service.is_enabled);
+  const [isEnabled, setIsEnabled] = useState(user_call_event.is_enabled);
   const supabase = createClient();
   const toggleService = async (is_enabled: boolean) => {
     setIsUpdating(true);
     const { error } = await supabase
-      .from('user_services')
+      .from('user_call_events')
       .update({ is_enabled })
-      .eq('id', user_service.id);
+      .eq('id', user_call_event.id);
     if (error) {
       // revert failed action
       setIsEnabled(!is_enabled);
