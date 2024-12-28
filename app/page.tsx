@@ -51,8 +51,8 @@ export default async function Index() {
         )}
       >
         <RelieveYourTeam />
-        <YourBenefits />
         <AudioDemoHero />
+        <YourBenefits />
         <EasySetting />
         <BookYourDemo />
       </div>

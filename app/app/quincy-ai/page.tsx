@@ -23,12 +23,12 @@ export default async function QuincyPage() {
     await getTranslations(`InnerPages.quincy`);
 
   const { data } = await supabase
-    .from('user_basic_details')
-    .select('contract_requested')
+    .from('user_base_details')
+    .select('requested_contract')
     .eq('id', userId)
     .limit(1)
     .single();
-  if (data?.contract_requested) {
+  if (data?.requested_contract) {
     return redirect(routeConsts.quincyDemo);
   }
   const existingNonDeletedDemo = await supabase

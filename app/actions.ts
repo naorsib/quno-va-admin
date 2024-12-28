@@ -18,6 +18,8 @@ import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
 
+import { end_call } from './random-call-events-actions';
+
 const getPhoneFromFormData = (formData: FormData) => {
   return (formData.get('phone') as string).replaceAll(/^0{1}/g, '');
 };
@@ -102,7 +104,6 @@ export const updateUser = async (formData: FormData) => {
   const country_code = formData.get('country_code') as string;
   const phone = `${country_code}${getPhoneFromFormData(formData)}`;
 
-  console.log('finalphone', phone);
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.updateUser({
@@ -177,7 +178,7 @@ export const verifyOtp = async (token: string, phone: string) => {
   }
 
   // const sb_admin = await createAdminClient();
-  const result = await supabase.from('user_basic_details').insert({
+  const result = await supabase.from('user_base_details').insert({
     id: user.id,
     first_name: user.user_metadata.first_name,
     last_name: user.user_metadata.last_name,
@@ -293,13 +294,14 @@ export const requestContract = async () => {
   } = await supabase.auth.getUser();
 
   const userId = user?.id as string;
-  const { error } = await supabase
-    .from('user_basic_details')
-    .update({ contract_requested: true })
-    .eq('id', userId);
-
-  // TODO - Verify
-  // A trigger 'after_contract_requested_user_basic_details' makes sure that the demo phone assigned to this user is deleted
+  const clinic_name = 'test';
+  const { data, error } = await supabase
+    .from('user_base_details')
+    .update({ requested_contract: true })
+    .eq('id', userId)
+    .select();
+  // end call if exists
+  await end_call();
 
   return redirect(`${routeConsts.quincyDemo}?requested=true`);
 };
@@ -314,7 +316,6 @@ export const startDemo = async () => {
   } = await supabase.auth.getUser();
 
   const userId = user?.id as string;
-  console.log('userId', userId);
 
   const supabase_admin = await createAdminClient();
   const existingNonDeletedDemo = await supabase_admin

@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 
 import { LandingHeroWrapper } from '@/components/landing-page/landing-hero-wrapper';
+import CircularSVGAnimation from '@/components/react-svg-components/circular-svg-animation';
 import { StaticRouteLink } from '@/components/static-route-link';
 import { H2, H5, P } from '@/components/typography/text';
 import AudioBar from '@/components/ui/audio-captions-player/audio-bar';
@@ -15,7 +16,7 @@ export default async function AudioDemoHero() {
 
   return (
     <LandingHeroWrapper className="items-center bg-primary">
-      <div className="flex w-full flex-col">
+      <div className="z-10 flex w-full flex-col">
         <div className="flex flex-col items-start text-start">
           <H5 variant="bannerInfo" className="text-border">
             {t('description')}
@@ -40,6 +41,7 @@ export default async function AudioDemoHero() {
           </GradientButton>
         </StaticRouteLink>
       </div>
+      <CircularSVGAnimation />
     </LandingHeroWrapper>
   );
 }

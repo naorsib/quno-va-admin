@@ -13,7 +13,7 @@ export async function UserCallEvents({ userId }: Props) {
     .select('id, call_event_type_id, is_enabled')
     .eq('user_id', userId)
     .order('id')) as { data: UserCallEvent[] };
-  console.log('user_call_events', user_call_events);
+
   return (
     <div className="flex w-full flex-col items-center gap-2 text-sm">
       <div className="max-w-nd grid w-full auto-rows-fr grid-cols-1 gap-4 sm:max-w-full md:grid-cols-2">

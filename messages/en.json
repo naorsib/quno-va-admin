@@ -8,7 +8,7 @@
       "info": "Streamline appointment cancellations with automated calls, freeing up slots instantly for other patients.",
       "title": "Cancel Appointment"
     },
-    "rechedule_appointment": {
+    "reschedule_appointment": {
       "info": "Allow patients to reschedule appointments with ease, improving scheduling flexibility and clinic efficiency.",
       "title": "Reschedule appointment"
     },
@@ -26,9 +26,35 @@
       "title": "Doctor callback"
     }
   },
-  "CallEvents_2": {
-    "appointment_cancelled": "Appointment cancelled",
-    "appointment_scheduled": "Appointment scheduled"
+  "CallEventBoxes": {
+    "schedule_appointment": {
+      "info": "Enable patients to schedule appointments effortlessly through an automated call, reducing staff workload and wait times",
+      "title": "Appointment scheduled"
+    },
+    "cancel_appointment": {
+      "info": "Streamline appointment cancellations with automated calls, freeing up slots instantly for other patients.",
+      "title": "Appointment cancelled"
+    },
+    "reschedule_appointment": {
+      "info": "Allow patients to reschedule appointments with ease, improving scheduling flexibility and clinic efficiency.",
+      "title": "Appointment rescheduled"
+    },
+    "prescription_renewal": {
+      "info": "info",
+      "title": "Perscription renew"
+    },
+    "get_sick_leave": {
+      "patientDescribed": "Patient described symptoms as",
+      "title": "Sick note request"
+    },
+    "doctor_call": {
+      "info": "Let patients request doctor callbacks seamlessly, enhancing communication and patient satisfaction.",
+      "title": "Doctor callback request"
+    }
+  },
+  "CaptionEvents": {
+    "cancel_appointment": "Appointment cancelled",
+    "schedule_appointment": "Appointment scheduled"
   },
   "Auth": {
     "googleButton": {
@@ -97,10 +123,25 @@
     }
   },
   "Enums": {
+    "appointment_types": {
+      "first_consultation": "First consultation",
+      "laser_treatment": "Laser treatment",
+      "teeth_alignment": "Teeth alignment"
+    },
     "clinic_type": {
       "clinictype1": "Clinic Type1",
       "clinictype2": "Clinic Type2",
       "clinictype3": "Clinic Type3"
+    },
+    "disease_symptom_types": {
+      "fever": "Fever",
+      "headache": "Headache",
+      "muscle_pain": "Muscle Pain"
+    },
+    "prescription_types": {
+      "ibuprofen": "Ibuprofen",
+      "prep": "Prep",
+      "ritalin": "Ritalin"
     }
   },
   "Errors": {

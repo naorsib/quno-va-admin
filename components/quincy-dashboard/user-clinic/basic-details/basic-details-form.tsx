@@ -80,7 +80,7 @@ export function BasicDetailsForm({ clinic_base, userId, ...props }: Props) {
     if (updatedField) {
       setIsUpdating(true);
       const { error } = await supabase
-        .from('user_basic_details')
+        .from('user_base_details')
         .update(updateObject)
         .eq('id', userId);
 

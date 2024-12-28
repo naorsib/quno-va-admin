@@ -20,7 +20,7 @@ export async function UserAvatar({ status }: Props) {
   const full_name = `${first_name} ${last_name}`;
   const image: string | undefined =
     user?.user_metadata.avatar_url || user?.user_metadata.picture;
-  console.log('IMAGE', image);
+
   return (
     <div className="relative flex flex-row items-center gap-2 truncate">
       <Avatar>

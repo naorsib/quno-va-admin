@@ -7,7 +7,7 @@ type Props = ComponentProps<'div'> & SVGRProps;
 const LogoSvgComponent = ({
   className,
   desc = 'Logo',
-  descId = 'quno_logo',
+  desc_id = 'quno_logo',
 }: Props) => (
   <svg
     className={className}
@@ -15,9 +15,9 @@ const LogoSvgComponent = ({
     width={221}
     height={35}
     fill="none"
-    aria-describedby={descId}
+    aria-describedby={desc_id}
   >
-    {<desc id={descId}>{desc}</desc>}
+    {<desc id={desc_id}>{desc}</desc>}
     <g clipPath="url(#a)">
       <path
         fill="currentColor"

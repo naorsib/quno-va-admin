@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
 import { requestContract } from '@/app/actions';
-import { AppointmentsLogs } from '@/components/quincy-demo/appointments-logs';
+import { CallEventLogs } from '@/components/quincy-demo/call-event-logs';
 import { DemoCall, OngoingCall } from '@/components/quincy-demo/demo-call';
 import { DemoSuccessBox } from '@/components/quincy-demo/demo-success-box';
 import { ThankYouDialog } from '@/components/quincy-demo/thank-you-dialog';
@@ -15,7 +15,7 @@ import { InnerPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
 
 export type DemoRequestedData = {
-  contract_requested: boolean;
+  requested_contract: boolean;
 };
 
 export type QuincyDemoPropsBase = DemoRequestedData & {
@@ -33,8 +33,8 @@ export default async function QuincyDemoPage(props: {
 
   const userId = user?.id as string;
   const { data: demo_data } = (await supabase
-    .from('user_basic_details')
-    .select('contract_requested')
+    .from('user_base_details')
+    .select('requested_contract')
     .eq('id', userId)
     .limit(1)
     .single()) as { data: DemoRequestedData };
@@ -49,7 +49,7 @@ export default async function QuincyDemoPage(props: {
 
   const searchParams = await props.searchParams;
   const demoOngoing = !!existingNonDeletedDemo.data;
-  if (!demoOngoing && !demo_data.contract_requested) {
+  if (!demoOngoing && !demo_data.requested_contract) {
     // should've never gotten here
     return redirect(routeConsts.quincyDashboard);
   }
@@ -69,16 +69,20 @@ export default async function QuincyDemoPage(props: {
       const { id: userOngoingCallId, created_at: callStartTime } = activeCall;
       ongoingCall = {
         userOngoingCallId,
-        callStartTime,
+        callStartTime: new Date(callStartTime),
       };
     }
-    console.log('ongoingCall:', ongoingCall);
   }
   // requested now
   const requested = !!searchParams.requested;
   const t: InnerPagesTrans<'quincyDemo'> = await getTranslations(
     `InnerPages.quincyDemo`,
   );
+
+  const { data: existing_call_events } = await supabase
+    .from('abstract_demo_call_events')
+    .select('id, created_at, call_event_type_id, extra_data')
+    .order('id', { ascending: false });
 
   return (
     // max-h-[calc(100vh-64px)]
@@ -100,7 +104,7 @@ export default async function QuincyDemoPage(props: {
               <Button
                 formAction={requestContract}
                 variant="secondary"
-                disabled={demo_data.contract_requested}
+                disabled={demo_data.requested_contract}
               >
                 <P className="font-normal">{t('requestContractButton')}</P>
               </Button>
@@ -108,23 +112,17 @@ export default async function QuincyDemoPage(props: {
           </div>
         </div>
         <DemoSuccessBox
-          contract_requested={demo_data.contract_requested}
+          requested_contract={demo_data.requested_contract}
           phone={existingNonDeletedDemo.data?.phone}
           t={t}
         />
-        {!demo_data.contract_requested && (
-          <DemoCall
-            ongoingCall={ongoingCall}
-            demo_service_phone_assignment_id={
-              existingNonDeletedDemo.data?.id as number
-            }
-          />
+        {!demo_data.requested_contract && (
+          <DemoCall ongoingCall={ongoingCall} />
         )}
-        <AppointmentsLogs
-          contract_requested={demo_data.contract_requested}
-          t={t}
-        />
-        <ThankYouDialog contract_requested={requested} t={t} />
+        {!demo_data.requested_contract && (
+          <CallEventLogs existing_call_events={existing_call_events || []} />
+        )}
+        <ThankYouDialog requested_contract={requested} t={t} />
       </div>
 
       <div className="sticky bottom-0 lg:hidden">
@@ -133,7 +131,7 @@ export default async function QuincyDemoPage(props: {
             variant="secondary"
             className="h-14 w-full"
             formAction={requestContract}
-            disabled={demo_data.contract_requested}
+            disabled={demo_data.requested_contract}
           >
             <P className="font-normal">{t('requestContractButton')}</P>
           </Button>

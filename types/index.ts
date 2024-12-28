@@ -1,4 +1,7 @@
 export type SVGRProps = {
   desc?: string;
-  descId?: string;
+  desc_id?: string;
+  className?: string;
+  height?: string;
+  width?: string;
 };

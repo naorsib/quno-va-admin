@@ -26,9 +26,18 @@ export const secondsFromDate = (date: Date) => {
   return Math.abs(Math.floor(milliDiff / 1000));
 };
 
-export const secondsToTime = (seconds: number) => {
+export const secondsToTime = (seconds?: number) => {
+  if (!seconds) return '00:00';
   return `${Math.floor(seconds / 60)
     .toString()
     .padStart(2, '0')}
       :${(seconds % 60).toString().padStart(2, '0')}`;
 };
+
+export function genRandomListItem<T extends any>(list?: T[]): T | undefined {
+  if (!list || list.length == 0) {
+    return;
+  }
+  const randomIndex = Math.floor(Math.random() * list.length);
+  return list[randomIndex];
+}

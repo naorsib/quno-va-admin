@@ -1,31 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { secondsToTime } from '@/utils/utils';
 
+import LoaderSvgComponent from '../react-svg-components/loader';
+
 type StopWatchProps = {
-  elapsedOnStart: number;
+  elapsedOnStart?: number;
 };
 
-export function StopWatch({ elapsedOnStart }: StopWatchProps) {
-  const [timeElapsedInSeconds, setTimeElapsedInSeconds] =
-    useState(elapsedOnStart);
+export function StopWatch({ elapsedOnStart = 0 }: StopWatchProps) {
+  const [timeElapsedInSeconds, setTimeElapsedInSeconds] = useState<
+    number | undefined
+  >();
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(
-      () => setTimeElapsedInSeconds(timeElapsedInSeconds + 1),
-      1000,
-    );
+    setTimeElapsedInSeconds(elapsedOnStart);
+    intervalRef.current = setInterval(() => {
+      setTimeElapsedInSeconds(previous =>
+        previous === undefined ? elapsedOnStart : previous + 1,
+      );
+    }, 1000);
 
     return () => {
-      clearInterval(interval);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     };
-  }, [timeElapsedInSeconds]);
+  }, [elapsedOnStart]);
 
-  return timeElapsedInSeconds === undefined ? (
-    <></>
-  ) : (
-    <div>{secondsToTime(timeElapsedInSeconds)}</div>
+  return (
+    <div className="w-12">
+      {timeElapsedInSeconds ? (
+        <div> {secondsToTime(timeElapsedInSeconds)}</div>
+      ) : (
+        <LoaderSvgComponent className="animate-loader-spin" />
+      )}
+    </div>
   );
 }

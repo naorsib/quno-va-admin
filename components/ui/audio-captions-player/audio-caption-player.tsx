@@ -8,7 +8,7 @@ import { P } from '@/components/typography/text';
 import { AudioControls } from '@/components/ui/audio-controls';
 import { captionsMap } from '@/consts/captions.consts';
 import en from '@/messages/en.json';
-import { CallEventsTrans, GenericTrans } from '@/types/translations';
+import { CaptionEventsTrans, GenericTrans } from '@/types/translations';
 
 import { AudioBarButton } from './audio-bar';
 import { CaptionManager } from './caption-manager';
@@ -26,12 +26,12 @@ interface UserCaption extends Caption<'user'> {}
 interface DialEventCaption extends Caption<'dial_event'> {}
 
 const callEventTypeMap = {
-  appointment_cancelled: CalendarSvgComponent,
-  appointment_scheduled: DialSvgComponent,
+  schedule_appointment: DialSvgComponent,
+  cancel_appointment: CalendarSvgComponent,
 };
 
 interface CallEventCaption extends Caption<'call_event'> {
-  callEventType: 'appointment_cancelled' | 'appointment_scheduled';
+  callEventType: keyof typeof en.CaptionEvents;
   time: string;
 }
 
@@ -49,7 +49,7 @@ type AudioDemoTrans = GenericTrans<keyof typeof en.Landing.heros.audioDemo>;
 export default function AudioCaptionPlayer({
   selectedAudioButton,
 }: AudioCaptionPlayerProps) {
-  const tCallEvents: CallEventsTrans = useTranslations('CallEvents_2');
+  const tCaptionEvents: CaptionEventsTrans = useTranslations('CaptionEvents');
   const t: AudioDemoTrans = useTranslations(`Landing.heros.audioDemo`);
 
   const { audioSrc, captions } = captionsMap[selectedAudioButton];
@@ -84,7 +84,7 @@ export default function AudioCaptionPlayer({
             ) : caption.type === 'call_event' ? (
               <CallEventCaptionnRender
                 caption={caption as CallEventCaption}
-                t={tCallEvents}
+                t={tCaptionEvents}
               />
             ) : (
               <CallCaptionRender caption={caption as DialEventCaption} />
@@ -125,7 +125,7 @@ function CallEventCaptionnRender({
   t,
 }: {
   caption: CallEventCaption;
-  t: CallEventsTrans;
+  t: CaptionEventsTrans;
 }) {
   const Cmp = callEventTypeMap[caption.callEventType];
   return (
@@ -133,7 +133,7 @@ function CallEventCaptionnRender({
       <div className="flex flex-col gap-2 rounded-lg border border-border bg-white p-4">
         <div className="flex flex-row items-center justify-between gap-2">
           <div className="flex flex-row items-center gap-2">
-            <Cmp />
+            {/* <Cmp /> */}
             <P className="font-bold">{t(caption.callEventType)}</P>
           </div>
 

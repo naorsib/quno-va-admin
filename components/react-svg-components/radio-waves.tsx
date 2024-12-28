@@ -7,17 +7,17 @@ type Props = ComponentProps<'div'> & SVGRProps;
 const RadioWavesSvgComponent = ({
   className,
   desc = 'Radio Waves',
-  descId = 'radioWaves',
+  desc_id = 'radioWaves',
 }: Props) => (
   <svg
     className={className}
-    aria-describedby={descId}
+    aria-describedby={desc_id}
     width="193"
     height="16"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    {<desc id={descId}>{desc}</desc>}
+    {<desc id={desc_id}>{desc}</desc>}
     <path
       fillRule="evenodd"
       clipRule="evenodd"

@@ -53,7 +53,7 @@ export default async function RelieveYourTeamHero() {
             loading="eager"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             alt={t('imageAltText')}
-            objectFit="contain"
+            className="object-contain"
           />
         </div>
       </div>

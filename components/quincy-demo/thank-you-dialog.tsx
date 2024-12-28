@@ -9,13 +9,13 @@ import {
 import { createClient } from '@/utils/supabase/server';
 
 export async function ThankYouDialog({
-  contract_requested,
+  requested_contract,
   t,
 }: QuincyDemoPropsBase) {
   const supabase = await createClient();
 
   return (
-    contract_requested && (
+    requested_contract && (
       <Dialog defaultOpen={true}>
         <DialogContent aria-describedby={t('dialogSubtitle')}>
           <div className="mt-1 flex flex-col items-center gap-3 text-center">

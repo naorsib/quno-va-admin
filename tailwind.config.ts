@@ -139,6 +139,14 @@ const config = {
         spin: {
           '100%': { transform: 'rotate(360deg)' },
         },
+        'circular-motion': {
+          '0%': {
+            transform: 'rotate(0deg) translateX(200px) rotate(0deg)',
+          },
+          '100%': {
+            transform: 'rotate(360deg) translateX(200px) rotate(-360deg)',
+          },
+        },
       },
       animation: {
         'wave-forms': 'waves 5s linear infinite',
@@ -146,6 +154,12 @@ const config = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'caret-blink': 'caret-blink 1.25s ease-out infinite',
         'loader-spin': 'spin 1.5s linear infinite',
+        'circular-motion-fastest': 'circular-motion 2s linear infinite',
+        'circular-motion-faster': 'circular-motion 2.2s linear infinite',
+        'circular-motion-fast': 'circular-motion 2.5s linear infinite reverse',
+        'circular-motion-normal':
+          'circular-motion 2.8s linear infinite reverse',
+        'circular-motion-slow': 'circular-motion 3s linear infinite',
       },
     },
   },

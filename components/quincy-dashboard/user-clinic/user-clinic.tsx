@@ -21,7 +21,7 @@ type Props = {
 export async function UserClinic({ userId, t }: Props) {
   const supabase = await createClient();
   const { data: clinic_details } = (await supabase
-    .from('user_basic_details')
+    .from('user_base_details')
     .select('clinic_name, address, clinic_type')
     .eq('id', userId)
     .limit(1)

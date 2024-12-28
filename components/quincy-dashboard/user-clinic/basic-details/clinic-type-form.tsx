@@ -77,7 +77,7 @@ export function ClinicTypeForm({ clinic_type, userId, ...props }: Props) {
 
       setIsUpdating(true);
       const { error } = await supabase
-        .from('user_basic_details')
+        .from('user_base_details')
         .update({ clinic_type })
         .eq('id', userId);
 

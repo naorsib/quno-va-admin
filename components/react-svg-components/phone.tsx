@@ -7,17 +7,17 @@ type Props = ComponentProps<'div'> & SVGRProps;
 const PhoneSvgComponent = ({
   className,
   desc = 'Phone',
-  descId = 'phone',
+  desc_id = 'phone',
 }: Props) => (
   <svg
     className={className}
-    aria-describedby={descId}
+    aria-describedby={desc_id}
     width="40"
     height="40"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    {<desc id={descId}>{desc}</desc>}
+    {<desc id={desc_id}>{desc}</desc>}
     <rect width="40" height="40" rx="20" fill="#52D147" />
     <g clipPath="url(#a)">
       <path

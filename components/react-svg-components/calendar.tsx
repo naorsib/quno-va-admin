@@ -7,17 +7,17 @@ type Props = ComponentProps<'div'> & SVGRProps;
 const CalendarSvgComponent = ({
   className,
   desc = 'Calendar',
-  descId = 'calendar',
+  desc_id = 'calendar',
 }: Props) => (
   <svg
     className={className}
-    aria-describedby={descId}
+    aria-describedby={desc_id}
     width="25"
     height="20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    {<desc id={descId}>{desc}</desc>}
+    {<desc id={desc_id}>{desc}</desc>}
     <path
       d="M1.25 7.5v10.625C1.25 19.16 2.09 20 3.125 20h11.047A6.874 6.874 0 0 1 17.5 7.527V7.5H1.25Z"
       fill="#C5C8D2"

@@ -10,11 +10,16 @@ import {
   useState,
 } from 'react';
 
+import {
+  end_call,
+  insert_random_call_event,
+  start_call,
+} from '@/app/random-call-events-actions';
 import DialSvgComponent from '@/components/react-svg-components/dial';
 import LoaderSvgComponent from '@/components/react-svg-components/loader';
 import PhoneSvgComponent from '@/components/react-svg-components/phone';
+import { SubmitButton } from '@/components/submit-button';
 import { P } from '@/components/typography/text';
-import { Button } from '@/components/ui/button';
 import { StopWatch } from '@/components/ui/stop-watch';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/utils/supabase/client';
@@ -27,16 +32,10 @@ export type OngoingCall = {
 
 type Props = {
   ongoingCall?: OngoingCall;
-  //TODO - we only really need this to mock the call initiation - Remove once development is done
-  demo_service_phone_assignment_id: number;
 };
 
-export function DemoCall({
-  demo_service_phone_assignment_id,
-  ongoingCall,
-}: Props) {
+export function DemoCall({ ongoingCall }: Props) {
   const [call, setCall] = useState(ongoingCall);
-  const [triggerring, setTriggering] = useState(false);
   const [recentlyFinishedCallDuration, setRecentlyFinishedCallDuration] =
     useState<number | undefined>();
 
@@ -48,7 +47,6 @@ export function DemoCall({
 
   const listenToCallEnd = useCallback(
     (incomingCallId: number) => {
-      console.log(`Listening to calls ending on id ${incomingCallId}`);
       return supabase
         .channel(`call_end_${incomingCallId}`)
         .on(
@@ -62,7 +60,7 @@ export function DemoCall({
           () => {
             if (call) {
               setRecentlyFinishedCallDuration(
-                secondsFromDate(new Date(call.callStartTime)),
+                secondsFromDate(call.callStartTime),
               );
             }
             updateSubscriptionRef.current?.unsubscribe();
@@ -75,7 +73,6 @@ export function DemoCall({
   );
 
   const listenToCallIncoming = useCallback(() => {
-    console.log('Subscribing to incoming calls');
     return supabase
       .channel('incoming_demo_calls')
       .on(
@@ -85,57 +82,22 @@ export function DemoCall({
           insertSubscriptionRef.current?.unsubscribe();
           setCall({
             userOngoingCallId: payload.new.id,
-            callStartTime: payload.new.created_at,
+            callStartTime: new Date(payload.new.created_at),
           });
-          console.log('New call received!', payload);
         },
       )
       .subscribe(console.log);
   }, [supabase]);
 
-  const triggerFakeCallEvent = async () => {
-    setTriggering(true);
-    setTimeout(async () => {
-      console.log('fake triggering call event');
-
-      setTriggering(false);
-    }, 2000);
-  };
-
-  const startCall = async () => {
-    setTriggering(true);
-    setTimeout(async () => {
-      console.log('starting fake call');
-      // TODO - remove the insert&update policies from users when development is done and this function is removed
-      await supabase
-        .from('incoming_demo_calls')
-        .insert({ demo_service_phone_assignment_id });
-
-      setTriggering(false);
-    }, 2000);
-  };
-
-  const endCall = async () => {
-    setTriggering(true);
-    setTimeout(async () => {
-      console.log('fake ending call');
-      // TODO - remove the insert&update policies from users when development is done and this function is removed
-      const ended_at = new Date().toISOString();
-      await supabase
-        .from('incoming_demo_calls')
-        .update({ ended_at })
-        .eq(
-          'demo_service_phone_assignment_id',
-          demo_service_phone_assignment_id,
-        );
-      setTriggering(false);
-    }, 2000);
-  };
-
   useEffect(() => {
     if (call) {
       updateSubscriptionRef.current?.unsubscribe();
       updateSubscriptionRef.current = listenToCallEnd(call.userOngoingCallId);
+
+      //TODO - This is not relevant for after development stage and can be safely removed
+      if (secondsFromDate(call.callStartTime) > 3599) {
+        end_call();
+      }
     } else {
       insertSubscriptionRef.current?.unsubscribe();
       insertSubscriptionRef.current = listenToCallIncoming();
@@ -152,31 +114,43 @@ export function DemoCall({
       {call ? (
         <>
           <div className="flex flex-col items-center">
-            <Button
-              disabled={triggerring}
-              onClick={() => triggerFakeCallEvent()}
-              variant="link"
-              className="pointer-cursor"
-            >
-              Trigger fake call event
-            </Button>
-            <LabelWrapper className="text-successDarkr bg-successLight">
-              <PhoneSvgComponent className="text-success" />
-              <P>{t('incomingCall')}</P>
-              <StopWatch
-                elapsedOnStart={secondsFromDate(new Date(call.callStartTime))}
-              />
-            </LabelWrapper>
+            <form className="flex flex-col items-center">
+              <SubmitButton
+                formAction={insert_random_call_event}
+                variant="link"
+                className="cursor-pointer"
+              >
+                Trigger fake call event (temporary - dev only)
+              </SubmitButton>
+
+              <LabelWrapper className="text-successDarkr bg-successLight">
+                <PhoneSvgComponent className="text-success" />
+                <P>{t('incomingCall')}</P>
+                <StopWatch
+                  elapsedOnStart={secondsFromDate(call.callStartTime)}
+                />
+              </LabelWrapper>
+              <SubmitButton
+                formAction={end_call}
+                variant="link"
+                className="cursor-pointer"
+              >
+                Fake call end (temporary - dev only)
+              </SubmitButton>
+            </form>
           </div>
-          <Button disabled={triggerring} onClick={() => endCall()}>
-            Fake call end (temporary - dev only)
-          </Button>
         </>
       ) : (
         <>
-          <Button disabled={triggerring} onClick={() => startCall()}>
-            Fake call start (temporary - dev only)
-          </Button>
+          <form>
+            <SubmitButton
+              formAction={start_call}
+              variant="link"
+              className="cursor-pointer"
+            >
+              Fake call start (temporary - dev only)
+            </SubmitButton>
+          </form>
 
           <LabelWrapper className="bg-border">
             <LoaderSvgComponent className="animate-loader-spin" />

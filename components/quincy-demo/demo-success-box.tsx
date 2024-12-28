@@ -5,11 +5,11 @@ import { parsePhone } from '@/utils/utils';
 
 type Props = QuincyDemoPropsBase & { phone: string };
 
-export async function DemoSuccessBox({ phone, contract_requested, t }: Props) {
+export async function DemoSuccessBox({ phone, requested_contract, t }: Props) {
   return (
     <>
       <div className="flex w-full flex-col items-center gap-4 rounded border border-successDark bg-successLight px-10 py-5">
-        {contract_requested ? (
+        {requested_contract ? (
           <>
             <PhoneSvgComponent />
             <div className="text-center">
