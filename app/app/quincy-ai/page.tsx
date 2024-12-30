@@ -64,24 +64,24 @@ export default async function QuincyPage() {
         <UserCallEvents userId={userId} />
       </div>
       {demoOngoing ? (
-        <form className="sticky bottom-0 lg:hidden">
+        <StaticRouteLink
+          routeTo="quincyDemo"
+          className="sticky bottom-3.5 lg:hidden"
+        >
+          <Button asChild variant="secondary" className="h-14 w-full">
+            <P className="font-normal">{t('continueDemoButton')}</P>
+          </Button>
+        </StaticRouteLink>
+      ) : (
+        <form className="sticky bottom-3.5 lg:hidden">
           <Button
             formAction={startDemo}
             variant="secondary"
             className="h-14 w-full"
           >
-            <P className="font-normal">{t('continueDemoButton')}</P>
-          </Button>
-        </form>
-      ) : (
-        <StaticRouteLink
-          routeTo="quincyDemo"
-          className="sticky bottom-0 lg:hidden"
-        >
-          <Button asChild variant="secondary" className="h-14 w-full">
             <P className="font-normal">{t('startDemoButton')}</P>
           </Button>
-        </StaticRouteLink>
+        </form>
       )}
     </div>
   );

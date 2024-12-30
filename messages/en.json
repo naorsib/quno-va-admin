@@ -188,7 +188,9 @@
     },
     "fields": {
       "address": "Address",
+      "address_placeholder": "Potsdamer Str. 108, Berlin",
       "clinic_name": "Clinic Name",
+      "clinic_name_placeholder": "Demo clinic",
       "clinic_type": "Clinic Type",
       "clinic_type_placeholder": "Select your clinic type",
       "confirmPassword": "Confirm Password",

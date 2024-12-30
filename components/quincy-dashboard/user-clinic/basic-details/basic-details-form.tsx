@@ -60,47 +60,68 @@ export function BasicDetailsForm({ clinic_base, userId, ...props }: Props) {
       clinic_name: clinicBase.clinic_name,
       address: clinicBase.address || '',
     },
-    mode: 'onBlur',
+    mode: 'onSubmit',
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    form.clearErrors();
-    const clinic_name = values.clinic_name;
-    const address = values.address;
-    let updateObject: Partial<UserClinicBase> = {};
-    let updatedField: keyof UserClinicBase | undefined;
-    if (clinicBase.address !== address) {
-      updateObject.address = address;
-      updatedField = 'address';
-    }
-    if (clinicBase.clinic_name !== clinic_name) {
-      updateObject.clinic_name = clinic_name;
-      updatedField = 'clinic_name';
-    }
-    if (updatedField) {
-      setIsUpdating(true);
-      const { error } = await supabase
-        .from('user_base_details')
-        .update(updateObject)
-        .eq('id', userId);
-
-      if (error) {
-        // revert failed action
-        form.setValue(updatedField, clinicBase[updatedField]);
-        // set errors
-        form.setError(updatedField, {
-          message: tErrors(UPDATE_UNSUCCESSFUL),
-        });
-      } else {
-        setClinicBase(Object.assign(clinicBase, updateObject));
+  const onSubmit = async () => {
+    form.trigger().then(async () => {
+      if (
+        form.getFieldState('address').invalid &&
+        form.getFieldState('address').isTouched
+      ) {
+        form.setValue(
+          'address',
+          clinicBase.address || tFields('address_placeholder'),
+        );
       }
-      setIsUpdating(false);
-    }
+      if (
+        form.getFieldState('clinic_name').invalid &&
+        form.getFieldState('clinic_name').isTouched
+      ) {
+        form.setValue(
+          'clinic_name',
+          clinicBase.clinic_name || tFields('clinic_name_placeholder'),
+        );
+      }
+      form.clearErrors();
+      const values = form.getValues();
+      const clinic_name = values.clinic_name;
+      const address = values.address;
+      let updateObject: Partial<UserClinicBase> = {};
+      let updatedField: keyof UserClinicBase | undefined;
+      if (clinicBase.address !== address) {
+        updateObject.address = address;
+        updatedField = 'address';
+      }
+      if (clinicBase.clinic_name !== clinic_name) {
+        updateObject.clinic_name = clinic_name;
+        updatedField = 'clinic_name';
+      }
+      if (updatedField) {
+        setIsUpdating(true);
+        const { error } = await supabase
+          .from('user_base_details')
+          .update(updateObject)
+          .eq('id', userId);
+
+        if (error) {
+          // revert failed action
+          form.setValue(updatedField, clinicBase[updatedField]);
+          // set errors
+          form.setError(updatedField, {
+            message: tErrors(UPDATE_UNSUCCESSFUL),
+          });
+        } else {
+          setClinicBase(Object.assign(clinicBase, updateObject));
+        }
+        setIsUpdating(false);
+      }
+    });
   };
 
   return (
     <FormProvider {...form}>
-      <form onBlur={form.handleSubmit(onSubmit)} className={props.className}>
+      <form onBlur={onSubmit} className={props.className}>
         <FormField
           control={form.control}
           name="clinic_name"
@@ -108,7 +129,13 @@ export function BasicDetailsForm({ clinic_base, userId, ...props }: Props) {
             <FormItem>
               <FormLabel>{tFields(field.name)}</FormLabel>
               <FormControl>
-                <NestedInput disabled={isUpdating} type="text" {...field} />
+                <NestedInput
+                  className="placeholder:text-label"
+                  placeholder={tFields(`${field.name}_placeholder`)}
+                  disabled={isUpdating}
+                  type="text"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,7 +149,13 @@ export function BasicDetailsForm({ clinic_base, userId, ...props }: Props) {
             <FormItem>
               <FormLabel>{tFields(field.name)}</FormLabel>
               <FormControl>
-                <NestedInput disabled={isUpdating} type="text" {...field} />
+                <NestedInput
+                  className="placeholder:text-label"
+                  placeholder={tFields(`${field.name}_placeholder`)}
+                  disabled={isUpdating}
+                  type="text"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

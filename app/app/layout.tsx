@@ -11,7 +11,7 @@ export default async function Layout({
     <SidebarProvider>
       <AppSidebar />
       <div className="flex w-full max-w-2xl flex-col">
-        <div className="sticky left-0 top-0 flex min-h-28 w-full flex-row items-end justify-center bg-sidebarGradient py-5 md:hidden">
+        <div className="sticky left-0 top-0 flex min-h-28 w-full flex-row items-end justify-center bg-primary py-5 md:hidden">
           <div className="absolute left-2 flex">
             <SidebarTrigger />
           </div>

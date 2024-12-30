@@ -18,6 +18,7 @@ import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
 
+import { FormFieldsTrans } from '../lib/validations';
 import { end_call } from './random-call-events-actions';
 
 const getPhoneFromFormData = (formData: FormData) => {
@@ -182,7 +183,6 @@ export const verifyOtp = async (token: string, phone: string) => {
     id: user.id,
     first_name: user.user_metadata.first_name,
     last_name: user.user_metadata.last_name,
-    clinic_name: `${user.user_metadata.first_name}'s clinic`,
     email: user.user_metadata.email,
     phone: user.user_metadata.phone,
   });
@@ -294,7 +294,6 @@ export const requestContract = async () => {
   } = await supabase.auth.getUser();
 
   const userId = user?.id as string;
-  const clinic_name = 'test';
   const { data, error } = await supabase
     .from('user_base_details')
     .update({ requested_contract: true })
@@ -316,6 +315,32 @@ export const startDemo = async () => {
   } = await supabase.auth.getUser();
 
   const userId = user?.id as string;
+
+  const { data: clinic_details } = await supabase
+    .from('user_base_details')
+    .select('clinic_name, address, clinic_type')
+    .eq('id', userId)
+    .limit(1)
+    .single();
+
+  const tFields: FormFieldsTrans = await getTranslations('Forms.fields');
+  const updateObject = {};
+  if (!clinic_details?.clinic_name) {
+    Object.assign(updateObject, {
+      clinic_name: tFields('clinic_name_placeholder'),
+    });
+  }
+  if (!clinic_details?.address) {
+    Object.assign(updateObject, { address: tFields('address_placeholder') });
+  }
+  console.log('updateObj', updateObject);
+  if (Object.keys(updateObject).length > 0) {
+    const { data, error } = await supabase
+      .from('user_base_details')
+      .update(updateObject)
+      .eq('id', userId)
+      .select();
+  }
 
   const supabase_admin = await createAdminClient();
   const existingNonDeletedDemo = await supabase_admin
