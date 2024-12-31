@@ -6,14 +6,25 @@ import {
   VibrateOffIcon as VolumeOff,
   Volume2,
 } from 'lucide-react';
-import { JSX, useCallback, useEffect, useReducer, useRef } from 'react';
+import {
+  JSX,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-
+const FAKE_FLOW_UNPDATE_INTERVAL_IN_SECONDS = 1.5;
 interface AudioControlsProps {
   audioSrc: string;
   shouldFakePlay?: boolean;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+  onError: () => void;
 }
 
 interface AudioState {
@@ -25,14 +36,9 @@ interface AudioState {
 }
 
 type AudioAction =
-  | { type: 'SET_PLAYING'; payload: boolean }
-  | { type: 'SET_FAKE_PLAY'; payload: boolean }
-  | { type: 'SET_MUTED'; payload: boolean }
-  | { type: 'SET_CURRENT_TIME'; payload: number }
-  | { type: 'SET_DURATION'; payload: number }
-  | { type: 'TOGGLE_PLAY' }
-  | { type: 'TOGGLE_MUTE' }
-  | { type: 'INCREMENT_TIME' };
+  | { type: 'SET_PLAYING' | 'SET_FAKE_PLAY' | 'SET_MUTED'; payload: boolean }
+  | { type: 'SET_CURRENT_TIME' | 'SET_DURATION'; payload: number }
+  | { type: 'TOGGLE_PLAY' | 'TOGGLE_MUTE' | 'INCREMENT_TIME' };
 
 const initialState: AudioState = {
   isPlaying: true,
@@ -68,7 +74,10 @@ function audioReducer(state: AudioState, action: AudioAction): AudioState {
     case 'INCREMENT_TIME': {
       return {
         ...state,
-        currentTime: Math.min(state.currentTime + 1, state.duration),
+        currentTime: Math.min(
+          state.currentTime + FAKE_FLOW_UNPDATE_INTERVAL_IN_SECONDS,
+          state.duration,
+        ),
       };
     }
     default: {
@@ -93,11 +102,15 @@ const dispatchSimulatedTimeUpdateEvent = (time: number): void => {
 export function AudioControls({
   audioSrc,
   shouldFakePlay = true,
+  isLoading,
+  setIsLoading,
+  onError,
 }: AudioControlsProps): JSX.Element {
   const [state, dispatch] = useReducer(audioReducer, {
     ...initialState,
     isFakePlay: shouldFakePlay,
   });
+  const [hasError, setHasError] = useState(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -113,74 +126,12 @@ export function AudioControls({
   const updateTimeFake = useCallback(() => {
     dispatch({ type: 'INCREMENT_TIME' });
     if (state.duration) {
+      setIsLoading(false);
       dispatchSimulatedTimeUpdateEvent(state.currentTime);
     } else {
       updateDuration();
     }
-  }, [state.duration, state.currentTime, updateDuration]);
-
-  useEffect(() => {
-    dispatch({ type: 'SET_FAKE_PLAY', payload: shouldFakePlay });
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const updateTime = () => {
-      dispatch({ type: 'SET_CURRENT_TIME', payload: audio.currentTime });
-    };
-
-    if (state.isFakePlay) {
-      if (!state.currentTime || state.currentTime < state.duration) {
-        intervalRef.current = setInterval(updateTimeFake, 1000);
-      } else {
-        dispatch({ type: 'SET_PLAYING', payload: false });
-      }
-    } else {
-      audio.addEventListener('timeupdate', updateTime);
-      audio.addEventListener('loadedmetadata', updateDuration);
-      audio.addEventListener('durationchange', updateDuration);
-
-      if (state.isPlaying && audio.paused) {
-        audio.play();
-      }
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    }
-    updateDuration();
-
-    return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-      audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('durationchange', updateDuration);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [
-    audioSrc,
-    state.currentTime,
-    state.duration,
-    state.isPlaying,
-    state.isFakePlay,
-    shouldFakePlay,
-    updateDuration,
-    updateTimeFake,
-  ]);
-
-  const togglePlayPause = useCallback(() => {
-    dispatch({ type: 'SET_FAKE_PLAY', payload: false });
-
-    const audio = audioRef.current;
-    if (audio) {
-      audio.currentTime = state.currentTime;
-      if (state.isPlaying) {
-        audio.pause();
-      } else {
-        audio.play();
-      }
-      dispatch({ type: 'TOGGLE_PLAY' });
-    }
-  }, [state.currentTime, state.isPlaying]);
+  }, [state.duration, state.currentTime, setIsLoading, updateDuration]);
 
   const toggleMute = useCallback(() => {
     const audio = audioRef.current;
@@ -195,6 +146,114 @@ export function AudioControls({
     }
   }, [state.isFakePlay, state.currentTime, state.isMuted]);
 
+  const handleCanPlay = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (!state.isFakePlay && state.isPlaying && audio.paused) {
+      if (state.isMuted) {
+        toggleMute();
+      }
+
+      audio.play().catch(error => {
+        onError();
+      });
+    }
+    setIsLoading(false);
+    setHasError(false);
+    updateDuration();
+  }, [
+    state.isFakePlay,
+    state.isPlaying,
+    state.isMuted,
+    toggleMute,
+    onError,
+    setIsLoading,
+    updateDuration,
+  ]);
+  useEffect(() => {
+    dispatch({ type: 'SET_FAKE_PLAY', payload: shouldFakePlay });
+    const audio = audioRef.current;
+
+    if (!audio) return;
+    audio.muted = state.isMuted;
+
+    const updateTime = () => {
+      dispatch({ type: 'SET_CURRENT_TIME', payload: audio.currentTime });
+    };
+
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('error', onError);
+
+    // failproof this edge case cause by and intermittent race condition
+
+    if (state.isFakePlay) {
+      if (!state.currentTime || state.currentTime < state.duration) {
+        intervalRef.current = setInterval(
+          updateTimeFake,
+          FAKE_FLOW_UNPDATE_INTERVAL_IN_SECONDS * 1000,
+        );
+      } else {
+        dispatch({ type: 'SET_PLAYING', payload: false });
+      }
+    } else {
+      audio.addEventListener('timeupdate', updateTime);
+      audio.addEventListener('loadedmetadata', updateDuration);
+      audio.addEventListener('durationchange', updateDuration);
+
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      if (!audio.paused && isLoading) {
+        onError();
+        audio.load();
+      }
+    }
+    updateDuration();
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('durationchange', updateDuration);
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('error', onError);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [
+    audioSrc,
+    isLoading,
+    shouldFakePlay,
+    state.isFakePlay,
+    state.isPlaying,
+    state.currentTime,
+    state.duration,
+    state.isMuted,
+    updateDuration,
+    updateTimeFake,
+    setIsLoading,
+    onError,
+    handleCanPlay,
+  ]);
+
+  const togglePlayPause = useCallback(() => {
+    dispatch({ type: 'SET_FAKE_PLAY', payload: false });
+
+    const audio = audioRef.current;
+    if (audio) {
+      audio.currentTime = state.currentTime;
+      if (state.isPlaying) {
+        audio.pause();
+      } else {
+        audio.play().catch(error => {
+          onError();
+        });
+      }
+      dispatch({ type: 'TOGGLE_PLAY' });
+    }
+  }, [state.currentTime, state.isPlaying, onError]);
+
   const handleSliderChange = useCallback((newValue: number[]) => {
     const newTime = newValue[0];
     dispatch({ type: 'SET_CURRENT_TIME', payload: newTime });
@@ -203,6 +262,19 @@ export function AudioControls({
       audio.currentTime = newTime;
     }
   }, []);
+
+  const formattedCurrentTime = useMemo(
+    () => formatTime(state.currentTime),
+    [state.currentTime],
+  );
+  const formattedDuration = useMemo(
+    () => formatTime(state.duration),
+    [state.duration],
+  );
+  const PlayPauseIcon = useMemo(
+    () => (state.isPlaying ? Pause : Play),
+    [state.isPlaying],
+  );
 
   return (
     <div className="flex flex-1 items-center space-x-2">
@@ -217,27 +289,26 @@ export function AudioControls({
         variant="outline"
         size="icon"
         className="bg-white"
+        disabled={isLoading || hasError}
       >
-        {state.isPlaying ? (
-          <Pause fill="currentColor" className="h-4 w-4" />
-        ) : (
-          <Play fill="currentColor" className="h-4 w-4" />
-        )}
+        <PlayPauseIcon fill="currentColor" className="h-4 w-4" />
       </Button>
       <Slider
         value={[state.currentTime]}
         max={state.duration || 100}
         step={0.1}
         onValueChange={handleSliderChange}
+        disabled={isLoading || hasError}
       />
       <span className="hidden text-sm">
-        {formatTime(state.currentTime)} / {formatTime(state.duration)}
+        {formattedCurrentTime} / {formattedDuration}
       </span>
       <Button
         onClick={toggleMute}
         variant="outline"
         size="icon"
         className="bg-white"
+        disabled={isLoading || hasError}
       >
         {state.isMuted ? (
           <VolumeOff fill="currentColor" className="h-4 w-4" />

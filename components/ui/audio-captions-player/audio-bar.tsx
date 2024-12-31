@@ -15,6 +15,7 @@ import { EnumsTrans, GenericTrans } from '@/types/translations';
 import AudioCaptionPlayer, { Caption } from './audio-caption-player';
 import { AudioControls } from './audio-controls';
 
+const MAX_RETRY_ATTEMPTS = 3;
 type AudioDemoTrans = GenericTrans<keyof typeof en.Landing.heros.audioDemo>;
 export type AudioBarButton = keyof typeof captionsMap;
 
@@ -27,6 +28,10 @@ export default function AudioBar(): JSX.Element {
     useState<AudioBarButton>(allButtons[0]);
   const [shouldTriggerAudioWithFakePlay, setShouldTriggerAudioWithFakePlay] =
     useState(true);
+  const [isFatalError, setIsFatalError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | undefined>();
+  const [retryAttempts, setRetryAttempts] = useState(0); // Added retryAttempts state
 
   const tCallEventTypeEnumTrans: EnumsTrans<'call_event_types'> =
     useTranslations('Enums.call_event_types');
@@ -34,6 +39,10 @@ export default function AudioBar(): JSX.Element {
 
   const handleFirstAudioSignal = useCallback(() => {
     setShouldTriggerAudioWithFakePlay(false);
+  }, []);
+
+  const handleLoadingChange = useCallback((loading: boolean) => {
+    setIsLoading(loading);
   }, []);
 
   useEffect(() => {
@@ -50,16 +59,49 @@ export default function AudioBar(): JSX.Element {
     selectedAudioButton,
     shouldTriggerAudioWithFakePlay,
     handleFirstAudioSignal,
+    isLoading,
   ]);
 
   const handleButtonClick = useCallback((button: AudioBarButton) => {
     setShouldTriggerAudioWithFakePlay(false);
     setSelectedAudioButton(button);
+    setIsLoading(true);
+    setError(undefined);
+    setRetryAttempts(0); // Reset retry attempts when button is clicked
   }, []);
+
+  const handleError = useCallback(() => {
+    if (retryAttempts < MAX_RETRY_ATTEMPTS) {
+      if (!isLoading) {
+        setIsLoading(true);
+      }
+      setRetryAttempts(previous => previous - 1);
+      setError(
+        new Error(
+          `Error loading audio. Retrying... (Attempt ${retryAttempts}/${MAX_RETRY_ATTEMPTS})`,
+        ),
+      );
+      setTimeout(() => {
+        setError(undefined);
+      }, 2000);
+    } else {
+      setIsFatalError(true);
+      setError(
+        new Error(
+          `Error loading audio after ${MAX_RETRY_ATTEMPTS} attempts. Please reload the page`,
+        ),
+      );
+    }
+  }, [retryAttempts, isLoading]);
 
   return (
     <>
-      <div className="my-4 lg:my-6">
+      <div
+        className={cn(
+          'my-4 lg:my-6',
+          isFatalError ? 'pointer-events-none opacity-50' : '',
+        )}
+      >
         <div className="mb-2 flex flex-row items-center gap-2 text-white">
           <DialSvgComponent />
           <H4 className="text-lg">{t('quincyHelpsWith')}</H4>
@@ -75,6 +117,7 @@ export default function AudioBar(): JSX.Element {
                   ? 'pointer-events-none relative flex flex-row overflow-hidden border-audioControl bg-transparent text-audioControl'
                   : 'border-black bg-audioControl text-black hover:bg-audioControl/90',
               )}
+              disabled={isLoading}
             >
               <P className="relative text-base/6 font-normal">
                 {tCallEventTypeEnumTrans(button)}
@@ -96,10 +139,22 @@ export default function AudioBar(): JSX.Element {
         <AudioControls
           audioSrc={captionsMap[selectedAudioButton].audioSrc}
           shouldFakePlay={shouldTriggerAudioWithFakePlay}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+          onError={handleError}
         />
       </div>
+      {error && (
+        <div className="mt-2 text-center text-red-500">
+          <P>{error.message}</P>
+        </div>
+      )}
       <AudioCaptionPlayer
-        captions={captionsMap[selectedAudioButton].captions as Caption[]}
+        captions={
+          isFatalError
+            ? []
+            : (captionsMap[selectedAudioButton].captions as Caption[])
+        }
       />
     </>
   );
