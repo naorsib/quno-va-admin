@@ -1,108 +1,123 @@
 import { PhoneCall } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { JSX } from 'react';
 
 import CalendarSvgComponent from '@/components/react-svg-components/calendar';
 import DialSvgComponent from '@/components/react-svg-components/dial';
 import RobotSvgComponent from '@/components/react-svg-components/robot';
 import { P } from '@/components/typography/text';
-import { AudioControls } from '@/components/ui/audio-controls';
-import { captionsMap } from '@/consts/captions.consts';
 import en from '@/messages/en.json';
-import { CaptionEventsTrans, GenericTrans } from '@/types/translations';
+import { EnumsTrans, GenericTrans } from '@/types/translations';
 
-import { AudioBarButton } from './audio-bar';
 import { CaptionManager } from './caption-manager';
 
-interface Caption<T extends 'ai' | 'call_event' | 'dial_event' | 'user'> {
+type CaptionType = 'ai' | 'call_event' | 'dial_event' | 'user';
+
+interface BaseCaption {
   id: number;
   text: string;
   startTime: number;
   endTime: number;
-  type: T;
+  type: CaptionType;
 }
-interface AiCaption extends Caption<'ai'> {}
 
-interface UserCaption extends Caption<'user'> {}
-interface DialEventCaption extends Caption<'dial_event'> {}
+interface AiCaption extends BaseCaption {
+  type: 'ai';
+}
 
-const callEventTypeMap = {
-  schedule_appointment: DialSvgComponent,
-  cancel_appointment: CalendarSvgComponent,
-};
+interface UserCaption extends BaseCaption {
+  type: 'user';
+}
 
-interface CallEventCaption extends Caption<'call_event'> {
-  callEventType: keyof typeof en.CaptionEvents;
+interface DialEventCaption extends BaseCaption {
+  type: 'dial_event';
+}
+
+interface CallEventCaption extends BaseCaption {
+  type: 'call_event';
+  callEventType: keyof typeof en.CallEventBoxes;
   time: string;
 }
 
-// interface AudioCaptionPlayerProps {
-//   title: string;
-//   audioSrc: string;
-//   captions: Caption<'ai' | 'call_event' | 'dial_event' | 'user'>[];
-// }
+export type Caption =
+  | AiCaption
+  | UserCaption
+  | DialEventCaption
+  | CallEventCaption;
+
+const callEventTypeToIconMap: Record<
+  keyof typeof en.CallEventBoxes,
+  React.ComponentType
+> = {
+  schedule_appointment: DialSvgComponent,
+  cancel_appointment: CalendarSvgComponent,
+  reschedule_appointment: DialSvgComponent,
+  prescription_renewal: DialSvgComponent,
+  get_sick_leave: DialSvgComponent,
+  doctor_call: DialSvgComponent,
+};
 
 interface AudioCaptionPlayerProps {
-  selectedAudioButton: AudioBarButton;
+  captions: Caption[];
 }
+
 type AudioDemoTrans = GenericTrans<keyof typeof en.Landing.heros.audioDemo>;
 
 export default function AudioCaptionPlayer({
-  selectedAudioButton,
-}: AudioCaptionPlayerProps) {
-  const tCaptionEvents: CaptionEventsTrans = useTranslations('CaptionEvents');
+  captions,
+}: AudioCaptionPlayerProps): JSX.Element {
+  const tCallEventTypeEnumTrans: EnumsTrans<'call_event_types'> =
+    useTranslations('Enums.call_event_types');
   const t: AudioDemoTrans = useTranslations(`Landing.heros.audioDemo`);
 
-  const { audioSrc, captions } = captionsMap[selectedAudioButton];
-  const title = selectedAudioButton;
-
   return (
-    <div>
-      <div className="border-input-border flex h-14 w-full flex-row items-center justify-between gap-2 rounded-tl-xl rounded-tr-xl border bg-white px-6">
-        <div className="flex flex-row items-center gap-2 overflow-x-hidden">
-          <DialSvgComponent />
-          <P fontFamily="poppins" className="truncate text-xl font-semibold">
-            {t(title)}
-          </P>
-        </div>
-        <AudioControls audioSrc={audioSrc} />
-      </div>
-      <div
-        id="caption-container"
-        className="scrollbar-none border-input-border h-96 space-y-4 overflow-y-auto rounded-bl-xl rounded-br-xl border border-t-0 bg-gray-100 p-6 pt-8"
-      >
+    <div className="scrollbar-none border-input-border relative h-96 space-y-4 overflow-hidden rounded-bl-xl rounded-br-xl border border-t-0 bg-gray-100 p-6 pt-8">
+      <div id="caption-container" className="absolute left-0 w-full">
         {captions.map(caption => (
-          <div
+          <CaptionRenderer
             key={caption.id}
-            data-start-time={caption.startTime}
-            data-end-time={caption.endTime}
-            className={`grid-row invisible grid w-full translate-y-full transform rounded-lg p-2 opacity-0 transition-all duration-500 ease-in-out`}
-          >
-            {caption.type === 'ai' ? (
-              <AiCaptionRender caption={caption as AiCaption} />
-            ) : caption.type === 'user' ? (
-              <UserCaptionRender caption={caption as UserCaption} />
-            ) : caption.type === 'call_event' ? (
-              <CallEventCaptionnRender
-                caption={caption as CallEventCaption}
-                t={tCaptionEvents}
-              />
-            ) : (
-              <CallCaptionRender caption={caption as DialEventCaption} />
-            )}
-          </div>
+            caption={caption}
+            tCaptionEvents={tCallEventTypeEnumTrans}
+          />
         ))}
       </div>
       <CaptionManager />
     </div>
   );
 }
-function AiCaptionRender({ caption }: { caption: AiCaption }) {
+
+function CaptionRenderer({
+  caption,
+  tCaptionEvents,
+}: {
+  caption: Caption;
+  tCaptionEvents: EnumsTrans<'call_event_types'>;
+}): JSX.Element {
+  return (
+    <div
+      data-start-time={caption.startTime}
+      data-end-time={caption.endTime}
+      className="grid-row invisible grid w-full translate-y-full transform rounded-lg p-2 opacity-0 transition-all duration-500 ease-in-out"
+    >
+      {caption.type === 'ai' ? (
+        <AiCaptionRender caption={caption} />
+      ) : caption.type === 'user' ? (
+        <UserCaptionRender caption={caption} />
+      ) : caption.type === 'call_event' ? (
+        <CallEventCaptionRender caption={caption} t={tCaptionEvents} />
+      ) : (
+        <CallCaptionRender caption={caption} />
+      )}
+    </div>
+  );
+}
+
+function AiCaptionRender({ caption }: { caption: AiCaption }): JSX.Element {
   return (
     <div className="flex w-full max-w-xl flex-row items-start justify-start gap-2.5">
       <div className="mx-x mt-1 rounded-full bg-primary p-2">
         <RobotSvgComponent />
       </div>
-
       <div className="flex-1 rounded-lg bg-primary/85 p-4 text-white">
         <P className="text-lg/6">{caption.text}</P>
       </div>
@@ -110,7 +125,7 @@ function AiCaptionRender({ caption }: { caption: AiCaption }) {
   );
 }
 
-function UserCaptionRender({ caption }: { caption: UserCaption }) {
+function UserCaptionRender({ caption }: { caption: UserCaption }): JSX.Element {
   return (
     <div className="w-full max-w-xl justify-self-end">
       <div className="rounded-lg bg-white p-4 text-primary">
@@ -120,23 +135,22 @@ function UserCaptionRender({ caption }: { caption: UserCaption }) {
   );
 }
 
-function CallEventCaptionnRender({
+function CallEventCaptionRender({
   caption,
   t,
 }: {
   caption: CallEventCaption;
-  t: CaptionEventsTrans;
-}) {
-  const Cmp = callEventTypeMap[caption.callEventType];
+  t: EnumsTrans<'call_event_types'>;
+}): JSX.Element {
+  const IconComponent = callEventTypeToIconMap[caption.callEventType];
   return (
     <div className="w-full max-w-lg justify-self-center text-black">
       <div className="flex flex-col gap-2 rounded-lg border border-border bg-white p-4">
         <div className="flex flex-row items-center justify-between gap-2">
           <div className="flex flex-row items-center gap-2">
-            {/* <Cmp /> */}
+            <IconComponent />
             <P className="font-bold">{t(caption.callEventType)}</P>
           </div>
-
           <P className="text-label">{caption.time}</P>
         </div>
         <P className="text-base/6">{caption.text}</P>
@@ -145,7 +159,11 @@ function CallEventCaptionnRender({
   );
 }
 
-function CallCaptionRender({ caption }: { caption: DialEventCaption }) {
+function CallCaptionRender({
+  caption,
+}: {
+  caption: DialEventCaption;
+}): JSX.Element {
   return (
     <div className="w-full max-w-lg justify-self-center text-hero-description">
       <div className="rounded-[40px] bg-border p-4">

@@ -12,6 +12,10 @@ import {
   useState,
 } from 'react';
 
+import AppointmentCancelledSvgComponent from '@/components/react-svg-components/appointment-event-icons';
+import PrescriptionSvgComponent from '@/components/react-svg-components/prescription';
+import SickLeaveSvgComponent from '@/components/react-svg-components/sick-leave';
+import { P } from '@/components/typography/text';
 import {
   Appointment,
   CallEvent,
@@ -25,11 +29,6 @@ import {
 import { CallEventTypes } from '@/types/enums';
 import { combineDates } from '@/utils/date-utils';
 import { createClient } from '@/utils/supabase/client';
-
-import AppointmentCancelledSvgComponent from '../react-svg-components/appointment-event-icons';
-import PrescriptionSvgComponent from '../react-svg-components/prescription';
-import SickLeaveSvgComponent from '../react-svg-components/sick-leave';
-import { P } from '../typography/text';
 
 type Props = {
   existing_call_events: CallEvent<CallEventTypes>[];

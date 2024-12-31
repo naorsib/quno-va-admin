@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import LoaderSvgComponent from '@/components/react-svg-components/loader';
 import { secondsToTime } from '@/utils/utils';
-
-import LoaderSvgComponent from '../react-svg-components/loader';
 
 type StopWatchProps = {
   elapsedOnStart?: number;

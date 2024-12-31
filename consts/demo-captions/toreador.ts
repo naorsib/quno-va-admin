@@ -1,4 +1,4 @@
-export const toreadorCaptions = [
+const toreadorCaptions = [
   {
     id: 1,
     text: 'Toreador Song from Carmen',
@@ -96,15 +96,8 @@ export const toreadorCaptions = [
   },
 ];
 
-export const captionsMap = {
-  appointment_booking: {
-    captions: toreadorCaptions,
-    audioSrc:
-      'https://upload.wikimedia.org/wikipedia/commons/4/40/Toreador_song_cleaned.ogg',
-  },
-  appointment_booking2: {
-    captions: toreadorCaptions,
-    audioSrc:
-      'https://upload.wikimedia.org/wikipedia/commons/4/40/Toreador_song_cleaned.ogg',
-  },
+export const toreadorCaptionWithAudio = {
+  captions: toreadorCaptions,
+  audioSrc:
+    'https://upload.wikimedia.org/wikipedia/commons/4/40/Toreador_song_cleaned.ogg',
 };

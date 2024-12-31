@@ -13,12 +13,12 @@ import {
   UNEXPECTED_ERROR,
 } from '@/consts/erroring.const';
 import { routeConsts } from '@/consts/routing.const';
+import { FormFieldsTrans } from '@/lib/validations';
 import { ErrorsTrans } from '@/types/translations';
 import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
 
-import { FormFieldsTrans } from '../lib/validations';
 import { end_call } from './random-call-events-actions';
 
 const getPhoneFromFormData = (formData: FormData) => {

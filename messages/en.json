@@ -52,10 +52,6 @@
       "title": "Doctor callback request"
     }
   },
-  "CaptionEvents": {
-    "cancel_appointment": "Appointment cancelled",
-    "schedule_appointment": "Appointment scheduled"
-  },
   "Auth": {
     "googleButton": {
       "text": {
@@ -127,6 +123,14 @@
       "first_consultation": "First consultation",
       "laser_treatment": "Laser treatment",
       "teeth_alignment": "Teeth alignment"
+    },
+    "call_event_types": {
+      "schedule_appointment": "Appointment Booking",
+      "cancel_appointment": "Appointment Cancellations",
+      "reschedule_appointment": "Appointment Rescheduling",
+      "prescription_renewal": "Prescription renewal",
+      "get_sick_leave": "Getting a sick leave",
+      "doctor_call": "Leave a doctor note"
     },
     "clinic_type": {
       "clinictype1": "Clinic Type1",
@@ -232,8 +236,6 @@
     },
     "heros": {
       "audioDemo": {
-        "appointment_booking": "Appointment Booking",
-        "appointment_booking2": "Appointment Booking2",
         "buttonDisclaimer": "*Free, requires registration",
         "buttonText": "Try live demo",
         "description": "DEMO",

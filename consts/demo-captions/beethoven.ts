@@ -1,0 +1,81 @@
+const beethovenCaptions = [
+  {
+    id: 1,
+    text: "Beethoven's Moonlight Sonata",
+    startTime: 0,
+    endTime: 2,
+    callEventType: 'schedule_appointment',
+    time: '14:00 Today',
+    type: 'call_event' as const,
+  },
+  {
+    id: 2,
+    text: 'Incoming Call from +1 123 456 7890 (John Doe)',
+    startTime: 2,
+    endTime: 6,
+    type: 'dial_event' as const,
+  },
+  {
+    id: 3,
+    text: 'Gentle piano intro begins',
+    startTime: 6,
+    endTime: 10,
+    type: 'ai' as const,
+  },
+  {
+    id: 4,
+    text: 'Soft, rolling arpeggios in right hand',
+    startTime: 10,
+    endTime: 14,
+    type: 'ai' as const,
+  },
+  {
+    id: 5,
+    text: 'Left hand introduces the melody',
+    startTime: 14,
+    endTime: 18,
+    type: 'ai' as const,
+  },
+  {
+    id: 6,
+    text: 'Melody becomes more pronounced',
+    startTime: 18,
+    endTime: 22,
+    type: 'ai' as const,
+  },
+  {
+    id: 7,
+    text: 'Slight increase in volume and intensity',
+    startTime: 22,
+    endTime: 26,
+    callEventType: 'cancel_appointment',
+    time: '14:30 Today',
+    type: 'call_event' as const,
+  },
+  {
+    id: 8,
+    text: 'The piece is hauntingly beautiful',
+    startTime: 26,
+    endTime: 30,
+    type: 'user' as const,
+  },
+  {
+    id: 9,
+    text: 'I can feel the emotion in every note',
+    startTime: 30,
+    endTime: 34,
+    type: 'user' as const,
+  },
+  {
+    id: 10,
+    text: 'The final gentle notes fade away',
+    startTime: 34,
+    endTime: 38,
+    type: 'user' as const,
+  },
+];
+export const beethovenCaptionWithAudio = {
+  captions: beethovenCaptions,
+  audioSrc:
+    'https://www.dropbox.com/scl/fi/38phiimwqckm77x9utzjt/Beethoven_Moonlight_1st_movement.ogg?rlkey=3r5azgf9y0j0gidtz8hzbsfow&st=k9t3ikcj&dl=1',
+};
