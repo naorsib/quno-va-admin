@@ -253,7 +253,10 @@ function CallEventLogBoxWrapper({
           desc={t(`CallEventLogBoxes.${call_event.call_event_type_id}.title`)}
           desc_id={call_event.call_event_type_id}
         />
-        <div className="flex flex-1 flex-col gap-2">
+        <div
+          className="flex flex-1 flex-col gap-2"
+          suppressHydrationWarning={true}
+        >
           <div className="flex w-full flex-row items-center justify-between gap-2">
             <P className="font-bold">
               {t(`CallEventLogBoxes.${call_event.call_event_type_id}.title`)}
