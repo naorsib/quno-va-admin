@@ -4,8 +4,8 @@ import { getTranslations } from 'next-intl/server';
 import { startDemo } from '@/app/actions';
 import { UserClinic } from '@/components/quincy-dashboard/user-clinic/user-clinic';
 import { UserCallEvents } from '@/components/quincy-dashboard/user-services/user-call-events';
+import { SubmitButton } from '@/components/submit-button';
 import { H1, P } from '@/components/typography/text';
-import { Button } from '@/components/ui/button';
 import { routeConsts } from '@/consts/routing.const';
 import { InnerPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
@@ -41,11 +41,15 @@ export default async function QuincyPage() {
           <H1 variant="innerPage">{t('title')}</H1>
 
           <form className="hidden lg:block">
-            <Button variant="secondary" formAction={startDemo}>
+            <SubmitButton
+              variant="secondary"
+              formAction={startDemo}
+              pendingType="loader"
+            >
               <P className="font-normal">
                 {t(demoPaused ? 'continueDemoButton' : 'startDemoButton')}
               </P>
-            </Button>
+            </SubmitButton>
           </form>
         </div>
         <UserClinic user_id={user_id} t={t} />
@@ -53,15 +57,16 @@ export default async function QuincyPage() {
       </div>
 
       <form className="sticky bottom-3.5 lg:hidden">
-        <Button
+        <SubmitButton
           formAction={startDemo}
+          pendingType="loader"
           variant="secondary"
           className="h-14 w-full"
         >
           <P className="font-normal">
             {t(demoPaused ? 'continueDemoButton' : 'startDemoButton')}
           </P>
-        </Button>
+        </SubmitButton>
       </form>
     </div>
   );

@@ -57,9 +57,8 @@ function useSupabaseSubscription(initialCall: OngoingCall | null) {
       if (subscriptionRef.current) {
         subscriptionRef.current.unsubscribe();
       }
-
+      // eslint-disable-next-line unicorn/prefer-ternary
       if (call) {
-        console.log(`renderin new call! ${call?.id}`);
         subscriptionRef.current = supabase
           .channel(`call_end_${call.id}`)
           .on(
@@ -121,6 +120,7 @@ export function DemoCall({ ongoingCall }: Props) {
           formAction={insert_random_call_event}
           variant="link"
           className="cursor-pointer"
+          pendingText={call ? 'Recalculating...' : ''}
         >
           Trigger fake call event (temporary - dev only)
         </SubmitButton>
@@ -136,6 +136,7 @@ export function DemoCall({ ongoingCall }: Props) {
           formAction={end_call}
           variant="link"
           className="cursor-pointer"
+          pendingText="Loading..."
         >
           Fake call end (temporary - dev only)
         </SubmitButton>
@@ -151,12 +152,13 @@ export function DemoCall({ ongoingCall }: Props) {
           formAction={initiateCallFromClient}
           variant="link"
           className="cursor-pointer"
+          pendingText="Loading..."
         >
           Fake call start (temporary - dev only)
         </SubmitButton>
 
         <LabelWrapper className="bg-border">
-          <LoaderSvgComponent className="animate-loader-spin" />
+          <LoaderSvgComponent className="text-secondary" />
           <P className="text-label">{t('waitingForCallsButton')}</P>
         </LabelWrapper>
       </>

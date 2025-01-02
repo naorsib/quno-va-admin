@@ -2,6 +2,7 @@
 'use server';
 import { PostgrestError } from '@supabase/supabase-js';
 import { getTranslations } from 'next-intl/server';
+import { sleep } from 'retell-sdk/core';
 
 import { UserCallEvent } from '@/components/quincy-dashboard/user-services/user-call-event-item';
 import en from '@/messages/en.json';
@@ -36,7 +37,7 @@ const insertDoctorCallCallTypeEvent: RandEventFunction = async (
       active_call_id,
       user_id,
       doctor_full_name,
-      not: note || t('doctorNoteDefault'),
+      note: note || t('doctorNoteDefault'),
     },
   );
   if (error) {
@@ -196,7 +197,6 @@ const insertCancelOrRescheduledAppointmentDemoCallEvent = async (
   }
 };
 async function getRandomAvailableAppointmentId(): Promise<number | undefined> {
-  const supabase_admin = await createAdminClient();
   const available_appointments = await getAllAvailableFutureAppointmens();
 
   const random_available_appointment = genRandomListItem(
@@ -338,7 +338,7 @@ const insertionFunctionMap: Record<CallEventTypes, RandEventFunction> = {
   doctor_call: insertDoctorCallCallTypeEvent,
 };
 
-// This file is just for faking call events while user is logged in
+// This function is just for faking call events while user is logged in (development purposes only)
 export const insert_random_call_event = async () => {
   // we assume here there user is logged in
   const supabase = await createClient();
@@ -435,11 +435,10 @@ export const end_call = async () => {
     if (error) {
       throw error;
     }
-    console.log('end_call_result:', data);
-    console.log('error', error);
   } catch (error) {
     console.error('FATAL ERROR:', error);
   }
+  await sleep(1000);
 };
 
 // TODO This only for tests and should at some point be removed
@@ -522,13 +521,14 @@ export const start_call = async (payload?: { phone: string }) => {
       })
       .eq('id', `${incoming_call.id}`);
   }
+  await sleep(1000);
 };
 
 const get_phone_user = async (phone: string) => {
   const supabase = await createAdminClient();
   const { data, error } = await supabase
     .from('user_base_details')
-    .select('id, clinic_name, address, clinic_type, first_name, last_name')
+    .select('id, clinic_name, address, clinic_type_id, first_name, last_name')
     // TODO - inner-join with past appointments and return along with a user-related call_context
     .eq('phone', phone)
     .limit(1)

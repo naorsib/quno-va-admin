@@ -3,6 +3,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { sleep } from 'retell-sdk/core';
 
 import {
   COULD_NOT_RESET_PASSWORD,
@@ -298,9 +299,12 @@ export const pauseDemo = async () => {
     .update({ user_demo_status_type_id: 'paused' })
     .eq('id', user_id);
   // end call if exists
-  // TODO - move to trigger function
-  await end_call();
-  return redirect(routeConsts.quincyAi);
+
+  return await sleep(1000).then(async () => {
+    // TODO - move to trigger function
+    await end_call();
+    return redirect(routeConsts.quincyAi);
+  });
 };
 
 export const requestContract = async () => {
@@ -316,9 +320,12 @@ export const requestContract = async () => {
     .update({ user_demo_status_type_id: 'finished' })
     .eq('id', user_id);
   // end call if exists
-  // TODO - move to trigger function
-  await end_call();
-  return redirect(`${routeConsts.quincyDemo}?requested=true`);
+
+  return await sleep(1000).then(async () => {
+    // TODO - move to trigger function
+    await end_call();
+    return redirect(`${routeConsts.quincyDemo}?requested=true`);
+  });
 };
 export const redirectToDemo = async () => {
   return redirect(routeConsts.quincyDemo);
@@ -334,7 +341,7 @@ export const startDemo = async () => {
 
   const { data: clinic_details } = await supabase
     .from('user_base_details')
-    .select('clinic_name, address, clinic_type')
+    .select('clinic_name, address, clinic_type_id')
     .eq('id', user_id)
     .limit(1)
     .single();

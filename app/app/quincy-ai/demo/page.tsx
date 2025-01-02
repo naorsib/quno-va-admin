@@ -7,8 +7,8 @@ import { DemoCall } from '@/components/quincy-demo/demo-call';
 import { DemoSuccessBox } from '@/components/quincy-demo/demo-success-box';
 import { ThankYouDialog } from '@/components/quincy-demo/thank-you-dialog';
 import SettingsSvgComponent from '@/components/react-svg-components/settings';
+import { SubmitButton } from '@/components/submit-button';
 import { H1, P } from '@/components/typography/text';
-import { Button } from '@/components/ui/button';
 import { routeConsts } from '@/consts/routing.const';
 import { InnerPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
@@ -78,27 +78,30 @@ export default async function QuincyDemoPage(props: {
           <div className="flex flex-1 flex-row items-center justify-between gap-3 lg:flex-initial">
             <H1 variant="innerPage">{t('title')}</H1>
             <form>
-              <Button
+              <SubmitButton
                 formAction={pauseDemo}
                 variant="link"
                 className="flex flex-row items-center gap-1 text-secondary-foreground hover:text-secondary hover:underline"
+                // eslint-disable-next-line unicorn/no-null
+                pendingText={null}
               >
                 <SettingsSvgComponent />
                 <P className="text-sm text-inherit">
                   {t(requested_contract ? 'restartDemo' : 'settingsLink')}
                 </P>
-              </Button>
+              </SubmitButton>
             </form>
           </div>
           <div className="hidden lg:block">
             <form>
-              <Button
+              <SubmitButton
                 formAction={requestContract}
+                pendingType="loader"
                 variant="secondary"
                 disabled={requested_contract}
               >
                 <P className="font-normal">{t('requestContractButton')}</P>
-              </Button>
+              </SubmitButton>
             </form>
           </div>
         </div>
@@ -112,14 +115,15 @@ export default async function QuincyDemoPage(props: {
 
       <div className="sticky bottom-3.5 lg:hidden">
         <form>
-          <Button
+          <SubmitButton
             variant="secondary"
             className="h-14 w-full"
+            pendingType="loader"
             formAction={requestContract}
             disabled={requested_contract}
           >
             <P className="font-normal">{t('requestContractButton')}</P>
-          </Button>
+          </SubmitButton>
         </form>
       </div>
     </div>

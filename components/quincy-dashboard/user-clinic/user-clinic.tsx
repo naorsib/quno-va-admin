@@ -1,4 +1,5 @@
 import { P } from '@/components/typography/text';
+import en from '@/messages/en.json';
 import { InnerPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
 
@@ -9,8 +10,7 @@ import {
 import { ClinicTypeForm } from './basic-details/clinic-type-form';
 
 export type UserClinicData = UserClinicBase & {
-  // TODO - maybe turn into enum using a lookup view
-  clinic_type?: string;
+  clinic_type_id: keyof typeof en.Enums.clinic_types;
 };
 
 type Props = {
@@ -18,12 +18,11 @@ type Props = {
   t: InnerPagesTrans<'quincy'>;
 };
 
-// TODO rename clinic_type to clinic_type_id, for consistency
 export async function UserClinic({ user_id, t }: Props) {
   const supabase = await createClient();
   const { data: clinic_details } = (await supabase
     .from('user_base_details')
-    .select('clinic_name, address, clinic_type')
+    .select('clinic_name, address, clinic_type_id')
     .eq('id', user_id)
     .limit(1)
     .single()) as { data: UserClinicData };
@@ -46,7 +45,7 @@ export async function UserClinic({ user_id, t }: Props) {
 
       <ClinicTypeForm
         className="mb-8 grid w-full max-w-xs grid-cols-1 gap-4 sm:max-w-lg sm:grid-cols-2"
-        clinic_type={clinic_details.clinic_type}
+        clinic_type_id={clinic_details.clinic_type_id}
         user_id={user_id}
       />
     </div>

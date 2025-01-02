@@ -143,7 +143,7 @@
       "hang_up_caller": "Caller hanged up",
       "phone_user_not_found": "Phone user not found. Could not associate the call with an active user"
     },
-    "clinic_type": {
+    "clinic_types": {
       "clinictype1": "Clinic Type1",
       "clinictype2": "Clinic Type2",
       "clinictype3": "Clinic Type3"
@@ -212,8 +212,8 @@
       "address_placeholder": "Potsdamer Str. 108, Berlin",
       "clinic_name": "Clinic Name",
       "clinic_name_placeholder": "Demo clinic",
-      "clinic_type": "Clinic Type",
-      "clinic_type_placeholder": "Select your clinic type",
+      "clinic_type_id": "Clinic Type",
+      "clinic_type_id_placeholder": "Select your clinic type",
       "confirmPassword": "Confirm Password",
       "email": "Business Email",
       "first_name": "First Name",
