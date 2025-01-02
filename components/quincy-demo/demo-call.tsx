@@ -54,9 +54,8 @@ function useSupabaseSubscription(initialCall: OngoingCall | null) {
 
   useEffect(() => {
     const setupSubscriptions = () => {
-      if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
-      }
+      subscriptionRef.current?.unsubscribe();
+
       // eslint-disable-next-line unicorn/prefer-ternary
       if (call) {
         subscriptionRef.current = supabase
@@ -109,29 +108,33 @@ function useSupabaseSubscription(initialCall: OngoingCall | null) {
 }
 
 export function DemoCall({ ongoingCall }: Props) {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { call, recentlyFinishedCallDuration } =
     useSupabaseSubscription(ongoingCall);
+
+  useEffect(() => setIsLoading(false), [setIsLoading]);
   const t = useTranslations(`InnerPages.quincyDemo`);
 
-  const renderCallContent = useMemo(
-    () => (
-      <div className="flex flex-col items-center">
+  const renderCallContent = () => (
+    <div className={'flex flex-col items-center'}>
+      <form>
         <SubmitButton
           formAction={insert_random_call_event}
           variant="link"
           className="cursor-pointer"
-          pendingText={call ? 'Recalculating...' : ''}
+          pendingText="Recalculating..."
         >
           Trigger fake call event (temporary - dev only)
         </SubmitButton>
-
-        <LabelWrapper className="text-successDarkr bg-successLight">
-          <PhoneSvgComponent className="text-success" />
-          <P>{t('incomingCall')}</P>
-          {call && (
-            <StopWatch elapsedOnStart={secondsFromDate(call.created_at)} />
-          )}
-        </LabelWrapper>
+      </form>
+      <LabelWrapper className="text-successDarkr bg-successLight">
+        <PhoneSvgComponent className="text-success" />
+        <P>{t('incomingCall')}</P>
+        {call && (
+          <StopWatch elapsedOnStart={secondsFromDate(call.created_at)} />
+        )}
+      </LabelWrapper>
+      <form>
         <SubmitButton
           formAction={end_call}
           variant="link"
@@ -140,14 +143,13 @@ export function DemoCall({ ongoingCall }: Props) {
         >
           Fake call end (temporary - dev only)
         </SubmitButton>
-      </div>
-    ),
-    [call, t],
+      </form>
+    </div>
   );
 
-  const renderWaitingContent = useMemo(
-    () => (
-      <>
+  const renderWaitingContent = () => (
+    <>
+      <form>
         <SubmitButton
           formAction={initiateCallFromClient}
           variant="link"
@@ -156,19 +158,22 @@ export function DemoCall({ ongoingCall }: Props) {
         >
           Fake call start (temporary - dev only)
         </SubmitButton>
-
-        <LabelWrapper className="bg-border">
-          <LoaderSvgComponent className="text-secondary" />
-          <P className="text-label">{t('waitingForCallsButton')}</P>
-        </LabelWrapper>
-      </>
-    ),
-    [t],
+      </form>
+      <LabelWrapper className="bg-border">
+        <LoaderSvgComponent className="text-secondary" />
+        <P className="text-label">{t('waitingForCallsButton')}</P>
+      </LabelWrapper>
+    </>
   );
 
   return (
-    <form className="flex flex-col items-center">
-      {call ? renderCallContent : renderWaitingContent}
+    <div
+      className={cn(
+        'flex flex-col items-center',
+        isLoading ? 'point-events-none opacity-50' : '',
+      )}
+    >
+      {call ? renderCallContent() : renderWaitingContent()}
       {recentlyFinishedCallDuration && (
         <LabelWrapper className="text-destructive">
           <DialSvgComponent />
@@ -176,7 +181,7 @@ export function DemoCall({ ongoingCall }: Props) {
           <div>{secondsToTime(recentlyFinishedCallDuration)}</div>
         </LabelWrapper>
       )}
-    </form>
+    </div>
   );
 }
 

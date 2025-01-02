@@ -408,6 +408,7 @@ export const insert_random_call_event = async () => {
   } catch (error) {
     console.error('FATAL ERROR:', error);
   }
+  await sleep(1000);
 };
 
 export const end_call = async () => {
@@ -526,7 +527,7 @@ export const start_call = async (payload?: { phone: string }) => {
 
 const get_phone_user = async (phone: string) => {
   const supabase = await createAdminClient();
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('user_base_details')
     .select('id, clinic_name, address, clinic_type_id, first_name, last_name')
     // TODO - inner-join with past appointments and return along with a user-related call_context
