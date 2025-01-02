@@ -3,9 +3,12 @@ import PhoneSvgComponent from '@/components/react-svg-components/phone';
 import { P } from '@/components/typography/text';
 import { parsePhone } from '@/utils/utils';
 
-type Props = QuincyDemoPropsBase & { phone: string };
+// TODO - Only good for initial demo, afterwards, we might want to apply a different phone assignment strategy
+const SINGLE_PHONE = '17754753378';
 
-export async function DemoSuccessBox({ phone, requested_contract, t }: Props) {
+type Props = QuincyDemoPropsBase;
+
+export async function DemoSuccessBox({ requested_contract, t }: Props) {
   return (
     <>
       <div className="flex w-full flex-col items-center gap-4 rounded border border-successDark bg-successLight px-10 py-5">
@@ -25,7 +28,7 @@ export async function DemoSuccessBox({ phone, requested_contract, t }: Props) {
               <P className="text-base/6">{t('innerBoxText2')}</P>
             </div>
             <P fontFamily="roboto" className="text-2xl font-bold">
-              +{parsePhone(phone)}
+              +{parsePhone(SINGLE_PHONE)}
             </P>
           </>
         )}

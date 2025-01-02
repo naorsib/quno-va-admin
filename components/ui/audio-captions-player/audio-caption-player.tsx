@@ -35,7 +35,7 @@ interface DialEventCaption extends BaseCaption {
 
 interface CallEventCaption extends BaseCaption {
   type: 'call_event';
-  callEventType: keyof typeof en.CallEventBoxes;
+  callEventType: keyof typeof en.CallEventLogBoxes;
   time: string;
 }
 
@@ -46,7 +46,7 @@ export type Caption =
   | CallEventCaption;
 
 const callEventTypeToIconMap: Record<
-  keyof typeof en.CallEventBoxes,
+  keyof typeof en.CallEventLogBoxes,
   React.ComponentType
 > = {
   schedule_appointment: DialSvgComponent,

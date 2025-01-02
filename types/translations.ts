@@ -30,6 +30,13 @@ export type InnerPagesTrans<P extends InnerPagesNames> = GenericTrans<
   keyof (typeof innerPages)[P]
 >;
 
+const dialogs = en.Dialogs;
+type DialogsNames = keyof typeof dialogs;
+
+export type DialogsTrans<P extends DialogsNames> = GenericTrans<
+  keyof (typeof dialogs)[P]
+>;
+
 const buttons = en.Forms.buttons;
 type ButtonsNames = keyof typeof buttons;
 

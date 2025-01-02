@@ -31,6 +31,7 @@ type GetSickLeaveAdditions = {
 
 type DoctorCallAdditions = {
   doctor_full_name: string;
+  note: string;
 };
 
 export type CallEvent<T extends CallEventTypes> = {

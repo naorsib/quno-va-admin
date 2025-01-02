@@ -6,14 +6,15 @@ import {
   ComponentProps,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 
 import {
   end_call,
+  initiateCallFromClient,
   insert_random_call_event,
-  start_call,
 } from '@/app/random-call-events-actions';
 import DialSvgComponent from '@/components/react-svg-components/dial';
 import LoaderSvgComponent from '@/components/react-svg-components/loader';
@@ -26,149 +27,154 @@ import { createClient } from '@/utils/supabase/client';
 import { secondsFromDate, secondsToTime } from '@/utils/utils';
 
 export type OngoingCall = {
-  userOngoingCallId: number;
-  callStartTime: Date;
+  id: number;
+  created_at: Date;
 };
 
 type Props = {
-  ongoingCall?: OngoingCall;
+  ongoingCall: OngoingCall | null;
 };
 
-export function DemoCall({ ongoingCall }: Props) {
-  const [call, setCall] = useState(ongoingCall);
+function useSupabaseSubscription(initialCall: OngoingCall | null) {
+  const [call, setCall] = useState<OngoingCall | null>(initialCall);
   const [recentlyFinishedCallDuration, setRecentlyFinishedCallDuration] =
     useState<number | undefined>();
+  const supabase = useMemo(() => createClient(), []);
+  const subscriptionRef = useRef<RealtimeChannel | undefined>(undefined);
 
-  const supabase = createClient();
-  const t = useTranslations(`InnerPages.quincyDemo`);
-
-  const updateSubscriptionRef = useRef<RealtimeChannel | undefined>(undefined);
-  const insertSubscriptionRef = useRef<RealtimeChannel | undefined>(undefined);
-
-  const listenToCallEnd = useCallback(
-    (incomingCallId: number) => {
-      return supabase
-        .channel(`call_end_${incomingCallId}`)
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'incoming_demo_calls',
-            filter: `id=eq.${incomingCallId}`,
-          },
-          () => {
-            if (call) {
-              setRecentlyFinishedCallDuration(
-                secondsFromDate(call.callStartTime),
-              );
-            }
-            updateSubscriptionRef.current?.unsubscribe();
-            setCall(undefined);
-          },
-        )
-        .subscribe(console.log);
+  const updateState = useCallback(
+    (newCall: OngoingCall | null, duration?: number) => {
+      requestAnimationFrame(() => {
+        setCall(newCall);
+        setRecentlyFinishedCallDuration(duration);
+      });
     },
-    [call, supabase],
+    [],
   );
 
-  const listenToCallIncoming = useCallback(() => {
-    return supabase
-      .channel('incoming_demo_calls')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'incoming_demo_calls' },
-        payload => {
-          insertSubscriptionRef.current?.unsubscribe();
-          setCall({
-            userOngoingCallId: payload.new.id,
-            callStartTime: new Date(payload.new.created_at),
-          });
-        },
-      )
-      .subscribe(console.log);
-  }, [supabase]);
-
   useEffect(() => {
-    if (call) {
-      updateSubscriptionRef.current?.unsubscribe();
-      updateSubscriptionRef.current = listenToCallEnd(call.userOngoingCallId);
-
-      //TODO - This is not relevant for after development stage and can be safely removed
-      if (secondsFromDate(call.callStartTime) > 3599) {
-        end_call();
+    const setupSubscriptions = () => {
+      if (subscriptionRef.current) {
+        subscriptionRef.current.unsubscribe();
       }
-    } else {
-      insertSubscriptionRef.current?.unsubscribe();
-      insertSubscriptionRef.current = listenToCallIncoming();
-    }
+
+      if (call) {
+        console.log(`renderin new call! ${call?.id}`);
+        subscriptionRef.current = supabase
+          .channel(`call_end_${call.id}`)
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'incoming_demo_calls',
+              filter: `id=eq.${call.id}`,
+            },
+            payload => {
+              if (!payload.old.ended_at && payload.new.ended_at) {
+                // eslint-disable-next-line unicorn/no-null
+                updateState(null, secondsFromDate(call.created_at));
+              }
+            },
+          )
+          .subscribe();
+      } else {
+        subscriptionRef.current = supabase
+          .channel('incoming_calls')
+          .on(
+            'postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'incoming_demo_calls' },
+            payload => {
+              if (!payload.old.associated_with) {
+                updateState({
+                  id: payload.new.id,
+                  created_at: new Date(payload.new.created_at),
+                });
+              }
+            },
+          )
+          .subscribe();
+      }
+    };
+
+    setupSubscriptions();
 
     return () => {
-      updateSubscriptionRef.current?.unsubscribe();
-      insertSubscriptionRef.current?.unsubscribe();
+      if (subscriptionRef.current) {
+        subscriptionRef.current.unsubscribe();
+      }
     };
-  }, [call, listenToCallEnd, listenToCallIncoming]);
+  }, [call, supabase, updateState]);
+
+  return { call, recentlyFinishedCallDuration };
+}
+
+export function DemoCall({ ongoingCall }: Props) {
+  const { call, recentlyFinishedCallDuration } =
+    useSupabaseSubscription(ongoingCall);
+  const t = useTranslations(`InnerPages.quincyDemo`);
+
+  const renderCallContent = useMemo(
+    () => (
+      <div className="flex flex-col items-center">
+        <SubmitButton
+          formAction={insert_random_call_event}
+          variant="link"
+          className="cursor-pointer"
+        >
+          Trigger fake call event (temporary - dev only)
+        </SubmitButton>
+
+        <LabelWrapper className="text-successDarkr bg-successLight">
+          <PhoneSvgComponent className="text-success" />
+          <P>{t('incomingCall')}</P>
+          {call && (
+            <StopWatch elapsedOnStart={secondsFromDate(call.created_at)} />
+          )}
+        </LabelWrapper>
+        <SubmitButton
+          formAction={end_call}
+          variant="link"
+          className="cursor-pointer"
+        >
+          Fake call end (temporary - dev only)
+        </SubmitButton>
+      </div>
+    ),
+    [call, t],
+  );
+
+  const renderWaitingContent = useMemo(
+    () => (
+      <>
+        <SubmitButton
+          formAction={initiateCallFromClient}
+          variant="link"
+          className="cursor-pointer"
+        >
+          Fake call start (temporary - dev only)
+        </SubmitButton>
+
+        <LabelWrapper className="bg-border">
+          <LoaderSvgComponent className="animate-loader-spin" />
+          <P className="text-label">{t('waitingForCallsButton')}</P>
+        </LabelWrapper>
+      </>
+    ),
+    [t],
+  );
 
   return (
-    <>
-      {call ? (
-        <>
-          <div className="flex flex-col items-center">
-            <form className="flex flex-col items-center">
-              <SubmitButton
-                formAction={insert_random_call_event}
-                variant="link"
-                className="cursor-pointer"
-              >
-                Trigger fake call event (temporary - dev only)
-              </SubmitButton>
-
-              <LabelWrapper className="text-successDarkr bg-successLight">
-                <PhoneSvgComponent className="text-success" />
-                <P>{t('incomingCall')}</P>
-                <StopWatch
-                  elapsedOnStart={secondsFromDate(call.callStartTime)}
-                />
-              </LabelWrapper>
-              <SubmitButton
-                formAction={end_call}
-                variant="link"
-                className="cursor-pointer"
-              >
-                Fake call end (temporary - dev only)
-              </SubmitButton>
-            </form>
-          </div>
-        </>
-      ) : (
-        <>
-          <form>
-            <SubmitButton
-              formAction={start_call}
-              variant="link"
-              className="cursor-pointer"
-            >
-              Fake call start (temporary - dev only)
-            </SubmitButton>
-          </form>
-
-          <LabelWrapper className="bg-border">
-            <LoaderSvgComponent className="animate-loader-spin" />
-            <P className="text-base text-label lg:text-lg">
-              {t('waitingForCallsButton')}
-            </P>
-          </LabelWrapper>
-        </>
-      )}
+    <form className="flex flex-col items-center">
+      {call ? renderCallContent : renderWaitingContent}
       {recentlyFinishedCallDuration && (
-        <LabelWrapper className="bg-destructive/40 text-destructive">
+        <LabelWrapper className="text-destructive">
           <DialSvgComponent />
           <P>{t('callEnded')}</P>
-
           <div>{secondsToTime(recentlyFinishedCallDuration)}</div>
         </LabelWrapper>
       )}
-    </>
+    </form>
   );
 }
 
@@ -177,7 +183,7 @@ function LabelWrapper({ className, children }: LabelWrapperProps) {
   return (
     <div
       className={cn(
-        'rounded-[40px] bg-destructive/40 px-4 py-3 text-destructive lg:px-6 lg:py-4',
+        'rounded-[40px] px-4 py-3 text-base text-destructive lg:px-6 lg:py-4 lg:text-lg',
         className,
       )}
     >

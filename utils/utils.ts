@@ -21,6 +21,7 @@ export const parsePhone = (phone: string) => {
 
 export const secondsFromDate = (date: Date) => {
   const now = new Date();
+
   const milliDiff: number = now.getTime() - date.getTime();
 
   return Math.abs(Math.floor(milliDiff / 1000));

@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/no-null */
 'use server';
-
 import { PostgrestError } from '@supabase/supabase-js';
+import { getTranslations } from 'next-intl/server';
 
 import { UserCallEvent } from '@/components/quincy-dashboard/user-services/user-call-event-item';
 import en from '@/messages/en.json';
@@ -25,16 +25,18 @@ const insertDoctorCallCallTypeEvent: RandEventFunction = async (
   user_id: string,
   active_call_id: number,
 ) => {
+  const t: any = await getTranslations('CallAssistives');
   const supabase_admin = await createAdminClient();
 
   const doctor_full_name = 'Dr. john Doe';
-
+  const note = Math.random() ? 'I left something at your office' : null;
   const { data, error } = await supabase_admin.rpc(
     'insert_doctor_call_call_type_event',
     {
       active_call_id,
       user_id,
       doctor_full_name,
+      not: note || t('doctorNoteDefault'),
     },
   );
   if (error) {
@@ -249,15 +251,14 @@ async function getUserActiveCallId(
 
   const { data: incomingDemoCall, error: incomingError } = (await supabase_admin
     .from('incoming_demo_calls')
-    .select('id, demo_service_phone_assignments(*), ended_at')
+    .select('id, ended_at, associated_with')
     .is('ended_at', null)
-    .eq('demo_service_phone_assignments.assigned_to', user_id)
-    .eq('demo_service_phone_assignments.is_deleted', false)
+    .eq('associated_with', user_id)
     .limit(1)
     .maybeSingle()) as { data?: { id: number }; error?: PostgrestError | null };
 
   if (incomingError) {
-    throw `Error fetching incoming demo calls: ${incomingError}`;
+    throw `Error fetching incoming calls for user: ${JSON.stringify(incomingError)}`;
   }
 
   return incomingDemoCall?.id;
@@ -344,11 +345,11 @@ export const insert_random_call_event = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const userId = user?.id as string;
+  const user_id = user?.id as string;
 
   try {
     const active_call_id: number | undefined =
-      await getUserActiveCallId(userId);
+      await getUserActiveCallId(user_id);
 
     if (!active_call_id) {
       throw 'No active incoming call for user!';
@@ -357,7 +358,7 @@ export const insert_random_call_event = async () => {
     const { data: enabled_user_call_events, error } = (await supabase
       .from('user_call_events')
       .select('id, call_event_type_id, is_enabled')
-      .eq('user_id', userId)
+      .eq('user_id', user_id)
       .eq('is_enabled', true)
       .order('id')) as {
       data?: UserCallEvent[];
@@ -389,7 +390,7 @@ export const insert_random_call_event = async () => {
       try {
         await insertionFunctionMap[
           radomlySelectedEvent.call_event_type_id as CallEventTypes
-        ](userId, active_call_id);
+        ](user_id, active_call_id);
         console.log(
           `Successfully inserted call event ${radomlySelectedEvent.call_event_type_id}`,
         );
@@ -410,16 +411,16 @@ export const insert_random_call_event = async () => {
 };
 
 export const end_call = async () => {
-  // we assume here there user is logged in
+  // we assume here there user is logged in. It is okay becuase the method only really exist for development purposes
   console.log('attempting call end');
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const userId = user?.id as string;
+  const user_id = user?.id as string;
   try {
     const active_call_id: number | undefined =
-      await getUserActiveCallId(userId);
+      await getUserActiveCallId(user_id);
 
     if (!active_call_id) {
       throw 'No active incoming call for user!';
@@ -435,41 +436,103 @@ export const end_call = async () => {
       throw error;
     }
     console.log('end_call_result:', data);
+    console.log('error', error);
   } catch (error) {
     console.error('FATAL ERROR:', error);
   }
 };
 
-export const start_call = async () => {
-  // we assume here there user is logged in
+// TODO This only for tests and should at some point be removed
+export const initiateCallFromClient = async () => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const userId = user?.id as string;
-  try {
-    const existingNonDeletedDemo = await supabase
-      .from('demo_service_phone_assignments')
-      .select('id, phone, is_deleted')
-      .eq('is_deleted', false)
-      .eq('assigned_to', userId)
-      .limit(1)
-      .maybeSingle();
 
-    if (!existingNonDeletedDemo) {
-      throw 'No existing active for user!';
-    }
+  const phone = user?.user_metadata.phone;
+  return start_call({ phone });
+};
 
-    const supabase_admin = await createAdminClient();
-    const demo_service_phone_assignment_id = existingNonDeletedDemo.data?.id;
-    const { data, error } = await supabase_admin
-      .from('incoming_demo_calls')
-      .insert({ demo_service_phone_assignment_id });
-    if (error) {
-      throw error;
-    }
-    console.log('start_call_result:', data);
-  } catch (error) {
-    console.error('FATAL ERROR:', error);
+// TODO This is only good right now. For later (non-finite/stable) phases, this function will probably reside in a different project and `payload.phone` would be mandatory
+export const start_call = async (payload?: { phone: string }) => {
+  const supabase_admin = await createAdminClient();
+  const supabase = await createClient();
+  //TODO - Export to env var and also maybe make environment-dependant to make fake dev calls possible
+  const isReceivingRealCalls = false;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  // TODO - Replace with real call metadata
+  const call_metadata = {};
+  const phone = isReceivingRealCalls
+    ? await (
+        await supabase.auth.getUser()
+      ).data.user?.user_metadata.phone
+    : payload?.phone;
+
+  if (!phone) {
+    throw `Incoming phone number is missing`;
   }
+
+  const { data: incoming_call, error: creation_error } = (await supabase_admin
+    .from('incoming_demo_calls')
+    .insert({ phone, call_metadata })
+    .select('id')
+    .single()) as {
+    data: { id: number };
+    error: PostgrestError | null;
+  };
+
+  const phone_user = await get_phone_user(phone);
+  if (creation_error) {
+    throw `Something went really wrong, the incoming_call couldn't be created. this can enver happen!. phone: ${phone}, call_metadata:{${call_metadata}}`;
+  }
+
+  try {
+    if (phone_user?.id) {
+      const { data: call_update, error: call_update_error } =
+        await supabase_admin
+          .from('incoming_demo_calls')
+          .update({
+            associated_with: phone_user.id,
+            call_context: { user: phone_user },
+          })
+          .eq('id', incoming_call.id);
+
+      // return {incoming_call_id: incoming_call.id}
+      if (call_update_error) {
+      }
+    } else {
+      throw {
+        type: 'phone_user_not_found',
+        message:
+          'Incoming phone number is not associated with any clinic(user) in the database',
+      };
+    }
+  } catch (error: any) {
+    const initError = error?.message || error || '';
+    const call_termination_reason_type_id = error?.type || 'unexpected_error';
+    const metadata_with_error = Object.assign(call_metadata, initError);
+
+    await supabase_admin
+      .from('incoming_demo_calls')
+      .update({
+        call_termination_reason_type_id,
+        call_metadata: metadata_with_error,
+      })
+      .eq('id', `${incoming_call.id}`);
+  }
+};
+
+const get_phone_user = async (phone: string) => {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase
+    .from('user_base_details')
+    .select('id, clinic_name, address, clinic_type, first_name, last_name')
+    // TODO - inner-join with past appointments and return along with a user-related call_context
+    .eq('phone', phone)
+    .limit(1)
+    .maybeSingle();
+
+  return data;
 };

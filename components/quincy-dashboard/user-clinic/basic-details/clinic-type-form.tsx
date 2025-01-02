@@ -36,7 +36,7 @@ type ClinicTypeDetails = {
 
 type Props = ComponentProps<'div'> & {
   clinic_type?: string;
-  userId: string;
+  user_id: string;
 };
 
 const useValidationSchema = (
@@ -48,7 +48,7 @@ const useValidationSchema = (
   });
 };
 
-export function ClinicTypeForm({ clinic_type, userId, ...props }: Props) {
+export function ClinicTypeForm({ clinic_type, user_id, ...props }: Props) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastClinicType, setLastClinicType] = useState(clinic_type || '');
 
@@ -79,7 +79,7 @@ export function ClinicTypeForm({ clinic_type, userId, ...props }: Props) {
       const { error } = await supabase
         .from('user_base_details')
         .update({ clinic_type })
-        .eq('id', userId);
+        .eq('id', user_id);
 
       if (error) {
         // revert failed action

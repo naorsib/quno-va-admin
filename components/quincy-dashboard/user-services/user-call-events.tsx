@@ -3,15 +3,14 @@ import { createClient } from '@/utils/supabase/server';
 import { UserCallEvent, UserCallEventItem } from './user-call-event-item';
 
 type Props = {
-  userId: string;
+  user_id: string;
 };
-
-export async function UserCallEvents({ userId }: Props) {
+export async function UserCallEvents({ user_id }: Props) {
   const supabase = await createClient();
   const { data: user_call_events } = (await supabase
     .from('user_call_events')
     .select('id, call_event_type_id, is_enabled')
-    .eq('user_id', userId)
+    .eq('user_id', user_id)
     .order('id')) as { data: UserCallEvent[] };
 
   return (

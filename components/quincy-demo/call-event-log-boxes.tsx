@@ -200,7 +200,7 @@ export function GetSickLeaveCallEventLogBox({
 }: GetSickLeaveCallEventLogBoxProps) {
   return (
     <>
-      {t(`CallEventBoxes.${call_event.call_event_type_id}.patientDescribed`)}{' '}
+      {t(`CallEventLogBoxes.${call_event.call_event_type_id}.patientDescribed`)}{' '}
       <b>
         {call_event.extra_data.disease_symptom_type_ids
           .map(s => t(`Enums.disease_symptom_types.${s}`))
@@ -213,7 +213,14 @@ export function DoctorCallCallEventLogBox({
   call_event,
   t,
 }: DoctorCallCallEventLogBoxProps) {
-  return <>text2</>;
+  return (
+    <>
+      {t(`CallEventLogBoxes.${call_event.call_event_type_id}.forDoctor`, {
+        doctorName: call_event.extra_data.doctor_full_name,
+      })}{' '}
+      {call_event.extra_data.note}
+    </>
+  );
 }
 
 type WrapperProps = ComponentProps<'div'> &
@@ -243,13 +250,13 @@ function CallEventLogBoxWrapper({
         <Cmp
           height="25"
           width="25"
-          desc={t(`CallEventBoxes.${call_event.call_event_type_id}.title`)}
+          desc={t(`CallEventLogBoxes.${call_event.call_event_type_id}.title`)}
           desc_id={call_event.call_event_type_id}
         />
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex w-full flex-row items-center justify-between gap-2">
             <P className="font-bold">
-              {t(`CallEventBoxes.${call_event.call_event_type_id}.title`)}
+              {t(`CallEventLogBoxes.${call_event.call_event_type_id}.title`)}
             </P>
             <P fontFamily="roboto" className="text-hero-description">
               <label className="hidden md:block">

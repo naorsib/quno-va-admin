@@ -1,4 +1,5 @@
-import { QuincyDemoPropsBase } from '@/app/app/quincy-ai/demo/page';
+import { getTranslations } from 'next-intl/server';
+
 import { P } from '@/components/typography/text';
 import {
   Dialog,
@@ -6,16 +7,19 @@ import {
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { DialogsTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
 
 export async function ThankYouDialog({
-  requested_contract,
-  t,
-}: QuincyDemoPropsBase) {
+  should_show,
+}: {
+  should_show: boolean;
+}) {
   const supabase = await createClient();
-
+  const t: DialogsTrans<'thank_you'> =
+    await getTranslations(`Dialogs.thank_you`);
   return (
-    requested_contract && (
+    should_show && (
       <Dialog defaultOpen={true}>
         <DialogContent aria-describedby={t('dialogSubtitle')}>
           <div className="mt-1 flex flex-col items-center gap-3 text-center">

@@ -1,57 +1,4 @@
 {
-  "CallEvents": {
-    "schedule_appointment": {
-      "info": "Enable patients to schedule appointments effortlessly through an automated call, reducing staff workload and wait times",
-      "title": "Book Appointment"
-    },
-    "cancel_appointment": {
-      "info": "Streamline appointment cancellations with automated calls, freeing up slots instantly for other patients.",
-      "title": "Cancel Appointment"
-    },
-    "reschedule_appointment": {
-      "info": "Allow patients to reschedule appointments with ease, improving scheduling flexibility and clinic efficiency.",
-      "title": "Reschedule appointment"
-    },
-
-    "prescription_renewal": {
-      "info": "Simplify prescription renewals via automated calls, saving time for both patients and clinic staff.",
-      "title": "Perscription renewal"
-    },
-    "get_sick_leave": {
-      "info": "Automate patient requests for sick notes, ensuring quick processing without burdening staff.",
-      "title": "Get a sick note"
-    },
-    "doctor_call": {
-      "info": "Let patients request doctor callbacks seamlessly, enhancing communication and patient satisfaction.",
-      "title": "Doctor callback"
-    }
-  },
-  "CallEventBoxes": {
-    "schedule_appointment": {
-      "info": "Enable patients to schedule appointments effortlessly through an automated call, reducing staff workload and wait times",
-      "title": "Appointment scheduled"
-    },
-    "cancel_appointment": {
-      "info": "Streamline appointment cancellations with automated calls, freeing up slots instantly for other patients.",
-      "title": "Appointment cancelled"
-    },
-    "reschedule_appointment": {
-      "info": "Allow patients to reschedule appointments with ease, improving scheduling flexibility and clinic efficiency.",
-      "title": "Appointment rescheduled"
-    },
-    "prescription_renewal": {
-      "info": "info",
-      "title": "Perscription renew"
-    },
-    "get_sick_leave": {
-      "patientDescribed": "Patient described symptoms as",
-      "title": "Sick note request"
-    },
-    "doctor_call": {
-      "info": "Let patients request doctor callbacks seamlessly, enhancing communication and patient satisfaction.",
-      "title": "Doctor callback request"
-    }
-  },
   "Auth": {
     "googleButton": {
       "text": {
@@ -118,6 +65,65 @@
       }
     }
   },
+
+  "CallAssistives": {
+    "INFO": "THIS IS PROBABLY GOING TO MOVE TO A SEPARATE PROJECT/REPO",
+    "doctorNoteDefault": "Please call me back as soon as possible, this is URGENT!"
+  },
+  "CallEvents": {
+    "schedule_appointment": {
+      "info": "Enable patients to schedule appointments effortlessly through an automated call, reducing staff workload and wait times",
+      "title": "Book Appointment"
+    },
+    "cancel_appointment": {
+      "info": "Streamline appointment cancellations with automated calls, freeing up slots instantly for other patients.",
+      "title": "Cancel Appointment"
+    },
+    "reschedule_appointment": {
+      "info": "Allow patients to reschedule appointments with ease, improving scheduling flexibility and clinic efficiency.",
+      "title": "Reschedule appointment"
+    },
+
+    "prescription_renewal": {
+      "info": "Simplify prescription renewals via automated calls, saving time for both patients and clinic staff.",
+      "title": "Perscription renewal"
+    },
+    "get_sick_leave": {
+      "info": "Automate patient requests for sick notes, ensuring quick processing without burdening staff.",
+      "title": "Get a sick note"
+    },
+    "doctor_call": {
+      "info": "Let patients request doctor callbacks seamlessly, enhancing communication and patient satisfaction.",
+      "title": "Doctor callback"
+    }
+  },
+  "CallEventLogBoxes": {
+    "schedule_appointment": {
+      "info": "Enable patients to schedule appointments effortlessly through an automated call, reducing staff workload and wait times",
+      "title": "Appointment scheduled"
+    },
+    "cancel_appointment": {
+      "info": "Streamline appointment cancellations with automated calls, freeing up slots instantly for other patients.",
+      "title": "Appointment cancelled"
+    },
+    "reschedule_appointment": {
+      "info": "Allow patients to reschedule appointments with ease, improving scheduling flexibility and clinic efficiency.",
+      "title": "Appointment rescheduled"
+    },
+    "prescription_renewal": {
+      "info": "info",
+      "title": "Perscription renew"
+    },
+    "get_sick_leave": {
+      "patientDescribed": "Patient described symptoms as",
+      "title": "Sick note request"
+    },
+    "doctor_call": {
+      "forDoctor": "For {doctorName}:",
+      "info": "Let patients request doctor callbacks seamlessly, enhancing communication and patient satisfaction.",
+      "title": "Doctor callback request"
+    }
+  },
   "Enums": {
     "appointment_types": {
       "first_consultation": "First consultation",
@@ -131,6 +137,11 @@
       "prescription_renewal": "Prescription renewal",
       "get_sick_leave": "Getting a sick leave",
       "doctor_call": "Leave a doctor note"
+    },
+    "call_termination_reason_types": {
+      "hang_up_agent": "Agent hanged up",
+      "hang_up_caller": "Caller hanged up",
+      "phone_user_not_found": "Phone user not found. Could not associate the call with an active user"
     },
     "clinic_type": {
       "clinictype1": "Clinic Type1",
@@ -146,6 +157,12 @@
       "ibuprofen": "Ibuprofen",
       "prep": "Prep",
       "ritalin": "Ritalin"
+    }
+  },
+  "Dialogs": {
+    "thank_you": {
+      "dialogTitle": "Thanks for your request!",
+      "dialogSubtitle": "Our account managers will reach out to you shortly!"
     }
   },
   "Errors": {
@@ -218,12 +235,11 @@
       "callEnded": "Call Ended",
       "contractRequested": "Contract Requested",
       "contractRequestedInfo": "We will reach out to you shortly!",
-      "dialogTitle": "Thanks for your request!",
-      "dialogSubtitle": "Our account managers will reach out to you shortly!",
       "incomingCall": "Incoming Call",
       "innerBoxText1": "Your demo is ready",
       "innerBoxText2": "Call this number from the phone you used to register and see it working",
       "requestContractButton": "Request Contract",
+      "restartDemo": "Restart Demo",
       "settingsLink": "Settings",
       "title": "Quincy demo",
       "waitingForCallsButton": "Waiting for Calls"

@@ -32,7 +32,7 @@ export function StopWatch({ elapsedOnStart = 0 }: StopWatchProps) {
   }, [elapsedOnStart]);
 
   return (
-    <div className="w-12">
+    <div className="w-14">
       {timeElapsedInSeconds ? (
         <div> {secondsToTime(timeElapsedInSeconds)}</div>
       ) : (

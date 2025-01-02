@@ -15,7 +15,6 @@ import {
 import { routeConsts } from '@/consts/routing.const';
 import { FormFieldsTrans } from '@/lib/validations';
 import { ErrorsTrans } from '@/types/translations';
-import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
 
@@ -286,6 +285,24 @@ export const resetPasswordAction = async (formData: FormData) => {
   encodedRedirect('success', routeConsts.resetPassword, 'true');
 };
 
+export const pauseDemo = async () => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const user_id = user?.id as string;
+  const { error } = await supabase
+    .from('user_base_details')
+    .update({ user_demo_status_type_id: 'paused' })
+    .eq('id', user_id);
+  // end call if exists
+  // TODO - move to trigger function
+  await end_call();
+  return redirect(routeConsts.quincyAi);
+};
+
 export const requestContract = async () => {
   const supabase = await createClient();
 
@@ -293,15 +310,14 @@ export const requestContract = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const userId = user?.id as string;
-  const { data, error } = await supabase
+  const user_id = user?.id as string;
+  const { error } = await supabase
     .from('user_base_details')
-    .update({ requested_contract: true })
-    .eq('id', userId)
-    .select();
+    .update({ user_demo_status_type_id: 'finished' })
+    .eq('id', user_id);
   // end call if exists
+  // TODO - move to trigger function
   await end_call();
-
   return redirect(`${routeConsts.quincyDemo}?requested=true`);
 };
 export const redirectToDemo = async () => {
@@ -314,17 +330,21 @@ export const startDemo = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const userId = user?.id as string;
+  const user_id = user?.id as string;
 
   const { data: clinic_details } = await supabase
     .from('user_base_details')
     .select('clinic_name, address, clinic_type')
-    .eq('id', userId)
+    .eq('id', user_id)
     .limit(1)
     .single();
 
   const tFields: FormFieldsTrans = await getTranslations('Forms.fields');
-  const updateObject = {};
+
+  const updateObject = Object.assign(
+    {},
+    { user_demo_status_type_id: 'ongoing' },
+  );
   if (!clinic_details?.clinic_name) {
     Object.assign(updateObject, {
       clinic_name: tFields('clinic_name_placeholder'),
@@ -333,74 +353,77 @@ export const startDemo = async () => {
   if (!clinic_details?.address) {
     Object.assign(updateObject, { address: tFields('address_placeholder') });
   }
-  console.log('updateObj', updateObject);
-  if (Object.keys(updateObject).length > 0) {
-    const { data, error } = await supabase
-      .from('user_base_details')
-      .update(updateObject)
-      .eq('id', userId)
-      .select();
-  }
 
-  const supabase_admin = await createAdminClient();
-  const existingNonDeletedDemo = await supabase_admin
-    .from('demo_service_phone_assignments')
-    .select('id, is_deleted')
-    .eq('is_deleted', false)
-    .eq('assigned_to', userId)
-    .limit(1)
-    .maybeSingle();
+  const { error } = await supabase
+    .from('user_base_details')
+    .update(updateObject)
+    .eq('id', user_id);
+
+  return error
+    ? redirect(routeConsts.signIn)
+    : redirect(routeConsts.quincyDemo);
+  // const supabase_admin = await createAdminClient();
+  // const existingNonDeletedDemo = await supabase_admin
+  //   .from('demo_service_phone_assignments')
+  //   .select('id, is_deleted')
+  //   .eq('is_deleted', false)
+  //   .eq('assigned_to', userId)
+  //   .limit(1)
+  //   .maybeSingle();
 
   // this should never happen unless the user is trying to be malicious
-  if (existingNonDeletedDemo.data) {
-    return redirect(routeConsts.quincyDemo);
-  }
-  // get a non-assigned phone or the longest assigned one
-  const { data: phone_assignment } = await supabase_admin
-    .from('demo_service_phone_assignments')
-    .select('id, phone, assigned_at')
-    .eq('is_deleted', false)
-    .order('assigned_at', {
-      nullsFirst: true,
-      ascending: true,
-    })
-    .limit(1)
-    .single();
+  // if (existingNonDeletedDemo.data) {
+  //   return redirect(routeConsts.quincyDemo);
+  // }
+  // // get a non-assigned phone or the longest assigned one
+  // const { data: phone_assignment, error: phone_assignment_err } =
+  //   await supabase_admin
+  //     .from('demo_service_phone_assignments')
+  //     .select('id, phone, assigned_at')
+  //     .eq('is_deleted', false)
+  //     .order('assigned_at', {
+  //       nullsFirst: true,
+  //       ascending: true,
+  //     })
+  //     .limit(1)
+  //     .single();
+  // console.log(phone_assignment);
+  // console.log(phone_assignment_err);
+  // if (phone_assignment) {
+  //   const assigned_at = new Date().toISOString();
 
-  if (phone_assignment) {
-    const assigned_at = new Date().toISOString();
+  //   if (phone_assignment.assigned_at == undefined) {
+  //     // update existing non-assigned phone record
+  //     const res = await supabase
+  //       .from('demo_service_phone_assignments')
+  //       .update({
+  //         assigned_at,
+  //         assigned_to: userId,
+  //       })
+  //       .eq('id', phone_assignment.id);
+  //   } else {
+  //     // soft-delete existing phone assignment record
+  //     // await supabase_admin
+  //     //   .from('demo_service_phone_assignments')
+  //     //   .update({ is_deleted: true })
+  //     //   .eq('id', phone_assignment.id);
 
-    if (phone_assignment.assigned_at == undefined) {
-      // update existing non-assigned phone record
-      await supabase_admin
-        .from('demo_service_phone_assignments')
-        .update({
-          assigned_at,
-          assigned_to: userId,
-        })
-        .eq('id', phone_assignment.id);
-    } else {
-      // soft-delete existing phone assignment record
-      await supabase_admin
-        .from('demo_service_phone_assignments')
-        .update({ is_deleted: true })
-        .eq('id', phone_assignment.id);
+  //     // create a new assignment record
+  //     await supabase_admin
+  //       .from('demo_service_phone_assignments')
+  //       .insert({
+  //         phone: phone_assignment.phone,
+  //         assigned_at,
+  //         assigned_to: userId,
+  //       })
+  //       .eq('id', phone_assignment.id);
+  //   }
+  //   return redirect(routeConsts.quincyDemo);
+  // } else {
+  //   // this can never happen
 
-      // create a new assignment record
-      await supabase_admin
-        .from('demo_service_phone_assignments')
-        .insert({
-          phone: phone_assignment.phone,
-          assigned_at,
-          assigned_to: userId,
-        })
-        .eq('id', phone_assignment.id);
-    }
-    return redirect(routeConsts.quincyDemo);
-  } else {
-    // this can never happen
-    return redirect(routeConsts.signIn);
-  }
+  //   return redirect(routeConsts.signIn);
+  // }
 };
 
 export const handleSignInWithGoogle = async (response: any) => {

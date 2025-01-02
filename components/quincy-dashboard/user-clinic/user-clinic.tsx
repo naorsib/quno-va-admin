@@ -14,16 +14,17 @@ export type UserClinicData = UserClinicBase & {
 };
 
 type Props = {
-  userId: string;
+  user_id: string;
   t: InnerPagesTrans<'quincy'>;
 };
 
-export async function UserClinic({ userId, t }: Props) {
+// TODO rename clinic_type to clinic_type_id, for consistency
+export async function UserClinic({ user_id, t }: Props) {
   const supabase = await createClient();
   const { data: clinic_details } = (await supabase
     .from('user_base_details')
     .select('clinic_name, address, clinic_type')
-    .eq('id', userId)
+    .eq('id', user_id)
     .limit(1)
     .single()) as { data: UserClinicData };
 
@@ -36,7 +37,7 @@ export async function UserClinic({ userId, t }: Props) {
       <P className="mb-4 text-base/6">{t('infoText1')}</P>
 
       <BasicDetailsForm
-        userId={userId}
+        user_id={user_id}
         clinic_base={clinic_base}
         className="mb-8 grid w-full max-w-xs grid-cols-1 gap-4 sm:max-w-lg sm:grid-cols-2"
       />
@@ -46,7 +47,7 @@ export async function UserClinic({ userId, t }: Props) {
       <ClinicTypeForm
         className="mb-8 grid w-full max-w-xs grid-cols-1 gap-4 sm:max-w-lg sm:grid-cols-2"
         clinic_type={clinic_details.clinic_type}
-        userId={userId}
+        user_id={user_id}
       />
     </div>
   );
