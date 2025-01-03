@@ -1,9 +1,14 @@
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { signOutAction } from '@/app/actions';
+import CalendarMenuSvgComponent from '@/components/react-svg-components/calendar-menu';
+import ClinicMenuSvgComponent from '@/components/react-svg-components/clinic-menu';
+import HomeMenuSvgComponent from '@/components/react-svg-components/home-menu';
 import LogoSvgComponent from '@/components/react-svg-components/logo';
 import LogoutSvgComponent from '@/components/react-svg-components/logout';
+import PatientMenuSvgComponent from '@/components/react-svg-components/patient-menu';
+import RobotMenuSvgComponent from '@/components/react-svg-components/robot-menu';
+import TasksMenuSvgComponent from '@/components/react-svg-components/tasks-menu';
 import { P } from '@/components/typography/text';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -33,24 +38,28 @@ export function AppSidebar() {
   const items = [
     {
       title: tSidebar('home'),
-      icon: Home,
+      icon: HomeMenuSvgComponent,
     },
     {
       title: tSidebar('quincy'),
       url: routeConsts.quincyDashboard,
-      icon: Inbox,
+      icon: RobotMenuSvgComponent,
+    },
+    {
+      title: tSidebar('clinic'),
+      icon: ClinicMenuSvgComponent,
     },
     {
       title: tSidebar('calendar'),
-      icon: Calendar,
+      icon: CalendarMenuSvgComponent,
     },
     {
-      title: tSidebar('search'),
-      icon: Search,
+      title: tSidebar('patients'),
+      icon: PatientMenuSvgComponent,
     },
     {
-      title: tSidebar('settings'),
-      icon: Settings,
+      title: tSidebar('tasks'),
+      icon: TasksMenuSvgComponent,
     },
   ];
   return (
@@ -65,7 +74,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <ClientMenuButton url={item.url}>
                     <a href={item?.url || '#'} className="p-3.5">
-                      <item.icon />
+                      <item.icon height="22" width="20" />
                       <span>{item.title}</span>
                     </a>
                   </ClientMenuButton>

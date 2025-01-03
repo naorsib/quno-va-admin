@@ -328,11 +328,12 @@
   "Sidebar": {
     "active": "Active",
     "calendar": "Calendar",
+    "clinic": "Clinic",
     "home": "Home",
     "logoDesc": "QunoMedical Logo",
     "logout": "Logout",
+    "patients": "Patients",
     "quincy": "Quincy",
-    "search": "Search",
-    "settings": "Settings"
+    "tasks": "Tasks"
   }
 }
