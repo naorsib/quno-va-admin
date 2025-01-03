@@ -45,19 +45,32 @@ export function CaptionManager({ isEditMode = false }: Props): null {
         newLastVisibleElement &&
         newLastVisibleElement !== lastVisibleElementRef.current
       ) {
-        // if new box exceeds container, move the container upper to contain it and eliminate old messages
         const newElementLocation =
           newLastVisibleElement.offsetTop +
           newLastVisibleElement.clientHeight +
           70;
+        const newTop = Math.min(
+          50,
+          -(newElementLocation - container.parentElement!.clientHeight),
+        );
         if (
-          newElementLocation + container.offsetTop >
-          container.parentElement!.clientHeight
+          lastVisibleElementRef.current &&
+          newLastVisibleElement.offsetTop >
+            lastVisibleElementRef.current.offsetTop
         ) {
-          const top = `${-(newElementLocation - container.parentElement!.clientHeight)}px`;
-          container.style.top = top;
-        }
+          // if new box exceeds container, move the container upper to contain it and eliminate older messages
 
+          if (
+            newElementLocation + container.offsetTop >
+            container.parentElement!.clientHeight
+          ) {
+            container.style.top = `${newTop}px`;
+          }
+        } else if (container.offsetTop < 0) {
+          // if new box should "shrink" container, move the container downer to contain narrow the space and re-display older messages
+
+          container.style.top = `${newTop}px`;
+        }
         lastVisibleElementRef.current = newLastVisibleElement;
       }
     },

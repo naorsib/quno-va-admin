@@ -140,12 +140,17 @@ export function AudioControls({
       if (state.isFakePlay) {
         audio.currentTime = state.currentTime;
         dispatch({ type: 'SET_FAKE_PLAY', payload: false });
+
+        audio.play().catch(error => {
+          onError();
+        });
+        dispatch({ type: 'SET_PLAYING', payload: true });
       }
 
       audio.muted = !state.isMuted;
       dispatch({ type: 'TOGGLE_MUTE' });
     }
-  }, [state.isFakePlay, state.currentTime, state.isMuted]);
+  }, [state.isFakePlay, state.currentTime, state.isMuted, onError]);
 
   const handleCanPlay = useCallback(() => {
     const audio = audioRef.current;
