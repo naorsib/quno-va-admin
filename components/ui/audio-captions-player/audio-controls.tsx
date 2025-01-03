@@ -109,6 +109,7 @@ export function AudioControls({
   const [state, dispatch] = useReducer(audioReducer, {
     ...initialState,
     isFakePlay: shouldFakePlay,
+    isPlaying: shouldFakePlay,
   });
   const [hasError, setHasError] = useState(false);
 
@@ -200,7 +201,7 @@ export function AudioControls({
       audio.addEventListener('timeupdate', updateTime);
       audio.addEventListener('loadedmetadata', updateDuration);
       audio.addEventListener('durationchange', updateDuration);
-
+      setIsLoading(false);
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }

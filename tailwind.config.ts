@@ -133,11 +133,17 @@ const config = {
           },
         },
         'caret-blink': {
-          '0%,70%,100%': { opacity: '1' },
-          '20%,50%': { opacity: '0' },
+          '0%,70%,100%': {
+            opacity: '1',
+          },
+          '20%,50%': {
+            opacity: '0',
+          },
         },
         spin: {
-          '100%': { transform: 'rotate(360deg)' },
+          '100%': {
+            transform: 'rotate(360deg)',
+          },
         },
         'circular-motion': {
           '0%': {

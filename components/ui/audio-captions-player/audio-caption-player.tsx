@@ -1,4 +1,4 @@
-import { PhoneCall } from 'lucide-react';
+import { ArrowDown, PhoneCall, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { JSX } from 'react';
 
@@ -6,49 +6,36 @@ import CalendarSvgComponent from '@/components/react-svg-components/calendar';
 import DialSvgComponent from '@/components/react-svg-components/dial';
 import RobotSvgComponent from '@/components/react-svg-components/robot';
 import { P } from '@/components/typography/text';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import en from '@/messages/en.json';
-import { EnumsTrans, GenericTrans } from '@/types/translations';
+import { EnumsTrans } from '@/types/translations';
 
 import { CaptionManager } from './caption-manager';
+export type EditTools = {
+  deleteCaption: (id: number) => void;
+  insertAfterCaption: (id: number) => void;
+};
+export type CaptionType = 'ai' | 'call_event' | 'dial_event' | 'user';
 
-type CaptionType = 'ai' | 'call_event' | 'dial_event' | 'user';
+export type Caption = BaseCaption | CallEventCaption;
 
-interface BaseCaption {
+export type CallEventType = keyof typeof en.Enums.call_event_types;
+
+export interface BaseCaption {
   id: number;
   text: string;
   startTime: number;
-  endTime: number;
   type: CaptionType;
 }
 
-interface AiCaption extends BaseCaption {
-  type: 'ai';
-}
-
-interface UserCaption extends BaseCaption {
-  type: 'user';
-}
-
-interface DialEventCaption extends BaseCaption {
-  type: 'dial_event';
-}
-
-interface CallEventCaption extends BaseCaption {
+export interface CallEventCaption extends BaseCaption {
   type: 'call_event';
-  callEventType: keyof typeof en.CallEventLogBoxes;
+  callEventType: CallEventType;
   time: string;
 }
 
-export type Caption =
-  | AiCaption
-  | UserCaption
-  | DialEventCaption
-  | CallEventCaption;
-
-const callEventTypeToIconMap: Record<
-  keyof typeof en.CallEventLogBoxes,
-  React.ComponentType
-> = {
+const callEventTypeToIconMap: Record<CallEventType, React.ComponentType> = {
   schedule_appointment: DialSvgComponent,
   cancel_appointment: CalendarSvgComponent,
   reschedule_appointment: DialSvgComponent,
@@ -59,29 +46,34 @@ const callEventTypeToIconMap: Record<
 
 interface AudioCaptionPlayerProps {
   captions: Caption[];
+  editTools?: EditTools;
 }
-
-type AudioDemoTrans = GenericTrans<keyof typeof en.Landing.heros.audioDemo>;
 
 export default function AudioCaptionPlayer({
   captions,
+  editTools = undefined,
 }: AudioCaptionPlayerProps): JSX.Element {
   const tCallEventTypeEnumTrans: EnumsTrans<'call_event_types'> =
     useTranslations('Enums.call_event_types');
-  const t: AudioDemoTrans = useTranslations(`Landing.heros.audioDemo`);
 
   return (
-    <div className="scrollbar-none border-input-border relative h-96 space-y-4 overflow-hidden rounded-bl-xl rounded-br-xl border border-t-0 bg-gray-100 p-6 pt-8">
+    <div
+      className={cn(
+        'border-input-border relative h-96 space-y-4 rounded-bl-xl rounded-br-xl border border-t-0 bg-gray-100 p-6 pt-8',
+        editTools ? 'overflow-y-auto' : 'scrollbar-none overflow-hidden',
+      )}
+    >
       <div id="caption-container" className="absolute left-0 w-full">
         {captions.map(caption => (
           <CaptionRenderer
             key={caption.id}
             caption={caption}
             tCaptionEvents={tCallEventTypeEnumTrans}
+            editTools={editTools}
           />
         ))}
       </div>
-      <CaptionManager />
+      <CaptionManager isEditMode={!!editTools} />
     </div>
   );
 }
@@ -89,48 +81,107 @@ export default function AudioCaptionPlayer({
 function CaptionRenderer({
   caption,
   tCaptionEvents,
+  editTools,
 }: {
   caption: Caption;
   tCaptionEvents: EnumsTrans<'call_event_types'>;
+  editTools?: EditTools;
 }): JSX.Element {
   return (
     <div
       data-start-time={caption.startTime}
-      data-end-time={caption.endTime}
-      className="grid-row invisible grid w-full translate-y-full transform rounded-lg p-2 opacity-0 transition-all duration-500 ease-in-out"
+      className={cn(
+        'grid-row invisible grid w-full translate-y-full transform rounded-lg p-2 transition-all duration-500 ease-in-out',
+      )}
     >
       {caption.type === 'ai' ? (
-        <AiCaptionRender caption={caption} />
+        <AiCaptionRender caption={caption} editTools={editTools} />
       ) : caption.type === 'user' ? (
-        <UserCaptionRender caption={caption} />
+        <UserCaptionRender caption={caption} editTools={editTools} />
       ) : caption.type === 'call_event' ? (
-        <CallEventCaptionRender caption={caption} t={tCaptionEvents} />
+        <CallEventCaptionRender
+          caption={caption as CallEventCaption}
+          t={tCaptionEvents}
+          editTools={editTools}
+        />
       ) : (
-        <CallCaptionRender caption={caption} />
+        <CallCaptionRender caption={caption} editTools={editTools} />
       )}
     </div>
   );
 }
 
-function AiCaptionRender({ caption }: { caption: AiCaption }): JSX.Element {
+function EditToolsRender({
+  caption,
+  editTools,
+  side = 'right',
+}: {
+  caption: BaseCaption;
+  editTools: EditTools;
+  side?: 'left' | 'right';
+}): JSX.Element {
   return (
-    <div className="flex w-full max-w-xl flex-row items-start justify-start gap-2.5">
+    <div
+      className={cn(
+        'absolute top-0 flex flex-col',
+        side === 'right' ? '-right-5' : '-left-5',
+      )}
+    >
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-6 w-6"
+        onClick={() => editTools.deleteCaption(caption.id)}
+      >
+        <Trash className="h-3 w-3" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-6 w-6"
+        onClick={() => editTools.insertAfterCaption(caption.id)}
+      >
+        <ArrowDown className="h-3 w-3" />
+      </Button>
+    </div>
+  );
+}
+
+function AiCaptionRender({
+  caption,
+  editTools,
+}: {
+  caption: BaseCaption;
+  editTools?: EditTools;
+}): JSX.Element {
+  return (
+    <div className="relative flex w-full max-w-xl flex-row items-start justify-start gap-2.5">
       <div className="mx-x mt-1 rounded-full bg-primary p-2">
         <RobotSvgComponent />
       </div>
       <div className="flex-1 rounded-lg bg-primary/85 p-4 text-white">
         <P className="text-lg/6">{caption.text}</P>
       </div>
+      {editTools && <EditToolsRender caption={caption} editTools={editTools} />}
     </div>
   );
 }
 
-function UserCaptionRender({ caption }: { caption: UserCaption }): JSX.Element {
+function UserCaptionRender({
+  caption,
+  editTools,
+}: {
+  caption: BaseCaption;
+  editTools?: EditTools;
+}): JSX.Element {
   return (
-    <div className="w-full max-w-xl justify-self-end">
+    <div className="relative w-full max-w-xl justify-self-end">
       <div className="rounded-lg bg-white p-4 text-primary">
         <P className="text-lg/6">{caption.text}</P>
       </div>
+      {editTools && (
+        <EditToolsRender side="left" caption={caption} editTools={editTools} />
+      )}
     </div>
   );
 }
@@ -138,13 +189,15 @@ function UserCaptionRender({ caption }: { caption: UserCaption }): JSX.Element {
 function CallEventCaptionRender({
   caption,
   t,
+  editTools,
 }: {
   caption: CallEventCaption;
   t: EnumsTrans<'call_event_types'>;
+  editTools?: EditTools;
 }): JSX.Element {
   const IconComponent = callEventTypeToIconMap[caption.callEventType];
   return (
-    <div className="w-full max-w-lg justify-self-center text-black">
+    <div className="relative w-full max-w-lg justify-self-center text-black">
       <div className="flex flex-col gap-2 rounded-lg border border-border bg-white p-4">
         <div className="flex flex-row items-center justify-between gap-2">
           <div className="flex flex-row items-center gap-2">
@@ -155,17 +208,21 @@ function CallEventCaptionRender({
         </div>
         <P className="text-base/6">{caption.text}</P>
       </div>
+
+      {editTools && <EditToolsRender caption={caption} editTools={editTools} />}
     </div>
   );
 }
 
 function CallCaptionRender({
   caption,
+  editTools,
 }: {
-  caption: DialEventCaption;
+  caption: BaseCaption;
+  editTools?: EditTools;
 }): JSX.Element {
   return (
-    <div className="w-full max-w-lg justify-self-center text-hero-description">
+    <div className="relative w-full max-w-lg justify-self-center text-hero-description">
       <div className="rounded-[40px] bg-border p-4">
         <div className="flex flex-row items-center gap-2.5">
           <PhoneCall
@@ -175,6 +232,7 @@ function CallCaptionRender({
           <P className="flex-1 text-lg/6">{caption.text}</P>
         </div>
       </div>
+      {editTools && <EditToolsRender caption={caption} editTools={editTools} />}
     </div>
   );
 }

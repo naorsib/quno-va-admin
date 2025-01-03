@@ -1,40 +1,30 @@
+/* eslint-disable unicorn/prevent-abbreviations */
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { JSX, useCallback, useEffect, useState } from 'react';
+import { JSX, useCallback, useState } from 'react';
 
 import DialSvgComponent from '@/components/react-svg-components/dial';
 import RadioWavesSvgComponent from '@/components/react-svg-components/radio-waves';
-import { H4, P } from '@/components/typography/text';
+import { P } from '@/components/typography/text';
 import { Button } from '@/components/ui/button';
 import { captionsMap } from '@/consts/demo-captions/captions';
 import { cn } from '@/lib/utils';
-import en from '@/messages/en.json';
-import { EnumsTrans, GenericTrans } from '@/types/translations';
+import { EnumsTrans } from '@/types/translations';
 
-import AudioCaptionPlayer, { Caption } from './audio-caption-player';
-import { AudioControls } from './audio-controls';
-import EditCaptionsComponent from './captions-editor/edit-captions';
+import { AudioControls } from '../audio-controls';
+import EditCaptionsComponent from './edit-captions';
 
 const MAX_RETRY_ATTEMPTS = 3;
-type AudioDemoTrans = GenericTrans<keyof typeof en.Landing.heros.audioDemo>;
 export type AudioBarButton = keyof typeof captionsMap;
 
 const allButtons: AudioBarButton[] = Object.keys(
   captionsMap,
 ) as AudioBarButton[];
 
-type Props = {
-  shouldShowEditCaptionsBar?: boolean;
-};
-
-export default function AudioBar({
-  shouldShowEditCaptionsBar = false,
-}: Props): JSX.Element {
+export default function EditAudioBar(): JSX.Element {
   const [selectedAudioButton, setSelectedAudioButton] =
     useState<AudioBarButton>(allButtons[0]);
-  const [shouldTriggerAudioWithFakePlay, setShouldTriggerAudioWithFakePlay] =
-    useState(true);
   const [isFatalError, setIsFatalError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | undefined>();
@@ -42,31 +32,8 @@ export default function AudioBar({
 
   const tCallEventTypeEnumTrans: EnumsTrans<'call_event_types'> =
     useTranslations('Enums.call_event_types');
-  const t: AudioDemoTrans = useTranslations(`Landing.heros.audioDemo`);
-
-  const handleFirstAudioSignal = useCallback(() => {
-    setShouldTriggerAudioWithFakePlay(false);
-  }, []);
-
-  useEffect(() => {
-    const audioElement = document.querySelector('audio') as HTMLAudioElement;
-    if (audioElement && shouldTriggerAudioWithFakePlay) {
-      audioElement.addEventListener('timeupdate', handleFirstAudioSignal);
-    }
-    return () => {
-      if (audioElement) {
-        audioElement.removeEventListener('timeupdate', handleFirstAudioSignal);
-      }
-    };
-  }, [
-    selectedAudioButton,
-    shouldTriggerAudioWithFakePlay,
-    handleFirstAudioSignal,
-    isLoading,
-  ]);
 
   const handleButtonClick = useCallback((button: AudioBarButton) => {
-    setShouldTriggerAudioWithFakePlay(false);
     setSelectedAudioButton(button);
     setIsLoading(true);
     setError(undefined);
@@ -99,19 +66,12 @@ export default function AudioBar({
 
   return (
     <>
-      {shouldShowEditCaptionsBar && selectedAudioButton && (
-        <EditCaptionsComponent selected_audio_button={selectedAudioButton} />
-      )}
       <div
         className={cn(
           'my-4 lg:my-6',
           isFatalError ? 'pointer-events-none opacity-50' : '',
         )}
       >
-        <div className="mb-2 flex flex-row items-center gap-2 text-white">
-          <DialSvgComponent />
-          <H4 className="text-lg">{t('quincyHelpsWith')}</H4>
-        </div>
         <div className="flex flex-row flex-wrap gap-2.5">
           {allButtons.map(button => (
             <Button
@@ -144,8 +104,8 @@ export default function AudioBar({
         </div>
         <AudioControls
           audioSrc={captionsMap[selectedAudioButton].audioSrc}
-          shouldFakePlay={shouldTriggerAudioWithFakePlay}
           isLoading={isLoading}
+          shouldFakePlay={false}
           setIsLoading={setIsLoading}
           onError={handleError}
         />
@@ -155,13 +115,7 @@ export default function AudioBar({
           <P>{error.message}</P>
         </div>
       )}
-      <AudioCaptionPlayer
-        captions={
-          isFatalError
-            ? []
-            : (captionsMap[selectedAudioButton].captions as Caption[])
-        }
-      />
+      <EditCaptionsComponent selected_audio_button={selectedAudioButton} />
     </>
   );
 }
