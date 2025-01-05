@@ -185,12 +185,8 @@ export function PrescriptionRenewalCallEventLogBox({
 }: PrescriptionRenewalCallEventLogBoxProps) {
   return (
     <>
-      <span className="font-bold">
-        {t(
-          `Enums.prescription_types.${call_event.extra_data.prescription_type_id}`,
-        )}
-      </span>{' '}
-      For the reason <span className="font-bold">I am out of it</span>
+      <span className="font-bold">{call_event.extra_data.info}</span> For the
+      reason <span className="font-bold">I am out of it</span>
     </>
   );
 }
@@ -201,11 +197,7 @@ export function GetSickLeaveCallEventLogBox({
   return (
     <>
       {t(`CallEventLogBoxes.${call_event.call_event_type_id}.patientDescribed`)}{' '}
-      <b>
-        {call_event.extra_data.disease_symptom_type_ids
-          .map(s => t(`Enums.disease_symptom_types.${s}`))
-          .join(', ')}
-      </b>
+      <b>{call_event.extra_data.info}</b>
     </>
   );
 }
@@ -218,7 +210,7 @@ export function DoctorCallCallEventLogBox({
       {t(`CallEventLogBoxes.${call_event.call_event_type_id}.forDoctor`, {
         doctorName: call_event.extra_data.doctor_full_name,
       })}{' '}
-      {call_event.extra_data.note}
+      {call_event.extra_data.info}
     </>
   );
 }

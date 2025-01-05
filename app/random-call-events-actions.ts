@@ -6,11 +6,7 @@ import { sleep } from 'retell-sdk/core';
 
 import { UserCallEvent } from '@/components/quincy-dashboard/user-services/user-call-event-item';
 import en from '@/messages/en.json';
-import {
-  CallEventTypes,
-  DiseaseSymptomType,
-  PrescriptionType,
-} from '@/types/enums';
+import { CallEventTypes, PrescriptionType } from '@/types/enums';
 import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { genRandomListItem } from '@/utils/utils';
@@ -32,14 +28,14 @@ const insertDoctorCallCallTypeEvent: RandEventFunction = async (
   const supabase_admin = await createAdminClient();
 
   const doctor_full_name = 'Dr. john Doe';
-  const note = Math.random() ? 'I left something at your office' : null;
+  const info = t('doctorNoteDefault');
   const { data, error } = await supabase_admin.rpc(
-    'insert_doctor_call_call_type_event',
+    'insert_doctor_call_call_event',
     {
       active_call_id,
       user_id,
       doctor_full_name,
-      note: note || t('doctorNoteDefault'),
+      info,
     },
   );
   if (error) {
@@ -54,26 +50,13 @@ const insertGetSickLeaveCallTypeEvent: RandEventFunction = async (
 ) => {
   const supabase_admin = await createAdminClient();
 
-  const disease_symptom_type_ids: DiseaseSymptomType[] = [];
-
-  const all_types = Object.keys(
-    en.Enums.disease_symptom_types,
-  ) as DiseaseSymptomType[];
-  all_types.forEach(t => {
-    if (Math.random() < 1 / (all_types.length / 2 + 1)) {
-      disease_symptom_type_ids.push(t);
-    }
-  });
-  if (disease_symptom_type_ids.length === 0) {
-    disease_symptom_type_ids.push(all_types[0]);
-  }
-
+  const info = 'I feel very weak today';
   const { data, error } = await supabase_admin.rpc(
-    'insert_get_sick_leave_call_type_event',
+    'insert_sick_leave_call_event',
     {
       active_call_id,
       user_id,
-      disease_symptom_type_ids,
+      info,
     },
   );
   if (error) {
@@ -91,14 +74,14 @@ const insertPrescriptionRenewalDemoCallEvent: RandEventFunction = async (
   const all_types = Object.keys(
     en.Enums.prescription_types,
   ) as PrescriptionType[];
-  const prescription_type_id = genRandomListItem(all_types) as PrescriptionType;
+  const info = 'I need a prescription for Ritalin';
 
   const { data, error } = await supabase_admin.rpc(
-    'insert_prescription_renewal_call_type_event',
+    'insert_prescription_renewal_call_event',
     {
       active_call_id,
       user_id,
-      prescription_type_id,
+      info,
     },
   );
   if (error) {
@@ -108,23 +91,23 @@ const insertPrescriptionRenewalDemoCallEvent: RandEventFunction = async (
   console.log(data);
 };
 
-const insertScheduledAppointmentDemoCallEvent: RandEventFunction = async (
+const insertNewAppointmentDemoCallEvent: RandEventFunction = async (
   user_id: string,
   active_call_id: number,
 ) => {
   const supabase_admin = await createAdminClient();
-  const available_appointment_id = await getRandomAvailableAppointmentId();
+  const new_appointment_id = await getRandomAvailableAppointmentId();
 
-  if (!available_appointment_id) {
+  if (!new_appointment_id) {
     throw 'No appointments available';
   }
 
   const { data, error } = await supabase_admin.rpc(
-    'insert_schedule_appointment_call_type_event',
+    'insert_new_appointment_call_event',
     {
-      available_appointment_id,
       active_call_id,
       user_id,
+      new_appointment_id,
     },
   );
   if (error) {
@@ -169,25 +152,20 @@ const insertCancelOrRescheduledAppointmentDemoCallEvent = async (
     : await getRandomAvailableAppointmentId();
 
   if (!new_appointment_id && !shouldCancel) {
-    throw 'User doesnt have an existing future scheduled appointments';
+    throw 'No appointments available!';
   }
-  let old_schedule_reschedule_appointment_demo_call_event_id =
-    await getUserRandomScheduleEventId(user_id);
-  let is_rescheduling_a_reschedule = false;
-  if (!old_schedule_reschedule_appointment_demo_call_event_id) {
-    old_schedule_reschedule_appointment_demo_call_event_id =
-      await getUserRandomRescheduleEventId(user_id);
-    is_rescheduling_a_reschedule = true;
+  const old_appointment_demo_call_event_id =
+    await getUserRandomActiveFutureAppointmentEventId(user_id);
+  if (!old_appointment_demo_call_event_id) {
+    throw 'User doesnt have any existing future scheduled appointments';
   }
-
-  if (old_schedule_reschedule_appointment_demo_call_event_id) {
+  if (old_appointment_demo_call_event_id) {
     const { data, error } = await supabase_admin.rpc(
-      'insert_reschedule_cancel_appointment_call_type_event',
+      'insert_reschedule_cancel_appointment_call_event',
       {
-        old_schedule_reschedule_appointment_demo_call_event_id,
         active_call_id,
         user_id,
-        is_rescheduling_a_reschedule,
+        old_appointment_demo_call_event_id,
         new_appointment_id,
       },
     );
@@ -208,16 +186,17 @@ async function getRandomAvailableAppointmentId(): Promise<number | undefined> {
   return random_available_appointment?.id;
 }
 
-async function getUserRandomRescheduleEventId(
+async function getUserRandomActiveFutureAppointmentEventId(
   user_id: string,
 ): Promise<number | undefined> {
   const supabase_admin = await createAdminClient();
   const now = new Date().toISOString();
   const { data, error } = await supabase_admin
-    .from('reschedule_appointment_demo_call_events')
+    .from('appointment_demo_call_events')
     .select(
       'id, abstract_demo_call_events(*), appointments(*), reschedule_appointment_demo_call_event_id',
     )
+    .not('appointment_id', 'is', null)
     .is('reschedule_appointment_demo_call_event_id', null)
     .eq('abstract_demo_call_events.user_id', user_id)
     .gt('appointments.time', now);
@@ -227,24 +206,24 @@ async function getUserRandomRescheduleEventId(
   return genRandomListItem(data?.map(d => d.id));
 }
 
-async function getUserRandomScheduleEventId(
-  user_id: string,
-): Promise<number | undefined> {
-  const supabase_admin = await createAdminClient();
-  const now = new Date().toISOString();
-  const { data, error } = await supabase_admin
-    .from('schedule_appointment_demo_call_events')
-    .select(
-      'id, abstract_demo_call_events(*), appointments(*), reschedule_appointment_demo_call_event_id',
-    )
-    .is('reschedule_appointment_demo_call_event_id', null)
-    .eq('abstract_demo_call_events.user_id', user_id)
-    .gt('appointments.time', now);
-  if (error) {
-    throw error;
-  }
-  return genRandomListItem(data?.map(d => d.id));
-}
+// async function getUserRandomScheduleEventId(
+//   user_id: string,
+// ): Promise<number | undefined> {
+//   const supabase_admin = await createAdminClient();
+//   const now = new Date().toISOString();
+//   const { data, error } = await supabase_admin
+//     .from('schedule_appointment_demo_call_events')
+//     .select(
+//       'id, abstract_demo_call_events(*), appointments(*), reschedule_appointment_demo_call_event_id',
+//     )
+//     .is('reschedule_appointment_demo_call_event_id', null)
+//     .eq('abstract_demo_call_events.user_id', user_id)
+//     .gt('appointments.time', now);
+//   if (error) {
+//     throw error;
+//   }
+//   return genRandomListItem(data?.map(d => d.id));
+// }
 
 async function getUserActiveCallId(
   user_id: string,
@@ -277,7 +256,7 @@ export async function getAllAvailableFutureAppointmens(): Promise<
   const supabase_admin = await createAdminClient();
 
   const now = new Date().toISOString();
-  let availableAppointmentsQuery = supabase_admin
+  const availableAppointmentsQuery = supabase_admin
     .from('appointments')
     .select('id, time, appointment_type_id')
     .gt('time', now);
@@ -302,9 +281,11 @@ export async function getAllAvailableFutureAppointmens(): Promise<
 
   const { data: scheduledAppointments, error: scheduledError } =
     (await supabase_admin
-      .from('schedule_appointment_demo_call_events')
-      .select('appointment_id, reschedule_appointment_demo_call_event_id')
-      .is('reschedule_appointment_demo_call_event_id', null)) as {
+      .from('appointment_demo_call_events')
+      .select('appointment_id, appointments(time)')
+      .not('appointment_id', 'is', null)
+      .is('reschedule_appointment_demo_call_event_id', null)
+      .gt('appointments.time', now)) as {
       data?: { appointment_id: number }[];
       error: PostgrestError | null;
     };
@@ -313,31 +294,17 @@ export async function getAllAvailableFutureAppointmens(): Promise<
     throw `Error fetching scheduled appointments: ${scheduledError}`;
   }
 
-  const { data: reScheduledAppointments, error: reScheduledError } =
-    (await supabase_admin
-      .from('schedule_appointment_demo_call_events')
-      .select('appointment_id, reschedule_appointment_demo_call_event_id')
-      .not('appointment_id', 'is', null)
-      .is('reschedule_appointment_demo_call_event_id', null)) as {
-      data?: { appointment_id: number }[];
-      error: PostgrestError | null;
-    };
-
-  if (reScheduledError || !reScheduledAppointments) {
-    throw `Error fetching rescheduled appointments: ${reScheduledError}`;
-  }
-
-  const appointmentIds = new Set([
-    ...scheduledAppointments.map(app => app.appointment_id),
-    ...reScheduledAppointments.map(app => app.appointment_id),
-  ]);
+  const scheduledAppointmentIds = new Set(
+    scheduledAppointments.map(app => app.appointment_id),
+  );
   return appointments
     .map(a => ({ ...a, time: new Date(a.time) }))
-    .filter(a => !appointmentIds.has(a.id));
+    .filter(a => !scheduledAppointmentIds.has(a.id));
 }
+
 //#endregion
 const insertionFunctionMap: Record<CallEventTypes, RandEventFunction> = {
-  schedule_appointment: insertScheduledAppointmentDemoCallEvent,
+  schedule_appointment: insertNewAppointmentDemoCallEvent,
   cancel_appointment: insertCancelAppointmentDemoCallEvent,
   reschedule_appointment: insertRescheduleAppointmentDemoCallEvent,
   prescription_renewal: insertPrescriptionRenewalDemoCallEvent,

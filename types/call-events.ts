@@ -1,4 +1,4 @@
-import { CallEventTypes, DiseaseSymptomType, PrescriptionType } from './enums';
+import { CallEventTypes } from './enums';
 
 export type Appointment = {
   time: Date;
@@ -22,16 +22,15 @@ type ScheduleAppointmentAdditions = {
   appointment: Appointment;
 };
 
-type PrescriptionRenewalAdditions = {
-  prescription_type_id: PrescriptionType;
-};
-type GetSickLeaveAdditions = {
-  disease_symptom_type_ids: DiseaseSymptomType[];
+type InfoAdditions = {
+  info: string;
 };
 
-type DoctorCallAdditions = {
+type PrescriptionRenewalAdditions = InfoAdditions & {};
+type GetSickLeaveAdditions = InfoAdditions & {};
+
+type DoctorCallAdditions = InfoAdditions & {
   doctor_full_name: string;
-  note: string;
 };
 
 export type CallEvent<T extends CallEventTypes> = {
