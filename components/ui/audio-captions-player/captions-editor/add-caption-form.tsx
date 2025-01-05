@@ -60,7 +60,6 @@ export default function AddCaptionForm({
   const textTimeInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    debugger;
     if (captionToDuplicate) {
       setCaptionType(captionToDuplicate.type);
       setText('');
@@ -218,7 +217,7 @@ export default function AddCaptionForm({
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
           </Button>
-          <Button className="text-white" type="submit">
+          <Button variant="secondary" className="text-white" type="submit">
             Add Caption
           </Button>
         </CardFooter>

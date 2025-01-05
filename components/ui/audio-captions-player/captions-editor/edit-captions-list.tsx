@@ -2,7 +2,7 @@
 'use client';
 
 import { Check, Clipboard, PlusCircle } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -27,6 +27,9 @@ export default function EditCaptionsList({
     null,
   );
 
+  useEffect(() => {
+    setCaptions(initial_captions);
+  }, [setCaptions, initial_captions]);
   const sortCaptions = useCallback((captionsToSort: Caption[]): Caption[] => {
     return [...captionsToSort]
       .sort((a, b) => a.startTime - b.startTime)
@@ -112,6 +115,7 @@ export default function EditCaptionsList({
         ) : (
           <>
             <Button
+              variant="secondary"
               onClick={() => setShowAddForm(true)}
               className="mt-4 cursor-pointer text-white hover:text-label"
             >
@@ -119,7 +123,7 @@ export default function EditCaptionsList({
             </Button>
 
             <Button
-              variant="link"
+              variant="secondary"
               onClick={copyToClipboard}
               className="mt-4 cursor-pointer text-white hover:text-label"
             >

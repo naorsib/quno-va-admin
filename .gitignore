@@ -38,3 +38,6 @@ next-env.d.ts
 .vscode/
 supabase/*
 
+app/prompt-actions.ts
+app/(sandbox-pages)/prompts-sandbox/page.tsx
+app/api/prompt/route.ts

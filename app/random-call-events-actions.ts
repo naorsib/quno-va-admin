@@ -15,6 +15,8 @@ import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { genRandomListItem } from '@/utils/utils';
 
+export type AppointmentType = keyof typeof en.Enums.appointment_types;
+
 type RandEventFunction = (
   user_id: string,
   active_call_id: number,
@@ -267,8 +269,9 @@ async function getUserActiveCallId(
 type AppoointmentCoreData = {
   id: number;
   time: Date;
+  appointment_type_id: AppointmentType;
 };
-async function getAllAvailableFutureAppointmens(): Promise<
+export async function getAllAvailableFutureAppointmens(): Promise<
   AppoointmentCoreData[] | undefined
 > {
   const supabase_admin = await createAdminClient();
@@ -276,12 +279,16 @@ async function getAllAvailableFutureAppointmens(): Promise<
   const now = new Date().toISOString();
   let availableAppointmentsQuery = supabase_admin
     .from('appointments')
-    .select('id, time')
+    .select('id, time, appointment_type_id')
     .gt('time', now);
 
   const { data: appointments, error: appointmentError } =
     (await availableAppointmentsQuery) as {
-      data?: { id: number; time: string }[];
+      data?: {
+        id: number;
+        time: string;
+        appointment_type_id: AppointmentType;
+      }[];
       error: PostgrestError | null;
     };
 
