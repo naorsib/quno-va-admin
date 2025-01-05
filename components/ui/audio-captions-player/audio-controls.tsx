@@ -24,7 +24,7 @@ interface AudioControlsProps {
   audioSrc: string;
   shouldFakePlay?: boolean;
   isLoading: boolean;
-  showSlider: boolean;
+  showSliderAndPlay: boolean;
   setIsLoading: (isLoading: boolean) => void;
   onError: () => void;
 }
@@ -105,7 +105,7 @@ export function AudioControls({
   audioSrc,
   shouldFakePlay = true,
   isLoading,
-  showSlider = false,
+  showSliderAndPlay = false,
   setIsLoading,
   onError,
 }: AudioControlsProps): JSX.Element {
@@ -287,7 +287,10 @@ export function AudioControls({
 
   return (
     <div
-      className={cn('flex items-center space-x-2', showSlider ? 'flex-1' : '')}
+      className={cn(
+        'flex items-center space-x-2',
+        showSliderAndPlay ? 'flex-1' : '',
+      )}
     >
       <audio
         ref={audioRef}
@@ -295,23 +298,26 @@ export function AudioControls({
         preload="metadata"
         muted={state.isMuted}
       />
-      <Button
-        onClick={togglePlayPause}
-        variant="outline"
-        size="icon"
-        className="bg-white"
-        disabled={isLoading || hasError}
-      >
-        <PlayPauseIcon fill="currentColor" className="h-4 w-4" />
-      </Button>
-      {showSlider && (
-        <Slider
-          value={[state.currentTime]}
-          max={state.duration || 100}
-          step={0.1}
-          onValueChange={handleSliderChange}
-          disabled={isLoading || hasError}
-        />
+      {showSliderAndPlay && (
+        <>
+          <Button
+            onClick={togglePlayPause}
+            variant="outline"
+            size="icon"
+            className="bg-white"
+            disabled={isLoading || hasError}
+          >
+            <PlayPauseIcon fill="currentColor" className="h-4 w-4" />
+          </Button>
+
+          <Slider
+            value={[state.currentTime]}
+            max={state.duration || 100}
+            step={0.1}
+            onValueChange={handleSliderChange}
+            disabled={isLoading || hasError}
+          />
+        </>
       )}
       <span className="hidden text-sm">
         {formattedCurrentTime} / {formattedDuration}

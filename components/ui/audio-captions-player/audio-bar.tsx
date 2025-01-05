@@ -27,7 +27,9 @@ type Props = {
   showSlider?: boolean;
 };
 
-export default function AudioBar({ showSlider = false }: Props): JSX.Element {
+export default function AudioBar({
+  showSliderAndPlay = false,
+}: Props): JSX.Element {
   const [selectedAudioButton, setSelectedAudioButton] =
     useState<AudioBarButton>(allButtons[0]);
   const [shouldTriggerAudioWithFakePlay, setShouldTriggerAudioWithFakePlay] =
@@ -139,7 +141,7 @@ export default function AudioBar({ showSlider = false }: Props): JSX.Element {
         <AudioControls
           audioSrc={captionsMap[selectedAudioButton].audioSrc}
           shouldFakePlay={shouldTriggerAudioWithFakePlay}
-          showSlider={showSlider}
+          showSliderAndPlay={showSliderAndPlay}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           onError={handleError}
