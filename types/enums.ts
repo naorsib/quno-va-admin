@@ -1,6 +1,3 @@
-import en from '@/messages/en.json';
-
-export type DiseaseSymptomType = keyof typeof en.Enums.disease_symptom_types;
-export type PrescriptionType = keyof typeof en.Enums.prescription_types;
-export type CallEventTypes = keyof typeof en.CallEvents;
-export type ClinicType = keyof typeof en.Enums.clinic_types;
+import { Database } from './supabase';
+export type CallEventTypes = Database['public']['Enums']['call_event_types'];
+export type ClinicType = Database['public']['Enums']['clinic_types'];

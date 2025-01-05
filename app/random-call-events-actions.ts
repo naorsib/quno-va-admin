@@ -6,7 +6,7 @@ import { sleep } from 'retell-sdk/core';
 
 import { UserCallEvent } from '@/components/quincy-dashboard/user-services/user-call-event-item';
 import en from '@/messages/en.json';
-import { CallEventTypes, PrescriptionType } from '@/types/enums';
+import { CallEventTypes } from '@/types/enums';
 import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { genRandomListItem } from '@/utils/utils';
@@ -71,9 +71,6 @@ const insertPrescriptionRenewalDemoCallEvent: RandEventFunction = async (
 ) => {
   const supabase_admin = await createAdminClient();
 
-  const all_types = Object.keys(
-    en.Enums.prescription_types,
-  ) as PrescriptionType[];
   const info = 'I need a prescription for Ritalin';
 
   const { data, error } = await supabase_admin.rpc(
@@ -148,7 +145,7 @@ const insertCancelOrRescheduledAppointmentDemoCallEvent = async (
 ): Promise<void> => {
   const supabase_admin = await createAdminClient();
   const new_appointment_id = shouldCancel
-    ? null
+    ? undefined
     : await getRandomAvailableAppointmentId();
 
   if (!new_appointment_id && !shouldCancel) {
