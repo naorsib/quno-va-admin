@@ -18,11 +18,13 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
+import { cn } from '@/lib/utils';
 const FAKE_FLOW_UNPDATE_INTERVAL_IN_SECONDS = 1.5;
 interface AudioControlsProps {
   audioSrc: string;
   shouldFakePlay?: boolean;
   isLoading: boolean;
+  showSlider: boolean;
   setIsLoading: (isLoading: boolean) => void;
   onError: () => void;
 }
@@ -103,6 +105,7 @@ export function AudioControls({
   audioSrc,
   shouldFakePlay = true,
   isLoading,
+  showSlider = false,
   setIsLoading,
   onError,
 }: AudioControlsProps): JSX.Element {
@@ -283,7 +286,9 @@ export function AudioControls({
   );
 
   return (
-    <div className="flex flex-1 items-center space-x-2">
+    <div
+      className={cn('flex items-center space-x-2', showSlider ? 'flex-1' : '')}
+    >
       <audio
         ref={audioRef}
         src={audioSrc}
@@ -299,13 +304,15 @@ export function AudioControls({
       >
         <PlayPauseIcon fill="currentColor" className="h-4 w-4" />
       </Button>
-      <Slider
-        value={[state.currentTime]}
-        max={state.duration || 100}
-        step={0.1}
-        onValueChange={handleSliderChange}
-        disabled={isLoading || hasError}
-      />
+      {showSlider && (
+        <Slider
+          value={[state.currentTime]}
+          max={state.duration || 100}
+          step={0.1}
+          onValueChange={handleSliderChange}
+          disabled={isLoading || hasError}
+        />
+      )}
       <span className="hidden text-sm">
         {formattedCurrentTime} / {formattedDuration}
       </span>

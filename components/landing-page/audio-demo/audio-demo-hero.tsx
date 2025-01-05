@@ -30,7 +30,9 @@ export default async function AudioDemoHero() {
             </P>
           </div>
         </div>
-        <AudioBar></AudioBar>
+        <AudioBar
+          showSlider={process.env.NODE_ENV === 'development'}
+        ></AudioBar>
 
         <StaticRouteLink
           routeTo="signUp"

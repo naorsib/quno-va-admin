@@ -192,6 +192,7 @@ export default function EditAudioBar(): JSX.Element {
         <AudioControls
           audioSrc={selectedAudioSrc}
           isLoading={isLoading}
+          showSlider={true}
           shouldFakePlay={false}
           setIsLoading={setIsLoading}
           onError={handleError}

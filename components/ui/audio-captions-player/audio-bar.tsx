@@ -14,7 +14,6 @@ import { EnumsTrans, GenericTrans } from '@/types/translations';
 
 import AudioCaptionPlayer, { Caption } from './audio-caption-player';
 import { AudioControls } from './audio-controls';
-import EditCaptionsComponent from './captions-editor/edit-captions';
 
 const MAX_RETRY_ATTEMPTS = 3;
 type AudioDemoTrans = GenericTrans<keyof typeof en.Landing.heros.audioDemo>;
@@ -25,12 +24,10 @@ const allButtons: AudioBarButton[] = Object.keys(
 ) as AudioBarButton[];
 
 type Props = {
-  shouldShowEditCaptionsBar?: boolean;
+  showSlider?: boolean;
 };
 
-export default function AudioBar({
-  shouldShowEditCaptionsBar = false,
-}: Props): JSX.Element {
+export default function AudioBar({ showSlider = false }: Props): JSX.Element {
   const [selectedAudioButton, setSelectedAudioButton] =
     useState<AudioBarButton>(allButtons[0]);
   const [shouldTriggerAudioWithFakePlay, setShouldTriggerAudioWithFakePlay] =
@@ -99,9 +96,6 @@ export default function AudioBar({
 
   return (
     <>
-      {shouldShowEditCaptionsBar && selectedAudioButton && (
-        <EditCaptionsComponent selected_audio_button={selectedAudioButton} />
-      )}
       <div
         className={cn(
           'my-4 lg:my-6',
@@ -145,6 +139,7 @@ export default function AudioBar({
         <AudioControls
           audioSrc={captionsMap[selectedAudioButton].audioSrc}
           shouldFakePlay={shouldTriggerAudioWithFakePlay}
+          showSlider={showSlider}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           onError={handleError}
