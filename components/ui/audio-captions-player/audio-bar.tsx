@@ -24,7 +24,7 @@ const allButtons: AudioBarButton[] = Object.keys(
 ) as AudioBarButton[];
 
 type Props = {
-  showSlider?: boolean;
+  showSliderAndPlay?: boolean;
 };
 
 export default function AudioBar({
