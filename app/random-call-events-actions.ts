@@ -93,18 +93,18 @@ const insertNewAppointmentDemoCallEvent: RandEventFunction = async (
   active_call_id: number,
 ) => {
   const supabase_admin = await createAdminClient();
-  const new_appointment_id = await getRandomAvailableAppointmentId();
+  const appointment_id = await getRandomAvailableAppointmentId();
 
-  if (!new_appointment_id) {
+  if (!appointment_id) {
     throw 'No appointments available';
   }
 
   const { data, error } = await supabase_admin.rpc(
-    'insert_new_appointment_call_event',
+    'insert_schedule_appointment_call_event',
     {
       active_call_id,
       user_id,
-      new_appointment_id,
+      appointment_id,
     },
   );
   if (error) {
@@ -151,18 +151,18 @@ const insertCancelOrRescheduledAppointmentDemoCallEvent = async (
   if (!new_appointment_id && !shouldCancel) {
     throw 'No appointments available!';
   }
-  const old_appointment_demo_call_event_id =
+  const old_appointment_event_id =
     await getUserRandomActiveFutureAppointmentEventId(user_id);
-  if (!old_appointment_demo_call_event_id) {
+  if (!old_appointment_event_id) {
     throw 'User doesnt have any existing future scheduled appointments';
   }
-  if (old_appointment_demo_call_event_id) {
+  if (old_appointment_event_id) {
     const { data, error } = await supabase_admin.rpc(
       'insert_reschedule_cancel_appointment_call_event',
       {
         active_call_id,
         user_id,
-        old_appointment_demo_call_event_id,
+        old_appointment_event_id,
         new_appointment_id,
       },
     );

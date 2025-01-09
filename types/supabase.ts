@@ -363,11 +363,11 @@ export type Database = {
           user_id: string;
         };
       };
-      insert_new_appointment_call_event: {
+      insert_schedule_appointment_call_event: {
         Args: {
           active_call_id: number;
           user_id: string;
-          new_appointment_id: number;
+          appointment_id: number;
         };
         Returns: {
           call_event_type_id: Database['public']['Enums']['call_event_types'];
@@ -397,7 +397,7 @@ export type Database = {
         Args: {
           active_call_id: number;
           user_id: string;
-          old_appointment_demo_call_event_id: number;
+          old_appointment_event_id: number;
           new_appointment_id?: number;
         };
         Returns: {
