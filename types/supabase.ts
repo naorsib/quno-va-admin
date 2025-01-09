@@ -204,7 +204,7 @@ export type Database = {
         Row: {
           associated_with: string | null;
           call_context: Json | null;
-          call_metadata: Json | null;
+          call_data: Json | null;
           call_termination_reason_type_id:
             | Database['public']['Enums']['call_termination_reason_types']
             | null;
@@ -217,7 +217,7 @@ export type Database = {
         Insert: {
           associated_with?: string | null;
           call_context?: Json | null;
-          call_metadata?: Json | null;
+          call_data?: Json | null;
           call_termination_reason_type_id?:
             | Database['public']['Enums']['call_termination_reason_types']
             | null;
@@ -230,7 +230,7 @@ export type Database = {
         Update: {
           associated_with?: string | null;
           call_context?: Json | null;
-          call_metadata?: Json | null;
+          call_data?: Json | null;
           call_termination_reason_type_id?:
             | Database['public']['Enums']['call_termination_reason_types']
             | null;

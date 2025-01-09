@@ -427,14 +427,15 @@ export const initiateCallFromClient = async () => {
 // TODO This is only good right now. For later (non-finite/stable) phases, this function will probably reside in a different project and `payload.phone` would be mandatory
 export const start_call = async (payload?: { phone: string }) => {
   const supabase_admin = await createAdminClient();
+
   const supabase = await createClient();
   //TODO - Export to env var and also maybe make environment-dependant to make fake dev calls possible
   const isReceivingRealCalls = false;
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  // TODO - Replace with real call metadata
-  const call_metadata = {};
+  // In the phone app it should be replaced with real call data
+  const call_data = {};
   const phone = isReceivingRealCalls
     ? await (
         await supabase.auth.getUser()
@@ -447,7 +448,7 @@ export const start_call = async (payload?: { phone: string }) => {
 
   const { data: incoming_call, error: creation_error } = (await supabase_admin
     .from('incoming_demo_calls')
-    .insert({ phone, call_metadata })
+    .insert({ phone, call_data })
     .select('id')
     .single()) as {
     data: { id: number };
@@ -456,7 +457,7 @@ export const start_call = async (payload?: { phone: string }) => {
 
   const phone_user = await get_phone_user(phone);
   if (creation_error) {
-    throw `Something went really wrong, the incoming_call couldn't be created. this can enver happen!. phone: ${phone}, call_metadata:{${call_metadata}}`;
+    throw `Something went really wrong, the incoming_call couldn't be created. This can enver happen!. ${JSON.stringify({ phone, call_data })}`;
   }
 
   try {
@@ -472,6 +473,7 @@ export const start_call = async (payload?: { phone: string }) => {
 
       // return {incoming_call_id: incoming_call.id}
       if (call_update_error) {
+        throw `Something went really wrong, the incoming_call couldn't be updated. This can enver happen!.${JSON.stringify({ user_id: phone_user.id, phone, call_data })}}`;
       }
     } else {
       throw {
@@ -483,13 +485,14 @@ export const start_call = async (payload?: { phone: string }) => {
   } catch (error: any) {
     const initError = error?.message || error || '';
     const call_termination_reason_type_id = error?.type || 'unexpected_error';
-    const metadata_with_error = Object.assign(call_metadata, initError);
-
+    const call_data_with_error = Object.assign(call_data, initError);
+    const ended_at = new Date().toISOString();
     await supabase_admin
       .from('incoming_demo_calls')
       .update({
         call_termination_reason_type_id,
-        call_metadata: metadata_with_error,
+        call_data: call_data_with_error,
+        ended_at,
       })
       .eq('id', `${incoming_call.id}`);
   }
