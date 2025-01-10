@@ -213,6 +213,7 @@ export type Database = {
           id: number;
           participant_identity: string;
           phone: string | null;
+          stream_sid: string | null;
         };
         Insert: {
           associated_with?: string | null;
@@ -226,6 +227,7 @@ export type Database = {
           id?: number;
           participant_identity?: string;
           phone?: string | null;
+          stream_sid?: string | null;
         };
         Update: {
           associated_with?: string | null;
@@ -239,6 +241,7 @@ export type Database = {
           id?: number;
           participant_identity?: string;
           phone?: string | null;
+          stream_sid?: string | null;
         };
         Relationships: [
           {
@@ -363,21 +366,6 @@ export type Database = {
           user_id: string;
         };
       };
-      insert_schedule_appointment_call_event: {
-        Args: {
-          active_call_id: number;
-          user_id: string;
-          appointment_id: number;
-        };
-        Returns: {
-          call_event_type_id: Database['public']['Enums']['call_event_types'];
-          created_at: string;
-          extra_data: Json;
-          id: number;
-          incoming_demo_call_id: number;
-          user_id: string;
-        };
-      };
       insert_prescription_renewal_call_event: {
         Args: {
           active_call_id: number;
@@ -399,6 +387,21 @@ export type Database = {
           user_id: string;
           old_appointment_event_id: number;
           new_appointment_id?: number;
+        };
+        Returns: {
+          call_event_type_id: Database['public']['Enums']['call_event_types'];
+          created_at: string;
+          extra_data: Json;
+          id: number;
+          incoming_demo_call_id: number;
+          user_id: string;
+        };
+      };
+      insert_schedule_appointment_call_event: {
+        Args: {
+          active_call_id: number;
+          user_id: string;
+          appointment_id: number;
         };
         Returns: {
           call_event_type_id: Database['public']['Enums']['call_event_types'];
@@ -441,7 +444,9 @@ export type Database = {
         | 'phone_user_not_found'
         | 'user_hanged_up'
         | 'agent_hanged_up'
-        | 'unexpected_error';
+        | 'unexpected_error'
+        | 'client_dissconnected'
+        | 'websocket_dissconneced';
       clinic_types: 'clinictype1' | 'clinictype2' | 'clinictype3';
       user_demo_status_types: 'ongoing' | 'paused' | 'finished';
     };

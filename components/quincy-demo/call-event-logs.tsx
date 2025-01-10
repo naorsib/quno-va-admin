@@ -1,10 +1,10 @@
 import { CallEvent } from '@/types/call-events';
-import { CallEventTypes } from '@/types/enums';
+import { CallEventType } from '@/types/enums';
 
 import { CallEventLogBoxes } from './call-event-log-boxes';
 
 type Props = {
-  existing_call_events: CallEvent<CallEventTypes>[];
+  existing_call_events: CallEvent<CallEventType>[];
 };
 export async function CallEventLogs({ existing_call_events }: Props) {
   return (

@@ -26,12 +26,12 @@ import {
   RescheduleAppointmentEventType,
   ScheduleAppointmentEventType,
 } from '@/types/call-events';
-import { CallEventTypes } from '@/types/enums';
+import { CallEventType } from '@/types/enums';
 import { combineDates } from '@/utils/date-utils';
 import { createClient } from '@/utils/supabase/client';
 
 type Props = {
-  existing_call_events: CallEvent<CallEventTypes>[];
+  existing_call_events: CallEvent<CallEventType>[];
 };
 export function CallEventLogBoxes({ existing_call_events = [] }: Props) {
   const [callEvents, setCallEvents] = useState(existing_call_events);
@@ -52,7 +52,7 @@ export function CallEventLogBoxes({ existing_call_events = [] }: Props) {
         },
         payload => {
           setCallEvents([
-            payload.new as CallEvent<CallEventTypes>,
+            payload.new as CallEvent<CallEventType>,
             ...callEvents,
           ]);
         },
@@ -121,7 +121,7 @@ export function CallEventLogBoxes({ existing_call_events = [] }: Props) {
   );
 }
 
-type CallEventLogBoxesProps<T extends CallEventTypes> = {
+type CallEventLogBoxesProps<T extends CallEventType> = {
   call_event: CallEvent<T>;
   t: any;
 };
@@ -216,7 +216,7 @@ export function DoctorCallCallEventLogBox({
 }
 
 type WrapperProps = ComponentProps<'div'> &
-  CallEventLogBoxesProps<CallEventTypes>;
+  CallEventLogBoxesProps<CallEventType>;
 
 const callEventTypeIconMap = {
   schedule_appointment: AppointmentCancelledSvgComponent,
@@ -271,9 +271,9 @@ function CallEventLogBoxWrapper({
   // const appointment = call_event.extra_data.appointment;
 }
 
-// type CallEventLogBoxComponent<T extends CallEventTypes> = React.ComponentType<CallEventLogBoxesProps<T>>;
+// type CallEventLogBoxComponent<T extends CallEventType> = React.ComponentType<CallEventLogBoxesProps<T>>;
 
-// const EventTypeToComponentMap: Record<string, CallEventLogBoxComponent<CallEventTypes>> = {
+// const EventTypeToComponentMap: Record<string, CallEventLogBoxComponent<CallEventType>> = {
 //   schedule_appointment: ScheduleAppointmentCallEventLogBox,
 //   cancel_appointment: CancelAppointmentCallEventLogBox,
 //   reschedule_appointment: RescheduleAppointmentCallEventLogBox,

@@ -1,4 +1,4 @@
-import { CallEventTypes } from './enums';
+import { CallEventType } from './enums';
 
 export type Appointment = {
   time: Date;
@@ -33,7 +33,7 @@ type DoctorCallAdditions = InfoAdditions & {
   doctor_full_name: string;
 };
 
-export type CallEvent<T extends CallEventTypes> = {
+export type CallEvent<T extends CallEventType> = {
   id: number;
   call_event_type_id: T;
   created_at: string;

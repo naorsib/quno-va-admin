@@ -6,7 +6,7 @@ import { sleep } from 'retell-sdk/core';
 
 import { UserCallEvent } from '@/components/quincy-dashboard/user-services/user-call-event-item';
 import en from '@/messages/en.json';
-import { CallEventTypes } from '@/types/enums';
+import { CallEventType } from '@/types/enums';
 import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { genRandomListItem } from '@/utils/utils';
@@ -300,7 +300,7 @@ export async function getAllAvailableFutureAppointmens(): Promise<
 }
 
 //#endregion
-const insertionFunctionMap: Record<CallEventTypes, RandEventFunction> = {
+const insertionFunctionMap: Record<CallEventType, RandEventFunction> = {
   schedule_appointment: insertNewAppointmentDemoCallEvent,
   cancel_appointment: insertCancelAppointmentDemoCallEvent,
   reschedule_appointment: insertRescheduleAppointmentDemoCallEvent,
@@ -360,7 +360,7 @@ export const insert_random_call_event = async () => {
       );
       try {
         await insertionFunctionMap[
-          radomlySelectedEvent.call_event_type_id as CallEventTypes
+          radomlySelectedEvent.call_event_type_id as CallEventType
         ](user_id, active_call_id);
         console.log(
           `Successfully inserted call event ${radomlySelectedEvent.call_event_type_id}`,
