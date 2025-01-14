@@ -4,7 +4,7 @@ import { P } from '@/components/typography/text';
 import { parsePhone } from '@/utils/utils';
 
 // TODO - Only good for initial demo, afterwards, we might want to apply a different phone assignment strategy
-const SINGLE_PHONE = '03041738193';
+const SINGLE_PHONE = '493041738193';
 
 type Props = QuincyDemoPropsBase;
 

@@ -144,9 +144,11 @@
       "phone_user_not_found": "Phone user not found. Could not associate the call with an active user"
     },
     "clinic_types": {
-      "clinictype1": "Clinic Type1",
-      "clinictype2": "Clinic Type2",
-      "clinictype3": "Clinic Type3"
+      "medical_practice": "Medical Practice",
+      "beauty": "Beauty",
+      "dental": "Dental",
+      "weight_loss": "Weight loss",
+      "orthopedics": "Orthopedics"
     }
   },
   "Dialogs": {
@@ -314,6 +316,10 @@
         "title": "Relieve Your Team"
       }
     }
+  },
+  "Metadata": {
+    "title": "Quincy",
+    "description": "Your personal AI receptionist"
   },
   "Sidebar": {
     "active": "Active",

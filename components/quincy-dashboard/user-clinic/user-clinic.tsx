@@ -1,5 +1,5 @@
 import { P } from '@/components/typography/text';
-import en from '@/messages/en.json';
+import { ClinicType } from '@/types/enums';
 import { InnerPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
 
@@ -10,7 +10,7 @@ import {
 import { ClinicTypeForm } from './basic-details/clinic-type-form';
 
 export type UserClinicData = UserClinicBase & {
-  clinic_type_id: keyof typeof en.Enums.clinic_types;
+  clinic_type_id: ClinicType;
 };
 
 type Props = {

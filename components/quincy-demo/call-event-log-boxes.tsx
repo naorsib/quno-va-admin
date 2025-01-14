@@ -185,8 +185,7 @@ export function PrescriptionRenewalCallEventLogBox({
 }: PrescriptionRenewalCallEventLogBoxProps) {
   return (
     <>
-      <span className="font-bold">{call_event.extra_data.info}</span> For the
-      reason <span className="font-bold">I am out of it</span>
+      <span className="font-bold">{call_event.extra_data.info}</span>
     </>
   );
 }

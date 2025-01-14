@@ -213,7 +213,6 @@ export const forgotPasswordAction = async (formData: FormData) => {
 
   const supabase = await createClient();
   const origin = (await headers()).get('origin');
-  const callbackUrl = formData.get('callbackUrl')?.toString();
 
   const { data, error } = await supabase.auth.signUp({
     email: email,
@@ -247,10 +246,6 @@ export const forgotPasswordAction = async (formData: FormData) => {
       routeConsts.forgotPassword,
       tErrors(COULD_NOT_RESET_PASSWORD),
     );
-  }
-
-  if (callbackUrl) {
-    return redirect(callbackUrl);
   }
 
   return encodedRedirect('success', routeConsts.forgotPassword, 'true');

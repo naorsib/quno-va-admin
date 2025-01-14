@@ -1,28 +1,18 @@
 import './globals.css';
 
 import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 
 import { roboto } from '@/components/typography/text';
 import { Toaster } from '@/components/ui/toaster';
-
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:3000';
-
-export const metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: 'Quincy',
-  description: 'You personal AI receptionist',
-};
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const locale = await getLocale();
+  // const locale = await getLocale();
   const messages = await getMessages();
 
   return (

@@ -447,7 +447,12 @@ export type Database = {
         | 'unexpected_error'
         | 'client_dissconnected'
         | 'websocket_dissconneced';
-      clinic_types: 'clinictype1' | 'clinictype2' | 'clinictype3';
+      clinic_types:
+        | 'medical_practice'
+        | 'beauty'
+        | 'dental'
+        | 'weight_loss'
+        | 'orthopedics';
       user_demo_status_types: 'ongoing' | 'paused' | 'finished';
     };
     CompositeTypes: {

@@ -309,6 +309,19 @@ const insertionFunctionMap: Record<CallEventType, RandEventFunction> = {
   doctor_call: insertDoctorCallCallTypeEvent,
 };
 
+const get_phone_user = async (phone: string) => {
+  const supabase = await createAdminClient();
+  const { data } = await supabase
+    .from('user_base_details')
+    .select('id, clinic_name, address, clinic_type_id, first_name, last_name')
+    // TODO - inner-join with past appointments and return along with a user-related call_context
+    .eq('phone', phone)
+    .limit(1)
+    .maybeSingle();
+
+  return data;
+};
+
 // This function is just for faking call events while user is logged in (development purposes only)
 export const insert_random_call_event = async () => {
   // we assume here there user is logged in
@@ -497,17 +510,4 @@ export const start_call = async (payload?: { phone: string }) => {
       .eq('id', `${incoming_call.id}`);
   }
   await sleep(1000);
-};
-
-const get_phone_user = async (phone: string) => {
-  const supabase = await createAdminClient();
-  const { data } = await supabase
-    .from('user_base_details')
-    .select('id, clinic_name, address, clinic_type_id, first_name, last_name')
-    // TODO - inner-join with past appointments and return along with a user-related call_context
-    .eq('phone', phone)
-    .limit(1)
-    .maybeSingle();
-
-  return data;
 };

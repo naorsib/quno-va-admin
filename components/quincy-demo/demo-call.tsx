@@ -11,20 +11,21 @@ import {
   useState,
 } from 'react';
 
-import {
-  end_call,
-  initiateCallFromClient,
-  insert_random_call_event,
-} from '@/app/random-call-events-actions';
 import DialSvgComponent from '@/components/react-svg-components/dial';
 import LoaderSvgComponent from '@/components/react-svg-components/loader';
 import PhoneSvgComponent from '@/components/react-svg-components/phone';
-import { SubmitButton } from '@/components/submit-button';
 import { P } from '@/components/typography/text';
 import { StopWatch } from '@/components/ui/stop-watch';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/utils/supabase/client';
 import { secondsFromDate, secondsToTime } from '@/utils/utils';
+
+// import {
+//   end_call,
+//   initiateCallFromClient,
+//   insert_random_call_event,
+// } from '@/app/random-call-events-actions';
+// import { SubmitButton } from '@/components/submit-button';
 
 export type OngoingCall = {
   id: number;
@@ -117,7 +118,7 @@ export function DemoCall({ ongoingCall }: Props) {
 
   const renderCallContent = () => (
     <div className={'flex flex-col items-center'}>
-      <form>
+      {/* <form>
         <SubmitButton
           formAction={insert_random_call_event}
           variant="link"
@@ -126,7 +127,7 @@ export function DemoCall({ ongoingCall }: Props) {
         >
           Trigger fake call event (temporary - dev only)
         </SubmitButton>
-      </form>
+      </form> */}
       <LabelWrapper className="text-successDarkr bg-successLight">
         <PhoneSvgComponent className="text-success" />
         <P>{t('incomingCall')}</P>
@@ -134,7 +135,7 @@ export function DemoCall({ ongoingCall }: Props) {
           <StopWatch elapsedOnStart={secondsFromDate(call.created_at)} />
         )}
       </LabelWrapper>
-      <form>
+      {/* <form>
         <SubmitButton
           formAction={end_call}
           variant="link"
@@ -143,13 +144,13 @@ export function DemoCall({ ongoingCall }: Props) {
         >
           Fake call end (temporary - dev only)
         </SubmitButton>
-      </form>
+      </form> */}
     </div>
   );
 
   const renderWaitingContent = () => (
     <>
-      <form>
+      {/* <form>
         <SubmitButton
           formAction={initiateCallFromClient}
           variant="link"
@@ -158,7 +159,7 @@ export function DemoCall({ ongoingCall }: Props) {
         >
           Fake call start (temporary - dev only)
         </SubmitButton>
-      </form>
+      </form> */}
       <LabelWrapper className="bg-border">
         <LoaderSvgComponent className="text-secondary" />
         <P className="text-label">{t('waitingForCallsButton')}</P>

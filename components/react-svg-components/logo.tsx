@@ -12,8 +12,8 @@ const LogoSvgComponent = ({
   <svg
     className={className}
     xmlns="http://www.w3.org/2000/svg"
-    width={221}
-    height={35}
+    width="221"
+    height="35"
     fill="none"
     aria-describedby={desc_id}
   >

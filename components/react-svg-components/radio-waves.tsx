@@ -25,9 +25,3 @@ const RadioWavesSvgComponent = ({
   </svg>
 );
 export default RadioWavesSvgComponent;
-<svg
-  width="193"
-  height="16"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
-></svg>;
