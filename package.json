@@ -38,6 +38,7 @@
     "client-only": "^0.0.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "fastify": "^5.2.1",
     "geist": "^1.2.1",
     "google-one-tap": "^1.0.6",
     "input-otp": "^1.4.1",
