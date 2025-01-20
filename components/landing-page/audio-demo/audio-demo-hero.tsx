@@ -43,7 +43,7 @@ export default async function AudioDemoHero() {
           </GradientButton>
         </StaticRouteLink>
       </div>
-      <CircularSVGAnimation />
+      <CircularSVGAnimation className="lg:flex" />
     </LandingHeroWrapper>
   );
 }

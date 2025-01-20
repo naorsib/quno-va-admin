@@ -1,11 +1,28 @@
-const CircularSVGAnimation = () => {
+import { ComponentProps } from 'react';
+
+import { cn } from '@/lib/utils';
+import { SVGRProps } from '@/types';
+
+type Props = ComponentProps<'div'> & SVGRProps & { shouldAnimate?: boolean };
+
+const CircularSVGAnimation = ({
+  className,
+  desc = 'Background Animation',
+  desc_id = 'bg_animation',
+}: Props) => {
   return (
-    <div className="absolute top-0 flex h-full w-full items-center justify-center blur-3xl">
+    <div
+      className={cn(
+        'absolute top-0 hidden h-full w-full items-center justify-center blur-3xl',
+        className,
+      )}
+    >
       <svg
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="h-full w-full"
       >
+        {<desc id={desc_id}>{desc}</desc>}
         <style>
           {`
              
