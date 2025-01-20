@@ -39,15 +39,6 @@ export default async function BookYourDemoHero() {
                 <P>{t('buttonText')}</P>
               </Button>
             </StaticRouteLink>
-            <StaticRouteLink routeTo="empty">
-              <Button
-                asChild
-                className="border-primary-overlay h-fit w-56 rounded-2xl border bg-white py-2.5 text-primary hover:text-white"
-                additions="landingButton"
-              >
-                <P>{t('button2Text')}</P>
-              </Button>
-            </StaticRouteLink>
           </div>
         </div>
         <div className="relative bottom-0 -mt-5 flex h-[500px] w-[120%] justify-center lg:absolute lg:-right-8 lg:left-auto lg:h-[125%] lg:w-[55%] lg:overflow-hidden">
@@ -69,15 +60,6 @@ export default async function BookYourDemoHero() {
             <GradientButton asChild additions="landingButton">
               <P>{t('buttonText')}</P>
             </GradientButton>
-          </StaticRouteLink>
-          <StaticRouteLink routeTo="empty" className="w-full">
-            <Button
-              asChild
-              className="border-card-primary text-primary-overlay pointer-events-none h-fit w-full rounded-2xl border bg-white py-4 hover:text-white"
-              additions="landingButton"
-            >
-              <P>{t('button2Text')}</P>
-            </Button>
           </StaticRouteLink>
         </div>
       </div>
