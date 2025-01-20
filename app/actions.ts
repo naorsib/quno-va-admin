@@ -1,8 +1,8 @@
 'use server';
 
+import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
 import { sleep } from 'retell-sdk/core';
 
 import {
@@ -439,5 +439,5 @@ export const handleSignInWithGoogle = async (response: any) => {
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return redirect(routeConsts.signIn);
+  return redirect(routeConsts.baseUrl);
 };
