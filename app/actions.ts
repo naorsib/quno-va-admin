@@ -1,8 +1,8 @@
 'use server';
 
-import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { sleep } from 'retell-sdk/core';
 
 import {
