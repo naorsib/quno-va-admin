@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 
 import { signOutAction } from '@/app/actions';
 import CalendarMenuSvgComponent from '@/components/react-svg-components/calendar-menu';
@@ -26,14 +26,16 @@ import { routeConsts } from '@/consts/routing.const';
 import en from '@/messages/en.json';
 import { GenericTrans } from '@/types/translations';
 
+import { InAppLogoButtonWrapper } from '../in-app-logo-button-wrapper';
 import { ClientMenuButton } from './client-menu-button';
 import { UserAvatar } from './user-avatar';
 
 type sidebarKeys = keyof typeof en.Sidebar;
 export type SidebarTrans = GenericTrans<sidebarKeys>;
 
-export function AppSidebar() {
-  const tSidebar: SidebarTrans = useTranslations('Sidebar');
+export async function AppSidebar() {
+  const t = await getTranslations(`Landing.header`);
+  const tSidebar: SidebarTrans = await getTranslations('Sidebar');
 
   const items = [
     {
@@ -65,8 +67,11 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader />
-      <SidebarContent className="p-7 pt-2 sm:px-4 lg:px-7">
-        <LogoSvgComponent className="z-10 text-white" desc="QunoMedical Logo" />
+      <SidebarContent className="overflow-x-hidden p-7 pt-2 sm:px-4 lg:px-7">
+        <InAppLogoButtonWrapper className="h-fit">
+          <LogoSvgComponent className="text-white" />
+        </InAppLogoButtonWrapper>
+
         <SidebarGroup className="mt-8">
           <SidebarGroupContent>
             <SidebarMenu>

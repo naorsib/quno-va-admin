@@ -1,7 +1,8 @@
-export const appBase = '/app';
-const quincyAi = `${appBase}/quincy-ai`;
+const appBase = '/app';
+const quincyAiBase = `${appBase}/quincy-ai`;
 
 export const routeConsts = {
+  appBase,
   baseUrl: '/',
   signIn: '/sign-in',
   signUp: '/sign-up',
@@ -10,7 +11,7 @@ export const routeConsts = {
   verifyEmail: '/verify-email',
   verifyOtp: '/verify-otp',
   youAreReady: '/you-are-ready',
-  quincyAi,
-  quincyDashboard: quincyAi,
-  quincyDemo: `${quincyAi}/demo`,
+  quincyAiBase,
+  quincyDashboard: quincyAiBase,
+  quincyDemo: `${quincyAiBase}/demo`,
 };

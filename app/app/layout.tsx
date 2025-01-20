@@ -1,4 +1,7 @@
+import { getTranslations } from 'next-intl/server';
+
 import { AppSidebar } from '@/components/app-sidebar/app-sidebar';
+import { InAppLogoButtonWrapper } from '@/components/in-app-logo-button-wrapper';
 import LogoSvgComponent from '@/components/react-svg-components/logo';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
@@ -7,6 +10,7 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
+  const t = await getTranslations(`Landing.header`);
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -15,10 +19,13 @@ export default async function Layout({
           <div className="absolute left-2 flex">
             <SidebarTrigger />
           </div>
-          <LogoSvgComponent
-            className="scale-75 text-white md:hidden"
-            desc="QunoMedical Logo"
-          />
+
+          <InAppLogoButtonWrapper className="h-fit">
+            <LogoSvgComponent
+              desc={t('logoDesc')}
+              className="scale-75 text-white md:hidden"
+            />
+          </InAppLogoButtonWrapper>
         </div>
         <div className="flex w-full flex-col px-3 md:mt-3 md:px-8">
           {children}

@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { appBase, routeConsts } from '@/consts/routing.const';
+import { routeConsts } from '@/consts/routing.const';
 
 export const updateSession = async (request: NextRequest) => {
   // Create an unmodified response
@@ -39,7 +39,7 @@ export const updateSession = async (request: NextRequest) => {
   const user = await supabase.auth.getUser();
 
   // protected routes
-  if (request.nextUrl.pathname.startsWith(appBase)) {
+  if (request.nextUrl.pathname.startsWith(routeConsts.appBase)) {
     if (user.error) {
       return NextResponse.redirect(new URL(routeConsts.signIn, request.url));
     }

@@ -293,12 +293,12 @@ export const pauseDemo = async () => {
     .from('user_base_details')
     .update({ user_demo_status_type_id: 'paused' })
     .eq('id', user_id);
-  // end call if exists
 
-  return await sleep(1000).then(async () => {
+  // end call if exists
+  return await sleep(500).then(async () => {
     // TODO - move to trigger function
-    await end_call();
-    return redirect(routeConsts.quincyAi);
+    await end_call(false);
+    return redirect(routeConsts.quincyAiBase);
   });
 };
 
