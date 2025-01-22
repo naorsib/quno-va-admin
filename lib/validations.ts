@@ -33,6 +33,20 @@ export const stringLengthValidation = (
     });
 };
 
+export const passwordValidation = (t: ValidationsTrans) => {
+  return z
+    .string()
+    .min(8, {
+      message: t('minLengthMessage', { fieldName: 'Password', min: 8 }),
+    })
+    .regex(/[0-9]/, {
+      message: t('passwordNumberMessage'),
+    })
+    .regex(/[a-zA-Z]/, {
+      message: t('passwordLetterMessage'),
+    });
+};
+
 export const phoneValidation = (fieldName: string, t: ValidationsTrans) => {
   return z.string().transform(value => value.replaceAll(/^0{1}/g, ''));
   // .refine(value => value.length == 11, {
@@ -43,6 +57,3 @@ export const phoneValidation = (fieldName: string, t: ValidationsTrans) => {
 export const emailValidation = (fieldName: string, t: ValidationsTrans) => {
   return z.string().email({ message: t('invalidMessage', { fieldName }) });
 };
-
-export const passwordValidation = (fieldName: string, t: ValidationsTrans) =>
-  stringLengthValidation(fieldName, t, 6, 20);

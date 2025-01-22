@@ -58,7 +58,9 @@
         "invalidMessage": "{fieldName} invalid",
         "maxLengthMessage": "{fieldName} must be at most ${max} characters.",
         "minLengthMessage": "{fieldName} must be at least {min} characters.",
-        "phoneLengthMessage": "{fieldName} must be 11 digits, or 12 if you included a leading zero"
+        "phoneLengthMessage": "{fieldName} must be 11 digits, or 12 if you included a leading zero",
+        "passwordNumberMessage": "Password must contain at least 1 number",
+        "passwordLetterMessage": "Password must contain at least 1 letter"
       },
       "custom": {
         "min": ""
