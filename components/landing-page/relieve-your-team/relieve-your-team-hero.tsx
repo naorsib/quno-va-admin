@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 
-import hero from '@/assets/images/relieve-image.png';
+import hero_v2 from '@/assets/images/octopus_desk.png';
+import hero_v1 from '@/assets/images/relieve-image.png';
 import { LandingHeroWrapper } from '@/components/landing-page/landing-hero-wrapper';
 import { StaticRouteLink } from '@/components/static-route-link';
 import { H1, H2, H5, P } from '@/components/typography/text';
@@ -11,15 +12,22 @@ import { GenericTrans } from '@/types/translations';
 
 type RelieveTrans = GenericTrans<keyof typeof en.Landing.heros.relieveYourTeam>;
 
+const herosMap = {
+  v1: hero_v1,
+  v2: hero_v2,
+};
+
 export default async function RelieveYourTeamHero() {
   const t: RelieveTrans = await getTranslations(
     `Landing.heros.relieveYourTeam`,
   );
 
+  const iv = (process.env.ILLUSTRATION_VERSION || '1') as '1' | '2';
+
   return (
     <LandingHeroWrapper className="items-center bg-hero-white lg:pt-0">
       <div className="flex w-full flex-col gap-4 pb-20 lg:flex-row lg:pb-0">
-        <div className="z-20 flex basis-3/5 flex-col items-center gap-2 text-start lg:items-start lg:pt-32">
+        <div className="z-20 flex basis-1/2 flex-col items-center gap-2 text-start lg:items-start lg:pt-32">
           <H5 variant="bannerInfo">{t('description')}</H5>
           <div className="my-2 flex flex-col items-center text-center lg:items-start lg:text-start">
             <H1 variant="landingPage">{t('title')}</H1>
@@ -48,7 +56,7 @@ export default async function RelieveYourTeamHero() {
         <div className="relative bottom-0 -mb-8 -mt-5 flex h-[500px] w-[150%] justify-center self-center lg:absolute lg:-right-8 lg:left-auto lg:-mb-40 lg:h-[125%] lg:w-[55%] lg:overflow-hidden">
           <Image
             fill={true}
-            src={hero}
+            src={herosMap[`v${iv}`]}
             decoding="async"
             loading="eager"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
