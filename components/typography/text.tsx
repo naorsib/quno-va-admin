@@ -226,6 +226,7 @@ const pVariants = cva('', {
       default: '',
       info: 'text-base/6 lg:text-lg/6',
       textInButton: 'text-xl font-normal',
+      sidebar: 'text-lg font-normal',
     },
   },
   defaultVariants: {

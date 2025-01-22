@@ -80,7 +80,7 @@ export async function AppSidebar() {
                   <ClientMenuButton url={item.url}>
                     <a href={item?.url || '#'} className="p-3.5">
                       <item.icon height="22" width="20" />
-                      <span>{item.title}</span>
+                      <P variant="sidebar">{item.title}</P>
                     </a>
                   </ClientMenuButton>
                 </SidebarMenuItem>
@@ -93,7 +93,7 @@ export async function AppSidebar() {
         <form action={signOutAction}>
           <Button className="mb-3 bg-transparent text-border-input hover:bg-transparent hover:text-white">
             <LogoutSvgComponent desc={tSidebar('logoDesc')} />
-            <P className="text-lg">{tSidebar('logout')}</P>
+            <P variant="sidebar">{tSidebar('logout')}</P>
           </Button>
         </form>
         <Separator className="bg-border-input" />
