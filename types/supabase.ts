@@ -7,31 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-          extensions?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       abstract_demo_call_events: {
@@ -253,6 +228,36 @@ export type Database = {
           },
         ];
       };
+      pending_actions: {
+        Row: {
+          completed: boolean | null;
+          created_at: string;
+          data: Json;
+          errors: Json[] | null;
+          id: number;
+          pending_action_type_id: Database['public']['Enums']['pending_action_types'];
+          success_at: string | null;
+        };
+        Insert: {
+          completed?: boolean | null;
+          created_at?: string;
+          data: Json;
+          errors?: Json[] | null;
+          id?: number;
+          pending_action_type_id: Database['public']['Enums']['pending_action_types'];
+          success_at?: string | null;
+        };
+        Update: {
+          completed?: boolean | null;
+          created_at?: string;
+          data?: Json;
+          errors?: Json[] | null;
+          id?: number;
+          pending_action_type_id?: Database['public']['Enums']['pending_action_types'];
+          success_at?: string | null;
+        };
+        Relationships: [];
+      };
       prescription_renewal_demo_call_events: {
         Row: {
           id: number;
@@ -281,6 +286,7 @@ export type Database = {
           address: string | null;
           clinic_name: string | null;
           clinic_type_id: Database['public']['Enums']['clinic_types'];
+          contract_requested: boolean | null;
           created_at: string;
           email: string;
           first_name: string;
@@ -295,6 +301,7 @@ export type Database = {
           address?: string | null;
           clinic_name?: string | null;
           clinic_type_id?: Database['public']['Enums']['clinic_types'];
+          contract_requested?: boolean | null;
           created_at?: string;
           email: string;
           first_name: string;
@@ -309,6 +316,7 @@ export type Database = {
           address?: string | null;
           clinic_name?: string | null;
           clinic_type_id?: Database['public']['Enums']['clinic_types'];
+          contract_requested?: boolean | null;
           created_at?: string;
           email?: string;
           first_name?: string;
@@ -453,6 +461,10 @@ export type Database = {
         | 'dental'
         | 'weight_loss'
         | 'orthopedics';
+      pending_action_types:
+        | 'contract_requested'
+        | 'user_registered'
+        | 'incoming_call';
       user_demo_status_types: 'ongoing' | 'paused' | 'finished';
     };
     CompositeTypes: {
