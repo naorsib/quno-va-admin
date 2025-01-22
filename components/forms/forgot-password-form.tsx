@@ -54,9 +54,13 @@ export function ForgotPasswordForm({ ...props }: Props) {
     mode: 'onBlur',
   });
 
+  const onSubmit = form.handleSubmit((data: any) => {
+    forgotPasswordAction(data);
+  });
+
   return (
     <FormProvider {...form}>
-      <form className={props.className}>
+      <form onSubmit={onSubmit} className={props.className}>
         <div className="grid gap-6">
           <FormField
             control={form.control}
@@ -76,7 +80,6 @@ export function ForgotPasswordForm({ ...props }: Props) {
             additions="main"
             disabled={!form.formState.isValid}
             className="bg-card-button text-white"
-            formAction={forgotPasswordAction}
           >
             {tb('text')}
           </SubmitButton>

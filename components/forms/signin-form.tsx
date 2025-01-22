@@ -21,7 +21,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import {
   emailValidation,
   FormFieldsTrans,
-  stringLengthValidation,
+  passwordValidation,
   ValidationsTrans,
 } from '@/lib/validations';
 import { FormButtonsTrans } from '@/types/translations';
@@ -36,7 +36,7 @@ const useValidationSchema = (
 ): ZodType<SignupFormData> => {
   return z.object({
     email: emailValidation(tFields('email'), t),
-    password: stringLengthValidation(tFields('password'), t, 6, 20),
+    password: passwordValidation(t),
   });
 };
 
@@ -60,9 +60,13 @@ export function SignInForm({ ...props }: Props) {
     mode: 'onBlur',
   });
 
+  const onSubmit = form.handleSubmit((data: any) => {
+    signInAction(data);
+  });
+
   return (
     <FormProvider {...form}>
-      <form className={props.className}>
+      <form onSubmit={onSubmit} className={props.className}>
         <div className="grid gap-6">
           <FormField
             control={form.control}
@@ -101,7 +105,6 @@ export function SignInForm({ ...props }: Props) {
             additions="main"
             disabled={!form.formState.isValid}
             className="bg-card-button text-white"
-            formAction={signInAction}
           >
             {tb('text')}
           </SubmitButton>
