@@ -24,21 +24,21 @@ export async function GET(request: Request) {
       }) as PendingActionData;
       const error_ = await handlePendingAction(pending_action_data);
 
-      if (error_) {
-        const success_at = new Date().toISOString();
-        supabase_admin
-          .from('pending_actions')
-          .update({ success_at, completed: true })
-          .eq('id', action.id);
-      } else {
+      if (error) {
         const errors = [...(action.errors || []), error_];
         const update_object = { errors };
         if (errors.length === MAX_RETRIES) {
           Object.assign(update_object, { completed: true });
         }
-        supabase_admin
+        await supabase_admin
           .from('pending_actions')
           .update(update_object)
+          .eq('id', action.id);
+      } else {
+        const success_at = new Date().toISOString();
+        await supabase_admin
+          .from('pending_actions')
+          .update({ success_at, completed: true })
           .eq('id', action.id);
       }
     }

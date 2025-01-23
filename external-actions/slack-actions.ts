@@ -1,4 +1,4 @@
-import { secondsToTime } from '@/utils/utils';
+import { secondsToTimeTextual } from '@/utils/utils';
 
 export const handlePendingAction = async (data: PendingActionData) => {
   try {
@@ -62,7 +62,7 @@ const sendContractRequestedNotification = async (
 
 const sendIncomingCallSlackNotification = async (data: IncomingCallData) => {
   const { call_id, first_name, last_name, email, duration } = data;
-  const text = `Call #${call_id}: ${first_name} ${last_name} ${email} just finished a call with a total length of ${secondsToTime(duration)}`;
+  const text = `Call #${call_id}: ${first_name} ${last_name} ${email} just finished a call with a total length of ${secondsToTimeTextual(duration)}`;
   const response = await fetch(process.env.MISC_SLACK_URL as string, {
     method: 'POST',
     headers: {
