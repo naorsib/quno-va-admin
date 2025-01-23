@@ -27,6 +27,9 @@ import { encodedRedirect } from '@/utils/utils';
 
 import { end_call } from './random-call-events-actions';
 
+const MAX_RESEND_ALLOWED = 10;
+const RESEND_COOLDOWN_MINUTES = 15;
+
 const transformPhone = (phone: string) => {
   return phone.replaceAll(/^0{1}/g, '');
 };
@@ -122,6 +125,17 @@ export const updateUser = async (formData: UserSignupDetails) => {
 
 const sendPhoneOtpCommon = async (phone: string) => {
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const number_of_resends = (user?.user_metadata.num_of_resends || 0) + 1;
+  const last_otp_sent = new Date().toISOString();
+  supabase.auth.updateUser({
+    data: { last_otp_sent, num_of_resends: number_of_resends },
+  });
+
   const { data, error } = await supabase.auth.signInWithOtp({
     phone,
     options: {
@@ -136,11 +150,47 @@ const sendPhoneOtpCommon = async (phone: string) => {
     // That's why we get 'otp_disabled' and it still sends out sms, currnetly surpressing this error code
     return;
   }
+
   return error;
 };
 
+export const resendOtp = async (phone: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.updateUser({
+    phone,
+    data: { phone },
+  });
+
+  if (!!error) {
+    // Faking success in order to not reveal the existence of the phone to the user
+    console.log(JSON.stringify(error));
+    return;
+  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const tErrors: ErrorsTrans = await getTranslations('Errors');
+
+  if (user?.user_metadata.last_otp_sent) {
+    const now = new Date();
+    const last_otp_sent = new Date(user.user_metadata.last_otp_sent);
+    const timeDifference = now.getTime() - last_otp_sent.getTime();
+    if (timeDifference < RESEND_COOLDOWN_MINUTES * 60 * 1000) {
+      return tErrors('resend_cooldown', { RESEND_COOLDOWN_MINUTES });
+    }
+  }
+  if (user?.user_metadata.num_of_resends >= MAX_RESEND_ALLOWED) {
+    return tErrors('resend_limit');
+  }
+
+  const error_ = await sendPhoneOtpCommon(phone);
+  if (error_) {
+    return tErrors('unexpected_error_otp');
+  }
+};
+
 export const sendPhoneOtp = async (formData: UserSignupDetails) => {
-  console.log(formData);
   const user_update_error = await updateUser(formData);
   if (!!user_update_error) {
     if (user_update_error.code == phoneExistsErrorCode) {
@@ -199,20 +249,6 @@ export const verifyOtp = async (token: string, phone: string) => {
   }
 
   return redirect(routeConsts.youAreReady);
-};
-
-export const resendOtp = async (phone: string) => {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.auth.updateUser({
-    phone,
-    data: { phone },
-  });
-  if (!!error) {
-    // Faking success in order to not reveal the existence of the phone to the user
-    return error.code == phoneExistsErrorCode ? undefined : error;
-  }
-  return await sendPhoneOtpCommon(phone);
 };
 
 export const forgotPasswordAction = async (

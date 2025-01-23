@@ -6,13 +6,17 @@ import { ComponentProps, useState } from 'react';
 
 import { resendOtp, verifyOtp } from '@/app/actions';
 import { SubmitButton } from '@/components/submit-button';
-import { Button } from '@/components/ui/button';
+import { P } from '@/components/typography/text';
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { FormButtonsTrans } from '@/types/translations';
+import {
+  AuthPagesTrans,
+  ErrorsTrans,
+  FormButtonsTrans,
+} from '@/types/translations';
 
 type Props = ComponentProps<'div'> & {
   phone: string;
@@ -20,37 +24,43 @@ type Props = ComponentProps<'div'> & {
 
 export function OtpCodeForm({ phone, ...props }: Props) {
   const [value, setValue] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [otpReady, setOtpReady] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const tb: FormButtonsTrans<'otp'> = useTranslations('Forms.buttons.otp');
+  const tErrors: ErrorsTrans = useTranslations('Errors');
+
+  const t: AuthPagesTrans<'verifyOtp'> = useTranslations(
+    'Auth.pages.verifyOtp',
+  );
+
   const onComplete = () => {
     setOtpReady(true);
   };
   const onResendClicked = async () => {
+    setErrorMessage('');
     setIsResending(true);
     const error = await resendOtp(phone);
     if (error) {
-      // TODO - Toast? Error? Anyway - translate
-      console.log('Error resending OTP!!', error);
+      setErrorMessage(error);
     }
     setIsResending(false);
   };
 
-  // TODO - Toast? Error? Anyway - translate
   const onSubmit = async () => {
+    setErrorMessage('');
     setIsVerifying(true);
+
     const error = await verifyOtp(value, phone);
     if (error) {
-      console.log('wrong OTP!!');
-      setIsVerifying(false);
-    } else {
-      console.log('correct OTP YAY! we should redirect here');
+      setErrorMessage(tErrors('wrong_otp'));
     }
+    setIsVerifying(false);
   };
 
   return (
-    <div className="grid gap-20">
+    <div className="grid gap-1">
       <InputOTP
         disabled={isResending || isVerifying}
         onChange={(value: string): void => {
@@ -73,7 +83,7 @@ export function OtpCodeForm({ phone, ...props }: Props) {
       </InputOTP>
       <SubmitButton
         additions="main"
-        className="w-fit bg-card-button font-normal text-white"
+        className="mt-12 w-fit bg-card-button font-normal text-white"
         disabled={!otpReady}
         onClick={onSubmit}
         pendingText={tb('submitting')}
@@ -81,13 +91,19 @@ export function OtpCodeForm({ phone, ...props }: Props) {
         {tb('submit')}
       </SubmitButton>
 
-      <Button
+      <P fontFamily="roboto" className="text-disclaimer text-center text-base">
+        {t('otpDisclaimer')}
+      </P>
+      <button
         disabled={isResending || isVerifying}
         className="w-fit cursor-pointer justify-self-center bg-transparent text-xs hover:bg-background hover:underline"
         onClick={onResendClicked}
       >
-        {tb('resend')}
-      </Button>
+        <P fontFamily="roboto" className="text-disclaimer text-lg">
+          {tb('resend')}
+        </P>
+      </button>
+      <P className="text-center text-xs text-destructive">{errorMessage}</P>
     </div>
   );
 }
