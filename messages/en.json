@@ -47,6 +47,7 @@
         "checkPhone": "Please check your phone and enter the code to verify",
         "confirmAccount": "Please confirm your account by entering the authorization code which was sent to",
         "initialTitle": "Almost there",
+        "otpDisclaimer": "The Recieving of the Code can take some minutes. Haven't recieved it?",
         "otpSent": "Verify your phone number",
         "signInDifferent": "Click here to sign in with a different user",
         "signingOut": "Signing out...",
@@ -58,7 +59,9 @@
         "invalidMessage": "{fieldName} invalid",
         "maxLengthMessage": "{fieldName} must be at most ${max} characters.",
         "minLengthMessage": "{fieldName} must be at least {min} characters.",
-        "phoneLengthMessage": "{fieldName} must be 11 digits, or 12 if you included a leading zero"
+        "phoneLengthMessage": "{fieldName} must be at least 7 digits, or 8 if you included a leading zero",
+        "passwordNumberMessage": "Password must contain at least 1 number",
+        "passwordLetterMessage": "Password must contain at least 1 letter"
       },
       "custom": {
         "min": ""
@@ -162,9 +165,13 @@
     "email_not_confirmed": "",
     "password_update_failed": "Password update failed",
     "otp_disabled": "",
+    "resend_cooldown": "Resend is only possible when {RESEND_COOLDOWN_MINUTES} minutes have passed",
+    "resend_limit": "Resend limit reached",
     "unexpected_error": "Unexpected error",
+    "unexpected_error_otp": "Could no resend OTP code. Unexpected error",
     "update_unsuccessful": "Update unsuccessful",
-    "same_password": "'New password should be different from the old password.'"
+    "same_password": "'New password should be different from the old password.'",
+    "wrong_otp": "Wrong OTP code, please try again"
   },
   "Forms": {
     "buttons": {
@@ -173,7 +180,7 @@
         "text": "Send reset email"
       },
       "otp": {
-        "resend": "Resend",
+        "resend": "Please send a new code",
         "submitting": "Submitting..",
         "submit": "Submit code"
       },
@@ -278,7 +285,6 @@
       "bookYourDemo": {
         "buttonDisclaimer": "*Free, requires registration",
         "buttonText": "Try live demo",
-        "button2Text": "Talk to an expert",
         "description": "DEMO",
         "imageAltText": "Book free demo",
         "info": "Why wait until your competitors take the leap? Experience how Quincy can streamline your practice and give you the competitive edge—before it’s too late.",

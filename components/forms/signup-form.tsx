@@ -20,6 +20,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import {
   emailValidation,
   FormFieldsTrans,
+  passwordValidation,
   phoneValidation,
   stringLengthValidation,
   ValidationsTrans,
@@ -44,7 +45,7 @@ const useValidationSchema = (
     last_name: stringLengthValidation(tFields('last_name'), t),
     phone: phoneValidation(tFields('phone'), t),
     email: emailValidation(tFields('email'), t),
-    password: stringLengthValidation(tFields('password'), t, 6, 20),
+    password: passwordValidation(t),
   });
 };
 
@@ -71,9 +72,13 @@ export function SignUpForm({ ...props }: Props) {
     mode: 'onBlur',
   });
 
+  const onSubmit = form.handleSubmit((data: any) => {
+    signUpAction(data);
+  });
+
   return (
     <FormProvider {...form}>
-      <form className={props.className}>
+      <form onSubmit={onSubmit} className={props.className}>
         <FormField
           control={form.control}
           name="country_code"
@@ -163,7 +168,6 @@ export function SignUpForm({ ...props }: Props) {
             additions="main"
             disabled={!form.formState.isValid}
             className="bg-card-button text-white"
-            formAction={signUpAction}
           >
             {tb('text')}
           </SubmitButton>

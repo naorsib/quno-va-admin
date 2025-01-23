@@ -9,6 +9,7 @@ import LoaderSvgComponent from './react-svg-components/loader';
 
 type PendingType = 'text' | 'loader';
 type Props = ComponentProps<typeof Button> & {
+  // pass "null" to keep original content (default button behavior)
   pendingText?: string | null;
   pendingType?: PendingType;
 };
@@ -22,7 +23,12 @@ export function SubmitButton({
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" aria-disabled={pending} {...props} disabled={pending}>
+    <Button
+      type="submit"
+      aria-disabled={pending}
+      {...props}
+      disabled={props.disabled || pending}
+    >
       {pending ? (
         pendingType === 'text' ? (
           pendingText || children

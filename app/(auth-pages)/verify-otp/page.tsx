@@ -5,6 +5,7 @@ import { signOutAction } from '@/app/actions';
 import { FormMessage, Message } from '@/components/form-message';
 import { OtpCodeForm } from '@/components/forms/otp-code-form';
 import { VerifyOtpForm } from '@/components/forms/verify-otp-form';
+import { StaticRouteLink } from '@/components/static-route-link';
 import { H2, P } from '@/components/typography/text';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +19,7 @@ import {
 import { routeConsts } from '@/consts/routing.const';
 import { AuthPagesTrans } from '@/types/translations';
 import { createClient } from '@/utils/supabase/server';
+import { parsePhone } from '@/utils/utils';
 
 export default async function VerifyOtpPage(props: {
   searchParams: Promise<Message>;
@@ -55,10 +57,13 @@ export default async function VerifyOtpPage(props: {
     }
   }
 
-  let phone = (user.phone || user.user_metadata.phone || '') as string;
+  const userPhone = user.phone || user.user_metadata.phone;
+
+  let phone = (userPhone || '') as string;
 
   const country_code = phone.length > 0 ? phone.slice(0, 2) : '49';
 
+  console.log(user);
   // remove country code
   phone = phone.slice(2);
 
@@ -68,6 +73,8 @@ export default async function VerifyOtpPage(props: {
     last_name,
     phone,
   };
+  const userphoneparsed = parsePhone(userPhone);
+  console.log(userphoneparsed);
   return (
     <Card>
       <CardHeader>
@@ -83,8 +90,16 @@ export default async function VerifyOtpPage(props: {
               <div className="pb-4 pt-12">
                 <P variant="info">{t('confirmAccount')}</P>
                 <P variant="info" className="font-bold">
-                  {user.phone}
+                  +{parsePhone(userPhone)}
                 </P>
+                <StaticRouteLink routeTo="verifyOtp">
+                  <Button
+                    className="h-fit bg-transparent p-0 hover:bg-transparent hover:text-primary"
+                    asChild
+                  >
+                    <P>Wrong phone?</P>
+                  </Button>
+                </StaticRouteLink>
               </div>
             </>
           ) : (

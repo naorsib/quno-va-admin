@@ -395,7 +395,7 @@ export const insert_random_call_event = async () => {
   await sleep(1000);
 };
 
-export const end_call = async () => {
+export const end_call = async (errorOnNoCall = true) => {
   // we assume here there user is logged in. It is okay becuase the method only really exist for development purposes
   console.log('attempting call end');
   const supabase = await createClient();
@@ -421,7 +421,9 @@ export const end_call = async () => {
       throw error;
     }
   } catch (error) {
-    console.error('FATAL ERROR:', error);
+    if (errorOnNoCall) {
+      console.error('FATAL ERROR:', error);
+    }
   }
   await sleep(1000);
 };

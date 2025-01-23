@@ -5,6 +5,11 @@ import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { sleep } from 'retell-sdk/core';
 
+import { ForgotPasswordFormData } from '@/components/forms/forgot-password-form';
+import { ResetPasswordFormData } from '@/components/forms/reset-password-form';
+import { SigninFormData } from '@/components/forms/signin-form';
+import { SignupFormData } from '@/components/forms/signup-form';
+import { UserSignupDetails } from '@/components/forms/verify-otp-form';
 import {
   COULD_NOT_RESET_PASSWORD,
   EMAIL_NOT_CONFIRMED,
@@ -16,25 +21,29 @@ import {
 import { routeConsts } from '@/consts/routing.const';
 import { FormFieldsTrans } from '@/lib/validations';
 import { ErrorsTrans } from '@/types/translations';
+import { createAdminClient } from '@/utils/supabase/admin-server';
 import { createClient } from '@/utils/supabase/server';
 import { encodedRedirect } from '@/utils/utils';
 
 import { end_call } from './random-call-events-actions';
 
-const getPhoneFromFormData = (formData: FormData) => {
-  return (formData.get('phone') as string).replaceAll(/^0{1}/g, '');
+const MAX_RESEND_ALLOWED = 10;
+const RESEND_COOLDOWN_MINUTES = 15;
+
+const transformPhone = (phone: string) => {
+  return phone.replaceAll(/^0{1}/g, '');
 };
 
 const phoneExistsErrorCode = 'phone_exists';
 
-export const signUpAction = async (formData: FormData) => {
-  const first_name = formData.get('first_name') as string;
-  const last_name = formData.get('last_name') as string;
-  const email = formData.get('email') as string;
+export const signUpAction = async (formData: SignupFormData) => {
+  const first_name = formData.first_name;
+  const last_name = formData.last_name;
+  const email = formData.email;
 
-  const password = formData.get('password') as string;
-  const country_code = formData.get('country_code') as string;
-  const phone = `${country_code}${getPhoneFromFormData(formData)}`;
+  const password = formData.password;
+  const country_code = formData.country_code;
+  const phone = `${country_code}${transformPhone(formData.phone)}`;
 
   const supabase = await createClient();
   const origin = (await headers()).get('origin');
@@ -54,9 +63,9 @@ export const signUpAction = async (formData: FormData) => {
   return redirect(`${routeConsts.verifyEmail}?email=${user?.email}`);
 };
 
-export const signInAction = async (formData: FormData) => {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+export const signInAction = async (formData: SigninFormData) => {
+  const email = formData.email;
+  const password = formData.password;
   const supabase = await createClient();
 
   const {
@@ -99,11 +108,11 @@ export const signUpWithAuth = async () => {
   }
 };
 
-export const updateUser = async (formData: FormData) => {
-  const first_name = formData.get('first_name') as string;
-  const last_name = formData.get('last_name') as string;
-  const country_code = formData.get('country_code') as string;
-  const phone = `${country_code}${getPhoneFromFormData(formData)}`;
+export const updateUser = async (formData: UserSignupDetails) => {
+  const first_name = formData.first_name;
+  const last_name = formData.last_name;
+  const country_code = formData.country_code;
+  const phone = `${country_code}${transformPhone(formData.phone)}`;
 
   const supabase = await createClient();
 
@@ -116,6 +125,17 @@ export const updateUser = async (formData: FormData) => {
 
 const sendPhoneOtpCommon = async (phone: string) => {
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const number_of_resends = (user?.user_metadata.num_of_resends || 0) + 1;
+  const last_otp_sent = new Date().toISOString();
+  supabase.auth.updateUser({
+    data: { last_otp_sent, num_of_resends: number_of_resends },
+  });
+
   const { data, error } = await supabase.auth.signInWithOtp({
     phone,
     options: {
@@ -130,10 +150,47 @@ const sendPhoneOtpCommon = async (phone: string) => {
     // That's why we get 'otp_disabled' and it still sends out sms, currnetly surpressing this error code
     return;
   }
+
   return error;
 };
 
-export const sendPhoneOtp = async (formData: FormData) => {
+export const resendOtp = async (phone: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.updateUser({
+    phone,
+    data: { phone },
+  });
+
+  if (!!error) {
+    // Faking success in order to not reveal the existence of the phone to the user
+    console.log(JSON.stringify(error));
+    return;
+  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const tErrors: ErrorsTrans = await getTranslations('Errors');
+
+  if (user?.user_metadata.last_otp_sent) {
+    const now = new Date();
+    const last_otp_sent = new Date(user.user_metadata.last_otp_sent);
+    const timeDifference = now.getTime() - last_otp_sent.getTime();
+    if (timeDifference < RESEND_COOLDOWN_MINUTES * 60 * 1000) {
+      return tErrors('resend_cooldown', { RESEND_COOLDOWN_MINUTES });
+    }
+  }
+  if (user?.user_metadata.num_of_resends >= MAX_RESEND_ALLOWED) {
+    return tErrors('resend_limit');
+  }
+
+  const error_ = await sendPhoneOtpCommon(phone);
+  if (error_) {
+    return tErrors('unexpected_error_otp');
+  }
+};
+
+export const sendPhoneOtp = async (formData: UserSignupDetails) => {
   const user_update_error = await updateUser(formData);
   if (!!user_update_error) {
     if (user_update_error.code == phoneExistsErrorCode) {
@@ -146,8 +203,8 @@ export const sendPhoneOtp = async (formData: FormData) => {
       'Could not send otp code',
     );
   }
-  const country_code = formData.get('country_code') as string;
-  const phone = `${country_code}${formData.get('phone') as string}`;
+  const country_code = formData.country_code;
+  const phone = `${country_code}${transformPhone(formData.phone)}`;
 
   const error = await sendPhoneOtpCommon(phone);
 
@@ -177,9 +234,9 @@ export const verifyOtp = async (token: string, phone: string) => {
   if (error) {
     return encodedRedirect('error', routeConsts.verifyOtp, error.message);
   }
-
+  const supabase_admin = await createAdminClient();
   // const sb_admin = await createAdminClient();
-  const result = await supabase.from('user_base_details').insert({
+  const result = await supabase_admin.from('user_base_details').insert({
     id: user.id,
     first_name: user.user_metadata.first_name,
     last_name: user.user_metadata.last_name,
@@ -194,22 +251,10 @@ export const verifyOtp = async (token: string, phone: string) => {
   return redirect(routeConsts.youAreReady);
 };
 
-export const resendOtp = async (phone: string) => {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.auth.updateUser({
-    phone,
-    data: { phone },
-  });
-  if (!!error) {
-    // Faking success in order to not reveal the existence of the phone to the user
-    return error.code == phoneExistsErrorCode ? undefined : error;
-  }
-  return await sendPhoneOtpCommon(phone);
-};
-
-export const forgotPasswordAction = async (formData: FormData) => {
-  const email = formData.get('email')?.toString() as string;
+export const forgotPasswordAction = async (
+  formData: ForgotPasswordFormData,
+) => {
+  const email = formData.email;
 
   const supabase = await createClient();
   const origin = (await headers()).get('origin');
@@ -251,10 +296,10 @@ export const forgotPasswordAction = async (formData: FormData) => {
   return encodedRedirect('success', routeConsts.forgotPassword, 'true');
 };
 
-export const resetPasswordAction = async (formData: FormData) => {
+export const resetPasswordAction = async (formData: ResetPasswordFormData) => {
   const supabase = await createClient();
 
-  const password = formData.get('newPassword') as string;
+  const password = formData.newPassword;
   //const confirmPassword = formData.get('confirmPassword') as string;
 
   const { error } = await supabase.auth.updateUser({
@@ -293,12 +338,12 @@ export const pauseDemo = async () => {
     .from('user_base_details')
     .update({ user_demo_status_type_id: 'paused' })
     .eq('id', user_id);
-  // end call if exists
 
-  return await sleep(1000).then(async () => {
+  // end call if exists
+  return await sleep(500).then(async () => {
     // TODO - move to trigger function
-    await end_call();
-    return redirect(routeConsts.quincyAi);
+    await end_call(false);
+    return redirect(routeConsts.quincyAiBase);
   });
 };
 
@@ -312,7 +357,7 @@ export const requestContract = async () => {
   const user_id = user?.id as string;
   const { error } = await supabase
     .from('user_base_details')
-    .update({ user_demo_status_type_id: 'finished' })
+    .update({ user_demo_status_type_id: 'finished', contract_requested: true })
     .eq('id', user_id);
   // end call if exists
 
@@ -439,5 +484,5 @@ export const handleSignInWithGoogle = async (response: any) => {
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return redirect(routeConsts.signIn);
+  return redirect(routeConsts.baseUrl);
 };

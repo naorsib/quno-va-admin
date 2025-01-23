@@ -16,7 +16,15 @@ export function encodedRedirect(
 }
 
 export const parsePhone = (phone: string) => {
-  return phone.replace(/(\d{1,2})(\d{3,4})(\d{3})(\d{4})/, '$1 $2 $3 $4');
+  const oldPhone = phone;
+  const newPhone = phone.replace(
+    /(\d{1,2})(\d{3,4})(\d{3})(\d{4})/,
+    '$1 $2 $3 $4',
+  );
+  if (oldPhone === newPhone) {
+    return phone.replace(/(\d{1,2})(\d{3,4})(\d{3})/, '$1 $2 $3');
+  }
+  return newPhone;
 };
 
 export const secondsFromDate = (date: Date) => {

@@ -31,7 +31,7 @@ const config = {
       boxShadow: {
         heroCardShadow: '0 4px 10px 0 hsl(var(--hero-card-shadow))',
         otpShadow: '0 1.7px 0 0 rgb(113, 107, 107)',
-        otpShadowActive: '0 1.7px 0 0 hsl(var(--primary))',
+        otpShadowActive: '0 1.7px 0 0 hsl(var(--secondary))',
       },
       letterSpacing: {
         description: '0.16em',
@@ -43,6 +43,7 @@ const config = {
           input: 'hsl(var(--border-input))',
         },
         audioControl: 'hsl(var(--audio-control))',
+        disclaimer: 'hsl(var(--disclaimer))',
         label: 'hsl(var(--label))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

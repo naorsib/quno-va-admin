@@ -64,9 +64,13 @@ export function VerifyOtpForm({ signupDetails, ...props }: Props) {
     mode: 'onBlur',
   });
 
+  const onSubmit = form.handleSubmit((data: UserSignupDetails) => {
+    sendPhoneOtp(data);
+  });
+
   return (
     <FormProvider {...form}>
-      <form className="grid gap-6">
+      <form onSubmit={onSubmit} className="grid gap-6">
         <FormField
           control={form.control}
           name="country_code"
@@ -129,7 +133,6 @@ export function VerifyOtpForm({ signupDetails, ...props }: Props) {
           disabled={!form.formState.isValid}
           className="bg-card-button font-normal text-white"
           pendingText={tb('load')}
-          formAction={sendPhoneOtp}
         >
           {tb('text')}
         </SubmitButton>

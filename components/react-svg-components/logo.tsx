@@ -6,8 +6,8 @@ type Props = ComponentProps<'div'> & SVGRProps;
 
 const LogoSvgComponent = ({
   className,
-  desc = 'Logo',
-  desc_id = 'quno_logo',
+  desc = 'QunoMedical Logo',
+  desc_id = 'qunomedical_logo',
 }: Props) => (
   <svg
     className={className}

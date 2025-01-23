@@ -32,8 +32,8 @@ const useValidationSchema = (
   tFields: FormFieldsTrans,
 ): ZodType<ResetPasswordFormData> => {
   return z.object({
-    confirmPassword: passwordValidation(tFields('confirmPassword'), t),
-    newPassword: passwordValidation(tFields('newPassword'), t),
+    confirmPassword: passwordValidation(t),
+    newPassword: passwordValidation(t),
   });
 };
 
@@ -57,9 +57,13 @@ export function ResetPasswordForm({ ...props }: Props) {
     mode: 'onBlur',
   });
 
+  const onSubmit = form.handleSubmit((data: any) => {
+    resetPasswordAction(data);
+  });
+
   return (
     <FormProvider {...form}>
-      <form className={props.className}>
+      <form onSubmit={onSubmit} className={props.className}>
         <div className="grid gap-6">
           <FormField
             control={form.control}
@@ -92,7 +96,6 @@ export function ResetPasswordForm({ ...props }: Props) {
             additions="main"
             disabled={!form.formState.isValid}
             className="bg-card-button text-white"
-            formAction={resetPasswordAction}
           >
             {tb('text')}
           </SubmitButton>

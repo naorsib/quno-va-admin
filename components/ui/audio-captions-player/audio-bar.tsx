@@ -116,16 +116,25 @@ export default function AudioBar({
               className={cn(
                 'border px-4 py-2',
                 selectedAudioButton === button
-                  ? 'pointer-events-none relative flex flex-row overflow-hidden border-audioControl bg-transparent text-audioControl'
+                  ? 'pointer-events-none relative flex flex-row overflow-hidden border-audioControl bg-primary text-audioControl'
                   : 'border-black bg-audioControl text-black hover:bg-audioControl/90',
               )}
               disabled={isLoading}
             >
+              {selectedAudioButton === button && (
+                <span
+                  className={cn(
+                    'absolute -bottom-5 flex h-[inherit]',
+                    isLoading ? '' : 'animate-wave-forms',
+                  )}
+                >
+                  <RadioWavesSvgComponent />
+                  <RadioWavesSvgComponent />
+                </span>
+                // <RadioWavesSvgComponent className="absolute -bottom-3 left-0" />
+              )}
               <P className="relative text-base/6 font-normal">
                 {tCallEventTypeEnumTrans(button)}
-                {selectedAudioButton === button && (
-                  <RadioWavesSvgComponent className="absolute -bottom-3 left-0" />
-                )}
               </P>
             </Button>
           ))}
