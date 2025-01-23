@@ -91,7 +91,7 @@ export function OtpCodeForm({ phone, ...props }: Props) {
         {tb('submit')}
       </SubmitButton>
 
-      <P fontFamily="roboto" className="text-disclaimer text-center text-base">
+      <P fontFamily="roboto" className="text-center text-base text-disclaimer">
         {t('otpDisclaimer')}
       </P>
       <button
@@ -99,7 +99,7 @@ export function OtpCodeForm({ phone, ...props }: Props) {
         className="w-fit cursor-pointer justify-self-center bg-transparent text-xs hover:bg-background hover:underline"
         onClick={onResendClicked}
       >
-        <P fontFamily="roboto" className="text-disclaimer text-lg">
+        <P fontFamily="roboto" className="text-lg text-disclaimer">
           {tb('resend')}
         </P>
       </button>
