@@ -341,7 +341,7 @@ export const pauseDemo = async () => {
 
   // end call if exists
   return await sleep(500).then(async () => {
-    // TODO - move to trigger function
+    // TODO - move to trigger function//
     await end_call(false);
     return redirect(routeConsts.quincyAiBase);
   });
