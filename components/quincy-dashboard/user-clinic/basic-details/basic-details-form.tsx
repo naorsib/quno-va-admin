@@ -57,7 +57,7 @@ export function BasicDetailsForm({ clinic_base, user_id, ...props }: Props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      clinic_name: clinicBase.clinic_name,
+      clinic_name: clinicBase.clinic_name || '',
       address: clinicBase.address || '',
     },
     mode: 'onSubmit',
