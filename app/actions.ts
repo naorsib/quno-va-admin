@@ -357,7 +357,7 @@ export const requestContract = async () => {
   const user_id = user?.id as string;
   const { error } = await supabase
     .from('user_base_details')
-    .update({ user_demo_status_type_id: 'finished' })
+    .update({ user_demo_status_type_id: 'finished', contract_requested: true })
     .eq('id', user_id);
   // end call if exists
 
