@@ -64,7 +64,7 @@ export function VerifyOtpForm({ signupDetails, ...props }: Props) {
     mode: 'onBlur',
   });
 
-  const onSubmit = form.handleSubmit((data: any) => {
+  const onSubmit = form.handleSubmit((data: UserSignupDetails) => {
     sendPhoneOtp(data);
   });
 

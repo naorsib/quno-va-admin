@@ -26,14 +26,14 @@ import {
 } from '@/lib/validations';
 import { FormButtonsTrans } from '@/types/translations';
 
-export interface SignupFormData {
+export interface SigninFormData {
   email: string;
   password: string;
 }
 const useValidationSchema = (
   t: ValidationsTrans,
   tFields: FormFieldsTrans,
-): ZodType<SignupFormData> => {
+): ZodType<SigninFormData> => {
   return z.object({
     email: emailValidation(tFields('email'), t),
     password: passwordValidation(t),
